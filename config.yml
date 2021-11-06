@@ -1,0 +1,7 @@
+timeBetweenSaves: 90000
+
+dataBaseName: DiscordBot
+
+collectionName: serverStats
+
+mongoURL: 

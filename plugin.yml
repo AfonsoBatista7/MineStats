@@ -1,0 +1,43 @@
+name: MineStats
+version: 4.1
+author: Afonso Batista
+main: org.rage.pluginstats.Main
+description: This plugin uploads to a dataBase the Stats of the players in a Minecraft Server.
+
+commands:
+  upload:
+   description: Uploads all the player stats to database.
+   
+  uploadall:
+   aliases: [uploadAll]
+   description: Uploads all the stats from all the players.
+   
+  download:
+   description: Downloads all the stats from a player in the cloud.
+   
+  merge:
+   description: Merges two player documents from the data base.
+
+  givemedal:
+   aliases: [giveMedal]
+   description: Gives a Medal to a player.
+
+  updateall:
+   aliases: [updateAll]
+   description: Updates all documents from database.
+   
+  medal:
+   aliases: [Medal, medalinfo, Medalinfo, medalInfo, MedalInfo]
+   description: Gives you some information about a medal.
+   
+  medals:
+   aliases: [Medals, allmedals, allMedals]
+   description: Prints all medals :D.
+   
+  playermedals:
+   aliases: [playerMedals, playermedal, playerMedal, pmedals, pm]
+   description: Shows you all the medals the a specyfied player have.
+   
+  stats:
+   aliases: [playerstats, playerStats, PlayerStats, Playerstats, pstats]
+   description: Shows you all the current stats of the player.  
