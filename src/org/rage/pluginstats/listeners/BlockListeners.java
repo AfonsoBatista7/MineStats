@@ -29,7 +29,7 @@ public class BlockListeners implements Listener {
 	@EventHandler(priority=EventPriority.MONITOR)
 	public void onBlockBreak(BlockBreakEvent event) {
 		if(!event.isCancelled()) { 
-			controller.brakeBlock(event.getPlayer(), event.getBlock());
+			controller.breakBlock(event.getPlayer(), event.getBlock());
 		}
 	}
 	

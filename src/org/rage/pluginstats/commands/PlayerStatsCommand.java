@@ -8,9 +8,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.rage.pluginstats.listeners.ListenersController;
-import org.rage.pluginstats.mongoDB.DataBase;
-import org.rage.pluginstats.mongoDB.PlayerProfile;
+import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.rage.pluginstats.player.ServerPlayer;
+import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.utils.Util;
 import org.rage.pluginstats.stats.Stats;
 
@@ -20,11 +20,11 @@ import org.rage.pluginstats.stats.Stats;
  */
 public class PlayerStatsCommand implements CommandExecutor {
 
-	private DataBase mongoDB;
-	private ListenersController controller;
+	private DataBaseManager mongoDB;
+	private ServerManager serverMan;
 
-	public PlayerStatsCommand(ListenersController controller, DataBase mongoDB) {
-		this.controller = controller;
+	public PlayerStatsCommand( DataBaseManager mongoDB, ServerManager serverMan) {
+		this.serverMan = serverMan;
 		this.mongoDB = mongoDB;
 	}
 	
@@ -51,11 +51,11 @@ public class PlayerStatsCommand implements CommandExecutor {
 		
 		UUID playerId = (UUID) playerDoc.get(Stats.PLAYERID.getQuery());
 		
-		PlayerProfile pp = controller.getPlayerFromHashMap(playerId);       
+		ServerPlayer pp = serverMan.getPlayerFromHashMap(playerId);       
 		if(pp==null) {
-			pp = new PlayerProfile(playerId, controller, mongoDB.getConfig());
+			pp = new ServerPlayer(playerId, mongoDB);
 			try {
-				controller.downloadFromDataBase(pp, playerDoc);
+				mongoDB.downloadFromDataBase(pp, playerDoc);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

@@ -25,7 +25,8 @@ import org.rage.pluginstats.listeners.EntityListeners;
 import org.rage.pluginstats.listeners.ListenersController;
 import org.rage.pluginstats.listeners.PlayerListeners;
 import org.rage.pluginstats.mongoDB.DataBase;
-import org.rage.pluginstats.mongoDB.PlayerProfile;
+import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.rage.pluginstats.server.ServerManager;
 
 /**
  * @author Afonso Batista
@@ -38,9 +39,10 @@ public class Main extends JavaPlugin {
 	
 	public static Server currentServer;
 	
-	private DataBase mongoDB;
 	private Logger log;
 	private ListenersController controller;
+	private DataBaseManager mongoDB;
+	private ServerManager serverMan;
 	
 	@Override
 	public void onLoad() {
@@ -49,11 +51,12 @@ public class Main extends JavaPlugin {
 			
 			loadConfig();
 			
-			Logger.getLogger( "org.mongodb.driver" ).setLevel(Level.SEVERE);  //Para nao ter logs
+			Logger.getLogger( "org.mongodb.driver" ).setLevel(Level.SEVERE);  //TO NOT HAVE LOGS ON CONSOLE
 			
-			mongoDB = new DataBase(getConfig());
 			currentServer = getServer();
-			controller = new ListenersController(new HashMap<UUID, PlayerProfile>(), mongoDB, log);
+			serverMan = new ServerManager(new DataBase(getConfig()), log);
+			mongoDB = serverMan.gerDataBaseManager();
+			controller = new ListenersController(mongoDB, serverMan);
 			initialized = true;
 		} catch(Exception e) {
 			log.log(Level.INFO, "[MineStats] - Error on enable MongoDB.", e);
@@ -71,25 +74,25 @@ public class Main extends JavaPlugin {
 			
 			PluginManager pm = getServer().getPluginManager();
 			
-			getCommand("upload").setExecutor(new UploadCommand(controller));
+			getCommand("upload").setExecutor(new UploadCommand(mongoDB));
 			
-			getCommand("uploadall").setExecutor(new UploadAllCommand(controller));
+			getCommand("uploadall").setExecutor(new UploadAllCommand(serverMan));
 			
-			getCommand("updateall").setExecutor(new UpdateAllCommand(controller, mongoDB));
+			getCommand("updateall").setExecutor(new UpdateAllCommand(mongoDB, serverMan));
 			
-			getCommand("download").setExecutor(new DownloadCommand(controller, mongoDB));
+			getCommand("download").setExecutor(new DownloadCommand(mongoDB, serverMan));
 			
-			getCommand("merge").setExecutor(new MergeCommand(controller, mongoDB));
+			getCommand("merge").setExecutor(new MergeCommand(mongoDB, serverMan));
 			
-			getCommand("givemedal").setExecutor(new GiveMedalCommand(controller, mongoDB));
+			getCommand("givemedal").setExecutor(new GiveMedalCommand(mongoDB, serverMan));
 			
 			getCommand("medal").setExecutor(new MedalCommand());
 			
 			getCommand("medals").setExecutor(new MedalsCommand());
 			
-			getCommand("playermedals").setExecutor(new PlayerMedalsCommand(controller, mongoDB));
+			getCommand("playermedals").setExecutor(new PlayerMedalsCommand(mongoDB, serverMan));
 			
-			getCommand("stats").setExecutor(new PlayerStatsCommand(controller, mongoDB));
+			getCommand("stats").setExecutor(new PlayerStatsCommand(mongoDB, serverMan));
 			
 			//Block Listener
 			pm.registerEvents(new BlockListeners(controller), this);
@@ -109,8 +112,8 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if(!loadError) {
-			controller.logOutAllPlayers();
-			controller.uploadAll();
+			serverMan.logOutAllPlayers();
+			serverMan.uploadAll();
 		}
 	}
 	

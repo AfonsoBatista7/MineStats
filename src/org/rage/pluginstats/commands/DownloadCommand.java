@@ -9,9 +9,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.rage.pluginstats.listeners.ListenersController;
-import org.rage.pluginstats.mongoDB.DataBase;
-import org.rage.pluginstats.mongoDB.PlayerProfile;
+import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.rage.pluginstats.player.ServerPlayer;
+import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
@@ -21,18 +21,18 @@ import org.rage.pluginstats.utils.Util;
  */
 public class DownloadCommand implements CommandExecutor{
 
-	private ListenersController controller;
-	private DataBase mongoDB;
+	private DataBaseManager mongoDB;
+	private ServerManager serverMan;
 
-	public DownloadCommand(ListenersController controller, DataBase mongoDB) {
-		this.controller = controller;
+	public DownloadCommand(DataBaseManager mongoDB, ServerManager serverMan) {
 		this.mongoDB = mongoDB;
+		this.serverMan = serverMan;
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {	
 		Document playerDoc = null;
-		PlayerProfile ps = null;
+		ServerPlayer sp = null;
 		
 		if(!(sender instanceof Player)) {
 			
@@ -52,19 +52,19 @@ public class DownloadCommand implements CommandExecutor{
 				
 				UUID playerId = (UUID) playerDoc.get(Stats.PLAYERID.getQuery());
 				
-				ps = controller.getPlayerFromHashMap(playerId);
+				sp = serverMan.getPlayerFromHashMap(playerId);
 				
-				if(ps==null) ps = new PlayerProfile(playerId, controller, mongoDB.getConfig());
+				if(sp==null) sp = new ServerPlayer(playerId, mongoDB);
 				
-				ps.stopPersisting();
+				sp.stopPersisting();
 				
 				try {
-					controller.downloadFromDataBase(ps, playerDoc);
+					mongoDB.downloadFromDataBase(sp, playerDoc);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 				
-				ps.startPersisting();
+				sp.startPersisting();
 				
 				Bukkit.broadcastMessage(
 						Util.chat("&b[MineStats]&7 - SUCCESS!! All of &a<player>&7 stats were downloaded from the cloud.".replace("<player>", args[0])));

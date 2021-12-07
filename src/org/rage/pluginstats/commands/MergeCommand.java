@@ -12,14 +12,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.Main;
-import org.rage.pluginstats.listeners.ListenersController;
 import org.rage.pluginstats.medals.MLevel;
 import org.rage.pluginstats.medals.Medals;
-import org.rage.pluginstats.mongoDB.DataBase;
-import org.rage.pluginstats.mongoDB.PlayerProfile;
+import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.rage.pluginstats.player.ServerPlayer;
+import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.utils.Util;
 
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
@@ -29,12 +28,12 @@ import com.mongodb.client.model.Updates;
  */
 public class MergeCommand implements CommandExecutor{
 
-	private DataBase mongoDB;
-	private ListenersController controller;
+	private DataBaseManager mongoDB;
+	private ServerManager serverMan;
 
-	public MergeCommand(ListenersController controller, DataBase mongoDB) {
-		this.controller = controller;
+	public MergeCommand(DataBaseManager mongoDB, ServerManager serverMan) {
 		this.mongoDB = mongoDB;
+		this.serverMan = serverMan;
 	}
 	
 	@Override
@@ -71,13 +70,10 @@ public class MergeCommand implements CommandExecutor{
 			sender.sendMessage(Util.chat("&b[MineStats]&7 - The two players are the same :/ ."));
 			return false;
 		}
-	
-		
-		MongoCollection<Document> collection = mongoDB.getCollection();
-		
+			
 		UUID playerId = getUUIDRecentPlayer(playerDoc1 ,playerDoc2);
 		
-		collection.updateMany(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc1.get(Stats.PLAYERID.getQuery())),
+		mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc1.get(Stats.PLAYERID.getQuery())),
 				Updates.combine(
 						Updates.set(Stats.PLAYERID.getQuery(), playerId),
 						Updates.set(Stats.ONLINE.getQuery(), playerDoc1.getBoolean(Stats.ONLINE.getQuery()) || playerDoc2.getBoolean(Stats.ONLINE.getQuery())),
@@ -97,18 +93,18 @@ public class MergeCommand implements CommandExecutor{
 			)
 		);
 
-		collection.deleteOne(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc2.get(Stats.PLAYERID.getQuery())));
+		mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc2.get(Stats.PLAYERID.getQuery())));
 		
-		controller.deleteFromHashMap((UUID) playerDoc2.get(Stats.PLAYERID.getQuery()));
-		controller.deleteFromHashMap((UUID) playerDoc1.get(Stats.PLAYERID.getQuery()));
+		serverMan.deleteFromHashMap((UUID) playerDoc2.get(Stats.PLAYERID.getQuery()));
+		serverMan.deleteFromHashMap((UUID) playerDoc1.get(Stats.PLAYERID.getQuery()));
 		
 		playerDoc1 = mongoDB.getPlayer(playerId);
 		
-		collection.updateOne(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc1.get(Stats.PLAYERID.getQuery())),
+		mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc1.get(Stats.PLAYERID.getQuery())),
 				Updates.set(Stats.MEDALS.getQuery(), getMedalList(playerDoc1.getList(Stats.MEDALS.getQuery(), Document.class))));
 		
 		try {
-			controller.downloadFromDataBase(new PlayerProfile(playerId, controller, mongoDB.getConfig()), playerDoc1);
+			mongoDB.downloadFromDataBase(new ServerPlayer(playerId, mongoDB), playerDoc1);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -121,7 +117,7 @@ public class MergeCommand implements CommandExecutor{
 		
 		Player player = Main.currentServer.getPlayer(playerDoc1.getString(Stats.NAME.getQuery()));
 		
-		controller.medalCheck(Medals.NAMEHOLDER, playerDoc1.getList(Stats.NAMES.getQuery(), String.class).size(), player, controller.getOfflinePlayerStats(playerId));
+		serverMan.getPlayerStats(playerId).medalCheck(Medals.NAMEHOLDER, playerDoc1.getList(Stats.NAMES.getQuery(), String.class).size(), player);
 		
 		return true;
 	}

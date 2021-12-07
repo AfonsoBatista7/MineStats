@@ -12,30 +12,27 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.rage.pluginstats.Main;
-import org.rage.pluginstats.listeners.ListenersController;
 import org.rage.pluginstats.medals.MLevel;
 import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.medals.Medals;
-import org.rage.pluginstats.mongoDB.DataBase;
-import org.rage.pluginstats.mongoDB.PlayerProfile;
+import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.rage.pluginstats.player.ServerPlayer;
+import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 /**
  * @author Afonso Batista
  * 2021
  */
 public class GiveMedalCommand implements CommandExecutor {
 
-	private DataBase mongoDB;
-	private ListenersController controller;
+	private DataBaseManager mongoDB;
+	private ServerManager serverMan;
 
-	public GiveMedalCommand(ListenersController controller, DataBase mongoDB) {
-		this.controller = controller;
+	public GiveMedalCommand(DataBaseManager mongoDB, ServerManager serverMan) {
 		this.mongoDB = mongoDB;
+		this.serverMan = serverMan;
 	}
 	
 	@Override
@@ -81,23 +78,22 @@ public class GiveMedalCommand implements CommandExecutor {
 			level = MLevel.GOD;
 		}
 		
-		MongoCollection<Document> collection = mongoDB.getCollection();
-		PlayerProfile pp = controller.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));       
+		ServerPlayer sp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));       
 		
-		if(pp==null) {
+		if(sp==null) {
 			try {
-				pp = new PlayerProfile((UUID) playerDoc.get(Stats.PLAYERID.getQuery()), controller, mongoDB.getConfig());
-				controller.downloadFromDataBase(pp, playerDoc);															//CASO O PLAYER NAO ESTEJA ONLINE
+				sp = new ServerPlayer((UUID) playerDoc.get(Stats.PLAYERID.getQuery()), mongoDB);
+				mongoDB.downloadFromDataBase(sp, playerDoc);															//CASO O PLAYER NAO ESTEJA ONLINE
 			} catch (ParseException e) {	
 				e.printStackTrace();
 			}
 		}
 		
 		Medal newMedal = new Medal(medal, level);
-		Document newMedalDoc = controller.createMedalDoc(newMedal);
+		Document newMedalDoc = newMedal.createMedalDoc();
 		                                                                         
-		if(pp.haveMedal(medal)) {
-			if(pp.getMedal(medal).getMedalLevel().equals(level)) {
+		if(sp.haveMedal(medal)) {
+			if(sp.getMedalByMedal(medal).getMedalLevel().equals(level)) {
 				sender.sendMessage(Util.chat("&b[MineStats]&7 - This player already have this medal."));
 				return false;
 			} else {
@@ -111,12 +107,12 @@ public class GiveMedalCommand implements CommandExecutor {
 				}
 			}
 		} else {
-			pp.newMedal(newMedal);
-			collection.updateOne(Filters.eq(Stats.PLAYERID.getQuery(), pp.getPlayerID()), Updates.addToSet(Stats.MEDALS.getQuery(), newMedalDoc));
+			sp.newMedal(newMedal);
+			mongoDB.newMedalOnDataBase(newMedalDoc, sp);
 		}
 		
 		Player player = Main.currentServer.getPlayer(playerDoc.getString(Stats.NAME.getQuery()));
-		if(player!=null) controller.newMedalEffect(player, newMedal.getMedalLevel());
+		if(player!=null) newMedal.newMedalEffect(player);
 		
 		Bukkit.broadcastMessage(
 				Util.chat("&b[MineStats]&7 - Now, &a<player1>&7 have the &c<medal>&7 &6<level>&7 level Medal!."

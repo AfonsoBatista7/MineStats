@@ -2,7 +2,8 @@ package org.rage.pluginstats.utils;
 
 import org.bukkit.ChatColor;
 import org.rage.pluginstats.medals.Medals;
-import org.rage.pluginstats.mongoDB.PlayerProfile;
+import org.rage.pluginstats.player.PlayerProfile;
+import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.stats.Stats;
 
 /**
@@ -27,37 +28,37 @@ public class Util {
 			return String.format("%s Hr %s Min", hours, minutes);
 	}
 	
-	public static long getMedalVariable(PlayerProfile pp, Medals medal) {
+	public static long getMedalVariable(ServerPlayer pp, Medals medal) {
 		
 		switch(medal) {
 			case DESTROYER:
-				return pp.getBlocksDestroyed();
+				return pp.getBlockStats().getBlocksDestroyed();
 			case BUILDER:
-				return pp.getBlocksPlaced();
+				return pp.getBlockStats().getBlocksPlaced();
 			case PVPMASTER:
-				return pp.getPlayersKilled();
+				return pp.getMobStats().getPlayersKilled();
 			case MOBSLAYER:
-				return pp.getMobsKilled();
+				return pp.getMobStats().getMobsKilled();
 			case WORLDTRAVELLER:
 				return pp.getMetersTraveled();
 			case TIMETRAVELLER:
 				return pp.getVersions().size();
 			case REDSTONENGINEER:
-				return pp.getRedtoneUsed();
+				return pp.getBlockStats().getRedstoneUsed();
 			case VETERAN:
-				return pp.lastLogIn.getYear() - pp.playerSince.getYear();
+				return pp.getLastLoginDate().getYear() - pp.getLastLoginDate().getYear();
 			case ZOMBIE:
 				return pp.getDeaths();
 			case LOGINNER:
 				return pp.getTimesLogin();
 			case DRAGONSLAYER:
-				return pp.getEnderDragonKills();
+				return pp.getMobStats().getEnderDragonKills();
 			case WITHERSLAYER:
-				return pp.getWhitherKills();
+				return pp.getMobStats().getWitherKills();
 			case TIMEWALKER:
 				return pp.getTimePlayed()/3600;
 			case FISHERMAN:
-				return pp.getFishCaught();
+				return pp.getMobStats().getFishCaught();
 			case NAMEHOLDER:
 				return pp.getAllNames().size();
 			default:
@@ -74,13 +75,13 @@ public class Util {
 			case NAMES:
 				return pp.getAllNames().size();
 			case BLOCKSDEST:
-				return pp.getBlocksDestroyed();
+				return pp.getBlockStats().getBlocksDestroyed();
 			case BLOCKSPLA:
-				return pp.getBlocksPlaced();
+				return pp.getBlockStats().getBlocksPlaced();
 			case KILLS:
-				return pp.getPlayersKilled();
+				return pp.getMobStats().getPlayersKilled();
 			case MOBKILLS:
-				return pp.getMobsKilled();
+				return pp.getMobStats().getMobsKilled();
 			case TRAVELLED:
 				return pp.getMetersTraveled();
 			case DEATHS:
@@ -98,13 +99,13 @@ public class Util {
 			case MEDALS:
 				return pp.getMedals();
 			case REDSTONEUSED:
-				return pp.getRedtoneUsed();
+				return pp.getBlockStats().getRedstoneUsed();
 			case FISHCAUGHT:
-				return pp.getFishCaught();
+				return pp.getMobStats().getFishCaught();
 			case ENDERDRAGONKILLS:
-				return pp.getEnderDragonKills();
+				return pp.getMobStats().getEnderDragonKills();
 			case WITHERKILLS:
-				return pp.getWhitherKills();
+				return pp.getMobStats().getWitherKills();
 			case VERSIONS:
 				return pp.getVersions().size();
 			default:

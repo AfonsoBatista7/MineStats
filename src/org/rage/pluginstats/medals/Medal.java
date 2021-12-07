@@ -1,5 +1,12 @@
 package org.rage.pluginstats.medals;
 
+import org.bson.Document;
+import org.bukkit.Effect;
+import org.bukkit.Location;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
+import org.rage.pluginstats.stats.Stats;
+
 /**
  * @author Afonso Batista
  * 2021
@@ -58,6 +65,18 @@ public class Medal {
 			break;
 		default:
 		}
+	}
+	
+	public void newMedalEffect(Player player) {
+		Location location = player.getLocation();
+		player.playSound(location, Sound.LEVEL_UP, level.getSoudLevel(), 2);
+		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 2020);
+		
+	}
+	
+	public Document createMedalDoc() {
+		return new Document(Stats.MEDALNAME.getQuery(), medal.toString())
+							.append(Stats.MEDALLEVEL.getQuery(), level.toString());
 	}
 	
 }

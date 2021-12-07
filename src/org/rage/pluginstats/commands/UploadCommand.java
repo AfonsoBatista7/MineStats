@@ -5,8 +5,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.rage.pluginstats.listeners.ListenersController;
-import org.rage.pluginstats.mongoDB.PlayerProfile;
+import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.utils.Util;
 
 /**
@@ -15,11 +15,10 @@ import org.rage.pluginstats.utils.Util;
  */
 public class UploadCommand implements CommandExecutor{
 	
-	private ListenersController controller;
+	private DataBaseManager mongoDB;
 	
-	public UploadCommand(ListenersController controller) {
-		this.controller = controller;
-		
+	public UploadCommand(DataBaseManager mongoDB) {
+		this.mongoDB = mongoDB;
 	}
 
 	@Override
@@ -44,12 +43,12 @@ public class UploadCommand implements CommandExecutor{
 			}
 		}
 		
-		PlayerProfile ps = controller.getPlayerStats(player);
+		ServerPlayer sp = mongoDB.getPlayerStats(player);
 		
-		ps.flushSessionPlaytime();
-		ps.stopPersisting();
-		controller.uploadToDataBase(ps);
-		ps.startPersisting();
+		sp.flushSessionPlaytime();
+		sp.stopPersisting();
+		mongoDB.uploadToDataBase(sp);
+		sp.startPersisting();
 		
 		Bukkit.broadcastMessage(
 				Util.chat("&b[MineStats]&7 - All of &a<player>&7 stats are up to date on the cloud :DD.".replace("<player>", player.getName())));
