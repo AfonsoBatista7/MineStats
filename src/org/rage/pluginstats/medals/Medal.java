@@ -9,7 +9,7 @@ import org.rage.pluginstats.stats.Stats;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class Medal {
 	

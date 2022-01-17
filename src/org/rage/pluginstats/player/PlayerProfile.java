@@ -17,7 +17,7 @@ import java.util.UUID;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class PlayerProfile {
 	
@@ -250,9 +250,5 @@ public class PlayerProfile {
 		
 		return false;
 		
-	}
-	
-	public void putStats() {
-		//TODO FAZER OS STATS FICAREM GOOD CODE PARA NAO PRECISAR DE METER 50000 LINHAS DE CODIGO SEMPRE QUE ATUALIZO TODOS OS STATS.
 	}
 }

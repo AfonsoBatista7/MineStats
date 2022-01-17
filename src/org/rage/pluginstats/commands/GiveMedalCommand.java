@@ -24,7 +24,7 @@ import org.rage.pluginstats.utils.Util;
 /**
  * Gives a specified medal to a specified player
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class GiveMedalCommand implements CommandExecutor {
 

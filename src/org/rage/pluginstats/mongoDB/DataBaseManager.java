@@ -32,7 +32,7 @@ import com.mongodb.client.model.Updates;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class DataBaseManager {
 	
@@ -58,6 +58,7 @@ public class DataBaseManager {
 			     				.append(Stats.KILLS.getQuery(), 0L)
 			     				.append(Stats.MOBKILLS.getQuery(), 0L)
 			     				.append(Stats.TRAVELLED.getQuery(), 0L)
+			     				.append(Stats.MINEDBLOCKS.getQuery(), 0L)
 			     				.append(Stats.DEATHS.getQuery(), 0L)
 			     				.append(Stats.TIMESLOGIN.getQuery(), 0L)
 			     				.append(Stats.REDSTONEUSED.getQuery(), 0L)
@@ -93,7 +94,7 @@ public class DataBaseManager {
 			try {
 				downloadFromDataBase(pp, playerDoc);
 			} catch (ParseException e) {
-				log.log(Level.SEVERE, "[MineStats] - An error has occurred:", e.fillInStackTrace());
+				log.log(Level.SEVERE, "[MineStats] - An error has occurred:", e);
 			}
 		}
 		
@@ -118,7 +119,8 @@ public class DataBaseManager {
 			
 			sp.setBlockStats(new BlockStats(playerDoc.getLong(Stats.BLOCKSDEST.getQuery()), 
 					playerDoc.getLong(Stats.BLOCKSPLA.getQuery()), 
-					playerDoc.getLong(Stats.REDSTONEUSED.getQuery())));
+					playerDoc.getLong(Stats.REDSTONEUSED.getQuery()),
+					playerDoc.getLong(Stats.MINEDBLOCKS.getQuery())));
 			
 			sp.setMobStats(new MobStats(playerDoc.getLong(Stats.KILLS.getQuery()),
 					playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),
@@ -163,7 +165,8 @@ public class DataBaseManager {
 					Updates.set(Stats.FISHCAUGHT.getQuery(), sp.getMobStats().getFishCaught()),
 					Updates.set(Stats.LASTLOGIN.getQuery(), sp.getLastLogin()),
 					Updates.set(Stats.TIMEPLAYED.getQuery(), sp.getTotalPlaytime()),
-					Updates.set(Stats.TIMESLOGIN.getQuery(), sp.getTimesLogin())
+					Updates.set(Stats.TIMESLOGIN.getQuery(), sp.getTimesLogin()),
+					Updates.set(Stats.MINEDBLOCKS.getQuery(), sp.getBlockStats().getMinedBlocks())
 			)
 		);
 	}

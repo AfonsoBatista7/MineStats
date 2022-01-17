@@ -11,7 +11,7 @@ import org.rage.pluginstats.player.ServerPlayer;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class ServerManager {
 	

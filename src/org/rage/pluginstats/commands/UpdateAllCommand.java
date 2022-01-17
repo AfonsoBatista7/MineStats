@@ -22,7 +22,7 @@ import com.mongodb.client.MongoCursor;
 /**
  * Update all player medals (make all players get medals if they can)
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class UpdateAllCommand implements CommandExecutor{
 	private DataBaseManager mongoDB;

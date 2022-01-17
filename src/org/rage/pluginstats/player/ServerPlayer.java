@@ -13,6 +13,10 @@ import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.utils.Util;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2022
+ */
 public class ServerPlayer extends PlayerProfile {
 
 	private final long TIME_BETWEEN_SAVES;
@@ -101,6 +105,10 @@ public class ServerPlayer extends PlayerProfile {
 	
 	public long fishCaught() {
 		return mobStats.fishCaught();
+	}
+	
+	public long mineBlock() {
+		return blockStats.mineBlock();
 	}
 	
 	/**

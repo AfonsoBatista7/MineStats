@@ -2,7 +2,7 @@ package org.rage.pluginstats.stats;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class Stat {
 	

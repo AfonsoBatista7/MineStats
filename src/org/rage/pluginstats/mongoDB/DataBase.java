@@ -13,7 +13,7 @@ import com.mongodb.client.MongoCollection;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class DataBase {
 	

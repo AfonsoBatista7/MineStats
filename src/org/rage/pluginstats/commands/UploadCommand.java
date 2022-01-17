@@ -12,7 +12,7 @@ import org.rage.pluginstats.utils.Util;
 /**
  * Upload a specified player stats to database
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class UploadCommand implements CommandExecutor{
 	

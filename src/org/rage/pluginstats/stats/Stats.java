@@ -2,7 +2,7 @@ package org.rage.pluginstats.stats;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public enum Stats {
 	//index, query, stat name, if is printable or not
@@ -27,7 +27,9 @@ public enum Stats {
 	TIMEPLAYED(18, "timePlayed", "Time Played", true),
 	ONLINE(19, "online", "Is Online?", false),
 	MEDALNAME(20, "medalName", "", false),
-	MEDALLEVEL(21, "medalLevel", "", false);
+	MEDALLEVEL(21, "medalLevel", "", false),
+	MINEDBLOCKS(22, "blockMined", "Mined Blocks", true);
+	
 	
 	private int index;
 	private String query, text;

@@ -9,7 +9,7 @@ import org.rage.pluginstats.utils.Util;
 /**
  * Prints all current existing medals
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class MedalsCommand implements CommandExecutor {
 

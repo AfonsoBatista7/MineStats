@@ -1,7 +1,5 @@
 package org.rage.pluginstats;
 
-
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +26,7 @@ import org.rage.pluginstats.server.ServerManager;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class Main extends JavaPlugin {
 

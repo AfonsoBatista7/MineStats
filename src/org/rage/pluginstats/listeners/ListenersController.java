@@ -15,7 +15,7 @@ import com.mongodb.client.model.Updates;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class ListenersController {
 	
@@ -92,8 +92,11 @@ public class ListenersController {
 	
 	public void breakBlock(Player player, Block block) {
 		if(block.getType().getId() > 0) {
+			int Ycord = player.getEyeLocation().getBlockY();
 			ServerPlayer pp = mongoDB.getPlayerStats(player);
+			
 			pp.medalCheck(Medals.DESTROYER, pp.breakBlock(), player);
+			if(Ycord>=1 && Ycord<=63 && isMining(block)) pp.medalCheck(Medals.MINER, pp.mineBlock(), player);
 		}
 	}
 	
@@ -124,6 +127,25 @@ public class ListenersController {
 				break;
 			default:
 			}
+		}
+	}
+	
+	public boolean isMining(Block block) {
+		switch(block.getType()) {
+		case STONE:
+		case COAL_ORE:
+		case IRON_ORE:
+		case GOLD_ORE:
+		case DIAMOND_ORE:
+		case LAPIS_ORE:
+		case REDSTONE_ORE:
+		case EMERALD_ORE:
+		case GRAVEL:
+		case SANDSTONE:
+		case OBSIDIAN:
+			return true;
+		default:
+			return false;
 		}
 	}
 }

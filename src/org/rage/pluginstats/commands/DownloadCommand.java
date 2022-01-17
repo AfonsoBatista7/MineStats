@@ -18,7 +18,7 @@ import org.rage.pluginstats.utils.Util;
 /**
  * Downloads the specified player from database.
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class DownloadCommand implements CommandExecutor{
 

@@ -8,7 +8,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
  * @author Afonso Batista
- * 2021
+ * 2021 - 2022
  */
 public class BlockListeners implements Listener {
 	
