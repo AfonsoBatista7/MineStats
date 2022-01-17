@@ -10,6 +10,7 @@ import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.utils.Util;
 
 /**
+ * Upload a specified player stats to database
  * @author Afonso Batista
  * 2021
  */

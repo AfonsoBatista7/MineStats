@@ -15,6 +15,7 @@ import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.utils.Util;
 
 /**
+ * Print all medals of the specified player
  * @author Afonso Batista
  * 2021
  */

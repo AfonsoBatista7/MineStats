@@ -103,6 +103,12 @@ public class ServerPlayer extends PlayerProfile {
 		return mobStats.fishCaught();
 	}
 	
+	/**
+	 * Checks if the player have already the medal, if not adds it to data base.
+	 * 
+	 * @param medal - Medal to check
+	 * @param player - Player to check
+	 */
 	public void newMedalOnDataBase(Medals medal, Player player) {
 			
 		if(!haveMedal(medal)) {
@@ -112,11 +118,18 @@ public class ServerPlayer extends PlayerProfile {
 			newMedal.newMedalEffect(player);
 			Bukkit.broadcastMessage(
 					Util.chat("&b[MineStats]&7 - &a<player>&7, received the &c<medalName> &6<level>&7 Medal!!! :D.".replace("<player>", getName())
-															   													   	   .replace("<medalName>", medal.toString())
-															   													   	   .replace("<level>", medal.getMedalLevel().toString())));
+															   													   .replace("<medalName>", medal.toString())
+															   													   .replace("<level>", medal.getMedalLevel().toString())));
 		}
 	}
 	
+	/**
+	 * Checks if <player> have a <stat> higher enough to upgrade/get the <medal>
+	 * 
+	 * @param medal - Medal to check
+	 * @param stat - The current value of the stat correspondent to the medal
+	 * @param player - Player to check
+	 */
 	public void medalCheck(Medals medal, long stat, Player player) {		
 		
 		boolean haveTrasition = false;
@@ -137,7 +150,6 @@ public class ServerPlayer extends PlayerProfile {
 		}
 		
 		if(haveTrasition) {
-			
 			mongoDB.levelUpMedal(player, getMedalByMedal(medal));
 			
 			Bukkit.broadcastMessage(
@@ -146,7 +158,6 @@ public class ServerPlayer extends PlayerProfile {
 		
 		if(player!=null) getMedalByMedal(medal).newMedalEffect(player);
 			
-		
 		Bukkit.broadcastMessage(
 				Util.chat("&b[MineStats]&7 - &a<player>&7 achieved <statCounter> <statName> and received the &c<medalName> &6<level>&7 Medal!!! :D.".replace("<player>", getName())
 																																				    .replace("<statCounter>", String.valueOf(stat))
@@ -158,27 +169,27 @@ public class ServerPlayer extends PlayerProfile {
 	}
 	
 	// Utility methods
-		public void startPersisting() {
-			timer.scheduleAtFixedRate(new StatsTimerTask(), TIME_BETWEEN_SAVES, TIME_BETWEEN_SAVES);
-		}
+	public void startPersisting() {
+		timer.scheduleAtFixedRate(new StatsTimerTask(), TIME_BETWEEN_SAVES, TIME_BETWEEN_SAVES);
+	}
+	
+	public void stopPersisting() {
+		timer.cancel();
+		timer = new Timer();
+	}
+	
+	public void uploadToDataBase() {
+		mongoDB.uploadToDataBase(this);
+	}
+	
+	private class StatsTimerTask extends TimerTask {
 		
-		public void stopPersisting() {
-			timer.cancel();
-			timer = new Timer();
+		@Override
+		public void run() {
+			flushSessionPlaytime();
+			medalCheck(Medals.TIMEWALKER, getTimePlayed()/3600, Main.currentServer.getPlayer(getName()));
+			uploadToDataBase();
 		}
-		
-		public void uploadToDataBase() {
-			mongoDB.uploadToDataBase(this);
-		}
-		
-		private class StatsTimerTask extends TimerTask {
-			
-			@Override
-			public void run() {
-				flushSessionPlaytime();
-				medalCheck(Medals.TIMEWALKER, getTimePlayed()/3600, Main.currentServer.getPlayer(getName()));
-				uploadToDataBase();
-			}
-		}
+	}
 	
 }

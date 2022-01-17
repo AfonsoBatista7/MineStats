@@ -189,6 +189,9 @@ public class PlayerProfile {
 		return kilometer;
 	}
 	
+	/**
+	 * @return true if the player have all medals and false if not
+	 */
 	public boolean haveAllMedalsGod() {
 		Medal medal;
 		

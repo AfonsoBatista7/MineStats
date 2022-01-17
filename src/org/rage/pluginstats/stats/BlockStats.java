@@ -1,5 +1,9 @@
 package org.rage.pluginstats.stats;
 
+/**
+ * @author Afonso Batista
+ * 2021
+ */
 public class BlockStats {
 	
 	private long blocksDestroyed,

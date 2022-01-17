@@ -15,7 +15,6 @@ import org.bson.conversions.Bson;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import org.rage.pluginstats.Main;
 import org.rage.pluginstats.medals.MLevel;
 import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.medals.Medals;
@@ -31,6 +30,10 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
+/**
+ * @author Afonso Batista
+ * 2021
+ */
 public class DataBaseManager {
 	
 	private Logger log;
@@ -64,7 +67,7 @@ public class DataBaseManager {
 			     				.append(Stats.LASTLOGIN.getQuery(), formatter.format(new Date()))
 			     				.append(Stats.PLAYERSINCE.getQuery(), formatter.format(new Date()))
 			     				.append(Stats.TIMEPLAYED.getQuery(), "0 Hr 0 Min")
-			     				.append(Stats.VERSIONS.getQuery(), Arrays.asList(Main.currentServer.getVersion()))
+			     				.append(Stats.VERSIONS.getQuery(), Arrays.asList(serverManager.getCurrentServerVersion()))
 			     				.append(Stats.MEDALS.getQuery(), Arrays.asList(new Medal(Medals.NOSTALGIAPLAYER).createMedalDoc()))
 								.append(Stats.ONLINE.getQuery(), player.isOnline());
 		
@@ -90,83 +93,86 @@ public class DataBaseManager {
 			try {
 				downloadFromDataBase(pp, playerDoc);
 			} catch (ParseException e) {
-				log.log(Level.INFO, "[MineStats] - Se isto aparecer o Moisés é gay:", e);
+				log.log(Level.SEVERE, "[MineStats] - An error has occurred:", e.fillInStackTrace());
 			}
 		}
 		
 		return serverManager.getPlayerStats(player.getUniqueId());
 	}
 	
-	public void downloadFromDataBase(ServerPlayer pp, Document playerDoc) throws ParseException {
+	/**
+	 * Downloads all stats from <playerDoc> in database to <sp>
+	 * 
+	 * @param sp - Local Player
+	 * @param playerDoc - Document with all player stats 
+	 */
+	public void downloadFromDataBase(ServerPlayer sp, Document playerDoc) throws ParseException {
 		synchronized (serverManager) {
 			String[] time = playerDoc.getString(Stats.TIMEPLAYED.getQuery()).split(" ");
 			int min = 0;
 			if(time.length>2) min = Integer.parseInt(time[2]);
 			
-			pp.setName((String) playerDoc.getString(Stats.NAME.getQuery()));
-			pp.setNameList(playerDoc.getList(Stats.NAMES.getQuery(), String.class));
-			pp.setVersionList(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class));
+			sp.setName((String) playerDoc.getString(Stats.NAME.getQuery()));
+			sp.setNameList(playerDoc.getList(Stats.NAMES.getQuery(), String.class));
+			sp.setVersionList(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class));
 			
-			pp.setBlockStats(new BlockStats(playerDoc.getLong(Stats.BLOCKSDEST.getQuery()), 
+			sp.setBlockStats(new BlockStats(playerDoc.getLong(Stats.BLOCKSDEST.getQuery()), 
 					playerDoc.getLong(Stats.BLOCKSPLA.getQuery()), 
 					playerDoc.getLong(Stats.REDSTONEUSED.getQuery())));
 			
-			pp.setMobStats(new MobStats(playerDoc.getLong(Stats.KILLS.getQuery()),
+			sp.setMobStats(new MobStats(playerDoc.getLong(Stats.KILLS.getQuery()),
 					playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),
 					playerDoc.getLong(Stats.WITHERKILLS.getQuery()), playerDoc.getLong(Stats.FISHCAUGHT.getQuery())));
 			
 			
-			pp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
-			pp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.LASTLOGIN.getQuery())));
-			pp.setPlayerSince(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.PLAYERSINCE.getQuery())));
-			pp.setTimePlayed(Long.parseLong(time[0])*3600+min*60);
-			pp.setDeaths(playerDoc.getLong(Stats.DEATHS.getQuery()));
-			pp.setTimesLogin(playerDoc.getLong(Stats.TIMESLOGIN.getQuery()));
-			pp.setSessionMarkTime(null);
+			sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
+			sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.LASTLOGIN.getQuery())));
+			sp.setPlayerSince(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.PLAYERSINCE.getQuery())));
+			sp.setTimePlayed(Long.parseLong(time[0])*3600+min*60);
+			sp.setDeaths(playerDoc.getLong(Stats.DEATHS.getQuery()));
+			sp.setTimesLogin(playerDoc.getLong(Stats.TIMESLOGIN.getQuery()));
+			sp.setSessionMarkTime(null);
 			
-			pp.setMedals(loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class)));
+			sp.setMedals(loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class)));
 			
-			serverManager.newPlayerOnServer(pp);
+			serverManager.newPlayerOnServer(sp);
 		}
 	}
 	
-	public synchronized void uploadToDataBase(ServerPlayer ps) {
+	/**
+	 * Uploads all <sp> stats to the database, updating it.
+	 * 
+	 * @param sp - Local Player
+	 */
+	public synchronized void uploadToDataBase(ServerPlayer sp) {
 		MongoCollection<Document> collection = mongoDB.getCollection();
 		
-		collection.updateMany(Filters.eq(Stats.PLAYERID.getQuery(), ps.getPlayerID()),
+		collection.updateMany(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()),
 			Updates.combine(
-					Updates.set(Stats.VERSIONS.getQuery(), ps.getVersions()),
-					Updates.set(Stats.ONLINE.getQuery(), ps.isOnline()),
-					Updates.set(Stats.BLOCKSDEST.getQuery(), ps.getBlockStats().getBlocksDestroyed()),
-					Updates.set(Stats.BLOCKSPLA.getQuery(), ps.getBlockStats().getBlocksPlaced()),
-					Updates.set(Stats.KILLS.getQuery(), ps.getMobStats().getPlayersKilled()),
-					Updates.set(Stats.MOBKILLS.getQuery(), ps.getMobStats().getMobsKilled()),
-					Updates.set(Stats.TRAVELLED.getQuery(), ps.getMetersTraveled()),
-					Updates.set(Stats.DEATHS.getQuery(), ps.getDeaths()),
-					Updates.set(Stats.REDSTONEUSED.getQuery(), ps.getBlockStats().getRedstoneUsed()),
-					Updates.set(Stats.ENDERDRAGONKILLS.getQuery(), ps.getMobStats().getEnderDragonKills()),
-					Updates.set(Stats.WITHERKILLS.getQuery(), ps.getMobStats().getWitherKills()),
-					Updates.set(Stats.FISHCAUGHT.getQuery(), ps.getMobStats().getFishCaught()),
-					Updates.set(Stats.LASTLOGIN.getQuery(), ps.getLastLogin()),
-					Updates.set(Stats.TIMEPLAYED.getQuery(), ps.getTotalPlaytime()),
-					Updates.set(Stats.TIMESLOGIN.getQuery(), ps.getTimesLogin())
+					Updates.set(Stats.VERSIONS.getQuery(), sp.getVersions()),
+					Updates.set(Stats.ONLINE.getQuery(), sp.isOnline()),
+					Updates.set(Stats.BLOCKSDEST.getQuery(), sp.getBlockStats().getBlocksDestroyed()),
+					Updates.set(Stats.BLOCKSPLA.getQuery(), sp.getBlockStats().getBlocksPlaced()),
+					Updates.set(Stats.KILLS.getQuery(), sp.getMobStats().getPlayersKilled()),
+					Updates.set(Stats.MOBKILLS.getQuery(), sp.getMobStats().getMobsKilled()),
+					Updates.set(Stats.TRAVELLED.getQuery(), sp.getMetersTraveled()),
+					Updates.set(Stats.DEATHS.getQuery(), sp.getDeaths()),
+					Updates.set(Stats.REDSTONEUSED.getQuery(), sp.getBlockStats().getRedstoneUsed()),
+					Updates.set(Stats.ENDERDRAGONKILLS.getQuery(), sp.getMobStats().getEnderDragonKills()),
+					Updates.set(Stats.WITHERKILLS.getQuery(), sp.getMobStats().getWitherKills()),
+					Updates.set(Stats.FISHCAUGHT.getQuery(), sp.getMobStats().getFishCaught()),
+					Updates.set(Stats.LASTLOGIN.getQuery(), sp.getLastLogin()),
+					Updates.set(Stats.TIMEPLAYED.getQuery(), sp.getTotalPlaytime()),
+					Updates.set(Stats.TIMESLOGIN.getQuery(), sp.getTimesLogin())
 			)
 		);
-	}
-	
-	public void newMedalOnDataBase(Medal newMedal, Player player) {	
-		Document doc = newMedal.createMedalDoc();								//NEED TO TEST IF PLAYER IDs CHANGE WHEN NAME CHANGE
-		mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), player.getUniqueId()), Updates.addToSet(Stats.MEDALS.getQuery(), doc));
-	}
-	
-	public void newMedalOnDataBase(Document medalDoc, ServerPlayer sp) {	
-		mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), Updates.addToSet(Stats.MEDALS.getQuery(), medalDoc));
 	}
 	
 	public void levelUpMedal(Player player, Medal medal) {
 		Document playerDoc = mongoDB.getPlayer(player.getUniqueId());
 		Object[] list = playerDoc.getList(Stats.MEDALS.getQuery(), Document.class).toArray();
 		List<Document> finalList = new ArrayList<Document>(list.length);
+		
 		for(int i=0; i<list.length; i++) {
 			Document document = (Document) list[i];
 			finalList.add(i, document);
@@ -178,6 +184,12 @@ public class DataBaseManager {
 		mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), player.getUniqueId()), Updates.set(Stats.MEDALS.getQuery(), finalList));
 	}
 	
+	/**
+	 * Loads all player <medals> from data base and convert them to an array of Medals 
+	 * 
+	 * @param medals - All player medals on data base.
+	 * @return the converted list of medals to save locally.
+	 */
 	public Medal[] loadMedals(List<Document> medals) {
 		
 		Medal[] newList = new Medal[Medals.values().length];
@@ -200,6 +212,15 @@ public class DataBaseManager {
 			if(medals.getString(Stats.MEDALNAME.getQuery()).equals(medal.toString())) return true;
 		return false;
 		
+	}
+	
+	public void newMedalOnDataBase(Medal newMedal, Player player) {	
+		Document doc = newMedal.createMedalDoc();								//NEED TO TEST IF PLAYER IDs CHANGE WHEN NAME CHANGED
+		mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), player.getUniqueId()), Updates.addToSet(Stats.MEDALS.getQuery(), doc));
+	}
+	
+	public void newMedalOnDataBase(Document medalDoc, ServerPlayer sp) {	
+		mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), Updates.addToSet(Stats.MEDALS.getQuery(), medalDoc));
 	}
 	
 	public void updateStat(Bson filter, Bson update) {

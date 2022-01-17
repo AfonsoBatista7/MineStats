@@ -23,6 +23,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
 /**
+ * If a player have changed is name, you can execute this command to merge two player profiles. 
  * @author Afonso Batista
  * 2021
  */

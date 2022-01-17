@@ -9,6 +9,10 @@ import org.rage.pluginstats.mongoDB.DataBase;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 
+/**
+ * @author Afonso Batista
+ * 2021
+ */
 public class ServerManager {
 	
 	private HashMap<UUID, ServerPlayer> stats;
@@ -29,6 +33,9 @@ public class ServerManager {
 		return currentVertion;
 	}
 	
+	/**
+	 * @return Minecraft version the server is currently running on.
+	 */
 	public String getServerVersion() {
 		String version = Main.currentServer.getVersion();
 		int start = version.indexOf("MC: ") + 4;
@@ -36,6 +43,9 @@ public class ServerManager {
 		return version.substring(start, end);
 	}
 	
+	/**
+	 * Uploads all players statistics to database
+	 */
 	public void uploadAll() {
 		for(ServerPlayer ps : stats.values()) {
 			ps.flushSessionPlaytime();

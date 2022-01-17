@@ -8,6 +8,7 @@ import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.utils.Util;
 
 /**
+ * Uploads to database all the current player stats to update it.
  * @author Afonso Batista
  * 2021
  */

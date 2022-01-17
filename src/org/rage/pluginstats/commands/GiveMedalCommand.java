@@ -22,6 +22,7 @@ import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
 /**
+ * Gives a specified medal to a specified player
  * @author Afonso Batista
  * 2021
  */

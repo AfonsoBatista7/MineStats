@@ -4,4 +4,4 @@ dataBaseName: DiscordBot
 
 collectionName: serverStats
 
-mongoURL: 
+mongoURL: mongodb+srv://RageCraft:pipoquinha1@clustermaster.tohwq.mongodb.net/DiscordBot?retryWrites=true&w=majority

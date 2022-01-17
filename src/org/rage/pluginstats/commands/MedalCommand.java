@@ -8,6 +8,7 @@ import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.utils.Util;
 
 /**
+ * Prints all information about a specified medal
  * @author Afonso Batista
  * 2021
  */

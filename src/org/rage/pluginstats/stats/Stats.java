@@ -5,7 +5,7 @@ package org.rage.pluginstats.stats;
  * 2021
  */
 public enum Stats {
-	
+	//index, query, stat name, if is printable or not
 	PLAYERID(0, "playerId", "Player ID", false),
 	NAME(1, "name", "Player Name", true),
 	NAMES(2, "names","Number of names", true),

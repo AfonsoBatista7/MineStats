@@ -15,6 +15,7 @@ import org.rage.pluginstats.utils.Util;
 import org.rage.pluginstats.stats.Stats;
 
 /**
+ * Prints all current specified player stats
  * @author Afonso Batista
  * 2021
  */

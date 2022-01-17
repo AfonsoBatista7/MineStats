@@ -20,6 +20,7 @@ import org.rage.pluginstats.utils.Util;
 import com.mongodb.client.MongoCursor;
 
 /**
+ * Update all player medals (make all players get medals if they can)
  * @author Afonso Batista
  * 2021
  */
@@ -51,7 +52,7 @@ public class UpdateAllCommand implements CommandExecutor{
 			if(sp==null) {
 				try {
 					sp = new ServerPlayer((UUID) doc.get(Stats.PLAYERID.getQuery()), mongoDB);
-					mongoDB.downloadFromDataBase(sp, doc);															//CASO O PLAYER NAO ESTEJA ONLINE
+					mongoDB.downloadFromDataBase(sp, doc);												//IF A PLAYER IS NOT ONLINE AT THE MOMENT
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}

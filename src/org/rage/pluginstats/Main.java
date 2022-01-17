@@ -2,8 +2,6 @@ package org.rage.pluginstats;
 
 
 
-import java.util.HashMap;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
