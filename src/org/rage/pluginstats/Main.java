@@ -44,7 +44,6 @@ public class Main extends JavaPlugin {
 	public void onLoad() {
 		log = this.getServer().getLogger();
 		try {
-			
 			loadConfig();
 			
 			Logger.getLogger( "org.mongodb.driver" ).setLevel(Level.SEVERE);  //TO NOT HAVE LOGS ON CONSOLE
@@ -54,6 +53,7 @@ public class Main extends JavaPlugin {
 			mongoDB = serverMan.gerDataBaseManager();
 			controller = new ListenersController(mongoDB, serverMan);
 			initialized = true;
+			
 		} catch(Exception e) {
 			log.log(Level.INFO, "[MineStats] - Error on enable MongoDB.", e);
 			loadError = true;

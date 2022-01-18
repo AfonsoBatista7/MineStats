@@ -145,8 +145,8 @@ public class MergeCommand implements CommandExecutor{
 		List<Document> newList = badMedals;
 		
 		for(Document badDoc: badMedals) {
-			medalName = badDoc.getString(Stats.MEDALNAME.getQuery());
-			level = badDoc.getString(Stats.MEDALLEVEL.getQuery());
+			medalName = badDoc.getString("medalName");
+			level = badDoc.getString("medalLevel");
 			newList = findAndRemoveMedal(medalName, level, badDoc, newList);
 		}
 		
@@ -159,7 +159,7 @@ public class MergeCommand implements CommandExecutor{
 		List<Document> newList = badMedals;
 		
 		for(Document badDoc2: badMedals) {
-			medalName2 = badDoc.getString(Stats.MEDALNAME.getQuery());
+			medalName2 = badDoc.getString("medalName");
 			
 			if(medalName.equals(medalName2) && !badDoc.equals(badDoc2)) {
 				if(MLevel.valueOf(level).getNumber() > MLevel.valueOf(badDoc2.getString(medalName2)).getNumber()) {

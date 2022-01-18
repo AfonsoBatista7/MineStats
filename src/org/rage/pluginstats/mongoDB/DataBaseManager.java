@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -48,29 +47,16 @@ public class DataBaseManager {
 	
 	public Document newPlayer(Player player) {
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		
 		Document playerDoc = new Document(Stats.PLAYERID.getQuery(), player.getUniqueId())
-			     				.append(Stats.NAME.getQuery(), player.getName())
-			     				.append(Stats.NAMES.getQuery(), Arrays.asList(player.getName()))
-			     				.append(Stats.BLOCKSDEST.getQuery(), 0L)
-			     				.append(Stats.BLOCKSPLA.getQuery(), 0L)
-			     				.append(Stats.KILLS.getQuery(), 0L)
-			     				.append(Stats.MOBKILLS.getQuery(), 0L)
-			     				.append(Stats.TRAVELLED.getQuery(), 0L)
-			     				.append(Stats.MINEDBLOCKS.getQuery(), 0L)
-			     				.append(Stats.DEATHS.getQuery(), 0L)
-			     				.append(Stats.TIMESLOGIN.getQuery(), 0L)
-			     				.append(Stats.REDSTONEUSED.getQuery(), 0L)
-			     				.append(Stats.ENDERDRAGONKILLS.getQuery(), 0L)
-			     				.append(Stats.WITHERKILLS.getQuery(), 0L)
-			     				.append(Stats.FISHCAUGHT.getQuery(), 0L)
-			     				.append(Stats.LASTLOGIN.getQuery(), formatter.format(new Date()))
-			     				.append(Stats.PLAYERSINCE.getQuery(), formatter.format(new Date()))
-			     				.append(Stats.TIMEPLAYED.getQuery(), "0 Hr 0 Min")
-			     				.append(Stats.VERSIONS.getQuery(), Arrays.asList(serverManager.getCurrentServerVersion()))
-			     				.append(Stats.MEDALS.getQuery(), Arrays.asList(new Medal(Medals.NOSTALGIAPLAYER).createMedalDoc()))
-								.append(Stats.ONLINE.getQuery(), player.isOnline());
+ 				.append(Stats.NAME.getQuery(), player.getName())
+ 				.append(Stats.NAMES.getQuery(), Arrays.asList(player.getName()))
+				.append(Stats.ONLINE.getQuery(), player.isOnline());
+		
+		for(Stats stat: Stats.values()) {
+			if(stat.getFirstValue()!=null)
+				playerDoc.append(stat.getQuery(), stat.getFirstValue());
+		}
+							
 		
 		mongoDB.newDoc(playerDoc);
 		
@@ -109,35 +95,44 @@ public class DataBaseManager {
 	 */
 	public void downloadFromDataBase(ServerPlayer sp, Document playerDoc) throws ParseException {
 		synchronized (serverManager) {
-			String[] time = playerDoc.getString(Stats.TIMEPLAYED.getQuery()).split(" ");
-			int min = 0;
-			if(time.length>2) min = Integer.parseInt(time[2]);
-			
-			sp.setName((String) playerDoc.getString(Stats.NAME.getQuery()));
-			sp.setNameList(playerDoc.getList(Stats.NAMES.getQuery(), String.class));
-			sp.setVersionList(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class));
-			
-			sp.setBlockStats(new BlockStats(playerDoc.getLong(Stats.BLOCKSDEST.getQuery()), 
-					playerDoc.getLong(Stats.BLOCKSPLA.getQuery()), 
-					playerDoc.getLong(Stats.REDSTONEUSED.getQuery()),
-					playerDoc.getLong(Stats.MINEDBLOCKS.getQuery())));
-			
-			sp.setMobStats(new MobStats(playerDoc.getLong(Stats.KILLS.getQuery()),
-					playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),
-					playerDoc.getLong(Stats.WITHERKILLS.getQuery()), playerDoc.getLong(Stats.FISHCAUGHT.getQuery())));
-			
-			
-			sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
-			sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.LASTLOGIN.getQuery())));
-			sp.setPlayerSince(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.PLAYERSINCE.getQuery())));
-			sp.setTimePlayed(Long.parseLong(time[0])*3600+min*60);
-			sp.setDeaths(playerDoc.getLong(Stats.DEATHS.getQuery()));
-			sp.setTimesLogin(playerDoc.getLong(Stats.TIMESLOGIN.getQuery()));
-			sp.setSessionMarkTime(null);
-			
-			sp.setMedals(loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class)));
-			
-			serverManager.newPlayerOnServer(sp);
+			try {
+				String[] time = playerDoc.getString(Stats.TIMEPLAYED.getQuery()).split(" ");
+				int min = 0;
+				if(time.length>2) min = Integer.parseInt(time[2]);
+				
+				sp.setName((String) playerDoc.getString(Stats.NAME.getQuery()));
+				sp.setNameList(playerDoc.getList(Stats.NAMES.getQuery(), String.class));
+				sp.setVersionList(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class));
+				
+				sp.setBlockStats(new BlockStats(playerDoc.getLong(Stats.BLOCKSDEST.getQuery()), 
+						playerDoc.getLong(Stats.BLOCKSPLA.getQuery()), 
+						playerDoc.getLong(Stats.REDSTONEUSED.getQuery()),
+						playerDoc.getLong(Stats.MINEDBLOCKS.getQuery())));
+				
+				sp.setMobStats(new MobStats(playerDoc.getLong(Stats.KILLS.getQuery()),
+						playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),
+						playerDoc.getLong(Stats.WITHERKILLS.getQuery()), playerDoc.getLong(Stats.FISHCAUGHT.getQuery())));
+				
+				
+				sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
+				sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.LASTLOGIN.getQuery())));
+				sp.setPlayerSince(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.PLAYERSINCE.getQuery())));
+				sp.setTimePlayed(Long.parseLong(time[0])*3600+min*60);
+				sp.setDeaths(playerDoc.getLong(Stats.DEATHS.getQuery()));
+				sp.setTimesLogin(playerDoc.getLong(Stats.TIMESLOGIN.getQuery()));
+				sp.setSessionMarkTime(null);
+				
+				sp.setMedals(loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class)));
+				
+				serverManager.newPlayerOnServer(sp);
+			} catch(NullPointerException e) {
+				for(Stats stat: Stats.values()) {
+					if(!playerDoc.containsKey(stat.getQuery()))
+						playerDoc.append(stat.getQuery(), stat.getFirstValue());
+				}
+				mongoDB.getCollection().replaceOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), playerDoc);
+				downloadFromDataBase(sp, playerDoc);
+			}
 		}
 	}
 	
@@ -179,7 +174,7 @@ public class DataBaseManager {
 		for(int i=0; i<list.length; i++) {
 			Document document = (Document) list[i];
 			finalList.add(i, document);
-			if(document.getString(Stats.MEDALNAME.getQuery()).equals(medal.getMedal().toString())) {
+			if(document.getString("medalName").equals(medal.getMedal().toString())) {
 				finalList.remove(i); finalList.add(i, medal.createMedalDoc()); 
 			}
 		}
@@ -200,8 +195,8 @@ public class DataBaseManager {
 		Medals medal; MLevel level;
 		for(Document doc: medals) {
 			
-			medal = Medals.valueOf(doc.getString(Stats.MEDALNAME.getQuery()));
-			level = MLevel.valueOf(doc.getString(Stats.MEDALLEVEL.getQuery()));
+			medal = Medals.valueOf(doc.getString("medalName"));
+			level = MLevel.valueOf(doc.getString("medalLevel"));
 			
 			newList[medal.getIndex()] = new Medal(medal, level) ;
 		}
@@ -212,7 +207,7 @@ public class DataBaseManager {
 	public boolean alreadyHadMedal(Medals medal, Document doc) {
 		List<Document> medalDoc = doc.getList(Stats.MEDALS.getQuery(), Document.class);
 		for(Document medals: medalDoc)
-			if(medals.getString(Stats.MEDALNAME.getQuery()).equals(medal.toString())) return true;
+			if(medals.getString("medalName").equals(medal.toString())) return true;
 		return false;
 		
 	}

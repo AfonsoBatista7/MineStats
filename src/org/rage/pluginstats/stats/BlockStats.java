@@ -15,6 +15,7 @@ public class BlockStats {
 		blocksDestroyed = 0;
 		blocksPlaced = 0;
 		redstoneUsed = 0;
+		minedBlocks = 0;
 	}
 	
 	public BlockStats(long blocksDestroyed, long blocksPlaced, long redstoneUsed, long minedBlocks) {

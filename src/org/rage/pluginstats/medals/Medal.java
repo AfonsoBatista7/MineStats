@@ -74,8 +74,8 @@ public class Medal {
 	}
 	
 	public Document createMedalDoc() {
-		return new Document(Stats.MEDALNAME.getQuery(), medal.toString())
-							.append(Stats.MEDALLEVEL.getQuery(), level.toString());
+		return new Document("medalName", medal.toString())
+							.append("medalLevel", level.toString());
 	}
 	
 }

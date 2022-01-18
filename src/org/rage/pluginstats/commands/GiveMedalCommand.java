@@ -103,7 +103,7 @@ public class GiveMedalCommand implements CommandExecutor {
 				for(int i=0; i<list.length; i++) {
 					Document document = (Document) list[i];
 					finalList.add(i, document);
-					if(document.getString(Stats.MEDALNAME.getQuery()).equals(medal.toString()))
+					if(document.getString("medalName").equals(medal.toString()))
 						finalList.remove(i); finalList.add(i,newMedalDoc); 
 				}
 			}

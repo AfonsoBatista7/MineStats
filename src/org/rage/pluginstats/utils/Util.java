@@ -61,6 +61,8 @@ public class Util {
 				return pp.getMobStats().getFishCaught();
 			case NAMEHOLDER:
 				return pp.getAllNames().size();
+			case MINER:
+				return pp.getBlockStats().getMinedBlocks();
 			default:
 		}
 		return 0;
@@ -108,6 +110,8 @@ public class Util {
 				return pp.getMobStats().getWitherKills();
 			case VERSIONS:
 				return pp.getVersions().size();
+			case MINEDBLOCKS:
+				return pp.getBlockStats().getMinedBlocks();
 			default:
 			
 		}
