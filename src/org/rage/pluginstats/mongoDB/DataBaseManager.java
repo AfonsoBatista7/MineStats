@@ -144,26 +144,11 @@ public class DataBaseManager {
 	public synchronized void uploadToDataBase(ServerPlayer sp) {
 		MongoCollection<Document> collection = mongoDB.getCollection();
 		
-		collection.updateMany(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()),
-			Updates.combine(
-					Updates.set(Stats.VERSIONS.getQuery(), sp.getVersions()),
-					Updates.set(Stats.ONLINE.getQuery(), sp.isOnline()),
-					Updates.set(Stats.BLOCKSDEST.getQuery(), sp.getBlockStats().getBlocksDestroyed()),
-					Updates.set(Stats.BLOCKSPLA.getQuery(), sp.getBlockStats().getBlocksPlaced()),
-					Updates.set(Stats.KILLS.getQuery(), sp.getMobStats().getPlayersKilled()),
-					Updates.set(Stats.MOBKILLS.getQuery(), sp.getMobStats().getMobsKilled()),
-					Updates.set(Stats.TRAVELLED.getQuery(), sp.getMetersTraveled()),
-					Updates.set(Stats.DEATHS.getQuery(), sp.getDeaths()),
-					Updates.set(Stats.REDSTONEUSED.getQuery(), sp.getBlockStats().getRedstoneUsed()),
-					Updates.set(Stats.ENDERDRAGONKILLS.getQuery(), sp.getMobStats().getEnderDragonKills()),
-					Updates.set(Stats.WITHERKILLS.getQuery(), sp.getMobStats().getWitherKills()),
-					Updates.set(Stats.FISHCAUGHT.getQuery(), sp.getMobStats().getFishCaught()),
-					Updates.set(Stats.LASTLOGIN.getQuery(), sp.getLastLogin()),
-					Updates.set(Stats.TIMEPLAYED.getQuery(), sp.getTotalPlaytime()),
-					Updates.set(Stats.TIMESLOGIN.getQuery(), sp.getTimesLogin()),
-					Updates.set(Stats.MINEDBLOCKS.getQuery(), sp.getBlockStats().getMinedBlocks())
-			)
-		);
+		for(Stats stat: Stats.values()) {
+			if(stat.toUpload())
+				collection.updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), 
+						Updates.set(stat.getQuery(), Util.getStatVariable(sp, stat)));
+		}
 	}
 	
 	public void levelUpMedal(Player player, Medal medal) {
