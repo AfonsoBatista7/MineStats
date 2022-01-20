@@ -56,6 +56,7 @@ public enum Stats {
 		this.query = query;
 		this.text = text;
 		this.print = print;
+		this.toUpload = toUpload;
 	}
 	
 	public int getIndex() {

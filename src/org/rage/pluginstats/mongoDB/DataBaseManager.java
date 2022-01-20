@@ -145,9 +145,10 @@ public class DataBaseManager {
 		MongoCollection<Document> collection = mongoDB.getCollection();
 		
 		for(Stats stat: Stats.values()) {
-			if(stat.toUpload())
+			if(stat.toUpload()) {
 				collection.updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), 
 						Updates.set(stat.getQuery(), Util.getStatVariable(sp, stat)));
+			}
 		}
 	}
 	
