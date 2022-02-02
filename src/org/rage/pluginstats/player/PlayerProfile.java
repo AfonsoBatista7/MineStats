@@ -43,7 +43,10 @@ public class PlayerProfile {
 	protected Date lastLogin,
 				   playerSince;
 	
-	private SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+	private SimpleDateFormat formatterLastLogin = new SimpleDateFormat("dd/MM/yyyy h:mm a");
+	private SimpleDateFormat formatterPlayerSince = new SimpleDateFormat("dd/MM/yyyy");
+
+	
 		
 	public PlayerProfile(UUID playerID) {
 		
@@ -204,11 +207,11 @@ public class PlayerProfile {
 	}
 	
 	public String getPlayerSince() {
-		return playerSince != null ? formatter.format(playerSince) : formatter.format(new Date());
+		return playerSince != null ? formatterPlayerSince.format(playerSince) : formatterPlayerSince.format(new Date());
 	}
 	
 	public String getLastLogin() {
-		return lastLogin != null ? formatter.format(lastLogin) : formatter.format(new Date());
+		return lastLogin != null ? formatterLastLogin.format(lastLogin) : formatterLastLogin.format(new Date());
 	}
 	
 	public Date getPlayerSinceDate() {

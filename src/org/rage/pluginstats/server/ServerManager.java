@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.rage.pluginstats.Main;
 import org.rage.pluginstats.mongoDB.DataBase;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
+import org.rage.pluginstats.utils.Util;
 
 /**
  * @author Afonso Batista
@@ -40,6 +42,8 @@ public class ServerManager {
 		String version = Main.currentServer.getVersion();
 		int start = version.indexOf("MC: ") + 4;
 		int end = version.length() - 1;
+		Bukkit.broadcastMessage(
+				Util.chat("Version: <v>".replace("<v>", version.substring(start, end))));
 		return version.substring(start, end);
 	}
 	
