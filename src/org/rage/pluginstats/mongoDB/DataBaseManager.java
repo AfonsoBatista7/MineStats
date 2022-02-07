@@ -38,7 +38,7 @@ public class DataBaseManager {
 	private Logger log;
 	private DataBase mongoDB;
 	private ServerManager serverManager;
-	
+		
 	public DataBaseManager(DataBase mongoDB, Logger log, ServerManager serverManager) {
 		this.log = log;
 		this.mongoDB = mongoDB;
@@ -50,6 +50,7 @@ public class DataBaseManager {
 		Document playerDoc = new Document(Stats.PLAYERID.getQuery(), player.getUniqueId())
  				.append(Stats.NAME.getQuery(), player.getName())
  				.append(Stats.NAMES.getQuery(), Arrays.asList(player.getName()))
+ 				.append(Stats.VERSIONS.getQuery(), Arrays.asList(serverManager.getCurrentServerVersion()))
 				.append(Stats.ONLINE.getQuery(), player.isOnline());
 		
 		for(Stats stat: Stats.values()) {
@@ -61,7 +62,7 @@ public class DataBaseManager {
 		mongoDB.newDoc(playerDoc);
 		
 		Bukkit.broadcastMessage(
-				Util.chat("&b[MineStats]&7 - Heyyy &a<player>&7! Bem vindo ao Minecraft Nostalgia :D.".replace("<player>", player.getName())));
+				Util.chat("&b[MineStats]&7 - Heyyy &a<player>&7! Welcome to Minecraft Nostalgia :D. Try ./stats to see your stats and ./pm to see your medals.".replace("<player>", player.getName())));
 						
 		
 		return playerDoc;
@@ -82,6 +83,9 @@ public class DataBaseManager {
 			} catch (ParseException e) {
 				log.log(Level.SEVERE, "[MineStats] - An error has occurred:", e);
 			}
+			
+			return pp;
+			
 		}
 		
 		return serverManager.getPlayerStats(player.getUniqueId());
@@ -115,14 +119,15 @@ public class DataBaseManager {
 				
 				
 				sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
-				sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.LASTLOGIN.getQuery())));
-				sp.setPlayerSince(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.PLAYERSINCE.getQuery())));
 				sp.setTimePlayed(Long.parseLong(time[0])*3600+min*60);
 				sp.setDeaths(playerDoc.getLong(Stats.DEATHS.getQuery()));
 				sp.setTimesLogin(playerDoc.getLong(Stats.TIMESLOGIN.getQuery()));
 				sp.setSessionMarkTime(null);
 				
 				sp.setMedals(loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class)));
+				
+				sp.setPlayerSince(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.PLAYERSINCE.getQuery())));
+				sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy h:mm a").parse(playerDoc.getString(Stats.LASTLOGIN.getQuery())));
 				
 				serverManager.newPlayerOnServer(sp);
 			} catch(NullPointerException e) {
@@ -132,6 +137,15 @@ public class DataBaseManager {
 				}
 				mongoDB.getCollection().replaceOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), playerDoc);
 				downloadFromDataBase(sp, playerDoc);
+			} catch(ParseException e) {
+				
+				String lastLogin = playerDoc.getString(Stats.LASTLOGIN.getQuery()).concat(" 12:00 AM"); 	
+				
+				mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), 
+						Updates.set(Stats.LASTLOGIN.getQuery(), lastLogin));
+				
+				sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy h:mm a").parse(lastLogin));
+				
 			}
 		}
 	}
