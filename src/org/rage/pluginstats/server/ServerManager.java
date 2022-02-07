@@ -40,6 +40,7 @@ public class ServerManager {
 		String version = Main.currentServer.getVersion();
 		int start = version.indexOf("MC: ") + 4;
 		int end = version.length() - 1;
+		System.out.println(version.substring(start, end));
 		return version.substring(start, end);
 	}
 	

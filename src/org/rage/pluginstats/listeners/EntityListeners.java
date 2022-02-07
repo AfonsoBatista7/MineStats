@@ -25,13 +25,9 @@ public class EntityListeners implements Listener {
 		Entity victim = event.getEntity();
 		Entity attacker = event.getEntity().getKiller();
 		
-		if(attacker instanceof Player) {
-			
-			if(victim instanceof Player) controller.die((Player) victim);	
-			
-			controller.kill((Player) attacker, victim);
-		}
+		if(victim instanceof Player) controller.die((Player) victim);
 		
-			
+		if(attacker instanceof Player) controller.kill((Player) attacker, victim);
+		
 	}
 }

@@ -84,7 +84,7 @@ public class Main extends JavaPlugin {
 			
 			getCommand("medal").setExecutor(new MedalCommand());
 			
-			getCommand("medals").setExecutor(new MedalsCommand());
+			getCommand("medals").setExecutor(new MedalsCommand(mongoDB, serverMan));
 			
 			getCommand("playermedals").setExecutor(new PlayerMedalsCommand(mongoDB, serverMan));
 			

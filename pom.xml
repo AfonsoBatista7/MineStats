@@ -11,7 +11,7 @@
 			<artifactId>craftbukkit-1.5-R0.1</artifactId>
 			<scope>system</scope>
 			<version>1.0</version>
-			<systemPath>C:\Users\Afonso Batista\eclipse-workspace\PluginStats\craftbukkit-1.5-R0.1.jar</systemPath>
+			<systemPath>C:\Users\Afonso\eclipse-workspace\PluginStats\craftbukkit-1.5-R0.1.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>

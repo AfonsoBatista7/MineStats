@@ -25,7 +25,7 @@ public enum Medals {
 	TIMEWALKER(100, 2, 16, "Time Played", "Play some time on the server :DDD"),			  					// #16 Time Played					 
 	FISHERMAN(10, 2, 17, "Fish Caught", "Catch some fish"),													// #17 Fish Caught
 	NAMEHOLDER(2, 1.5, 18, "Number of names", "Change your minecraft player name"),				  			// #18 Number of names
-	MINER(10000, 3, 19, "Mined Blocks", "Break stone and ore blocks under the sea level (62)");				// #19 Mined Blocks
+	MINER(10000, 3, 19, "Mined Blocks", "Break blocks under the sea level (63)");				// #19 Mined Blocks
 	
 	private int index;
 	private long transition;

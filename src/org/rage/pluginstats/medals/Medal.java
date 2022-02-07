@@ -5,7 +5,6 @@ import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-import org.rage.pluginstats.stats.Stats;
 
 /**
  * @author Afonso Batista

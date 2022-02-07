@@ -17,7 +17,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Afonso/Desktop/craftbukkit-1.5-R0.1.jar">
+	<classpathentry kind="lib" path="C:/Users/Afonso/eclipse-workspace/PluginStats/craftbukkit-1.5-R0.1.jar">
 		<attributes>
 			<attribute name="module" value="true"/>
 		</attributes>
