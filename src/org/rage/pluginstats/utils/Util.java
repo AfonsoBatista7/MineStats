@@ -1,5 +1,8 @@
 package org.rage.pluginstats.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.bukkit.ChatColor;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.player.PlayerProfile;
@@ -11,6 +14,8 @@ import org.rage.pluginstats.stats.Stats;
  * 2021 - 2022
  */
 public class Util {
+	
+	private static List<String> colors = Arrays.asList("&c", "&6", "&e", "&a", "&2", "&b", "&3", "&9", "&1", "&5", "&d");
 	
 	public static String chat(String message) {
 		return ChatColor.translateAlternateColorCodes('&', message);
@@ -26,6 +31,27 @@ public class Util {
 			return String.format("%s Hours", hours);
 		else
 			return String.format("%s Hr %s Min", hours, minutes);
+	}
+	
+	public static String rainbowText(String message) {
+		
+		StringBuilder builder = new StringBuilder(message);
+				
+		int index = 0;
+		
+		
+		
+		for(int i=0; i<builder.length(); i+=3) {
+			
+		if(index == colors.size()) index=0;
+		
+		builder.insert(i, colors.get(index));
+		
+		index++;
+			
+		}
+		
+		return builder.toString();
 	}
 	
 	public static long getMedalVariable(ServerPlayer pp, Medals medal) {

@@ -9,6 +9,7 @@ import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.utils.Util;
 
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -34,6 +35,10 @@ public class ListenersController {
 	public void playerJoin(Player player) {
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.join();
+		
+		if(mongoDB.getConfig().getString("players."+player.getUniqueId())!=null)
+			player.setDisplayName(Util.chat(mongoDB.getConfig().getString("players."+player.getUniqueId())));
+		
 		mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), pp.getPlayerID()), Updates.set(Stats.ONLINE.getQuery(), true));
 		pp.startPersisting();
 		

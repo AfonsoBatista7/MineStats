@@ -75,7 +75,7 @@ public class MedalsCommand implements CommandExecutor {
 		
 		int i = 0;
 		
-		while(i+1 != medals.length) {
+		while(i<medals.length) {
 			if(medals[i]!=null)
 				if(medals[i].getMedal().equals(medal)) return true;
 			i++;

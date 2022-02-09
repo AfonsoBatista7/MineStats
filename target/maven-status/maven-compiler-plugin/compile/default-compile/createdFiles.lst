@@ -1,6 +1,8 @@
+org\rage\pluginstats\tags\Tags.class
 org\rage\pluginstats\listeners\EntityListeners.class
 org\rage\pluginstats\player\PlayerProfile.class
 org\rage\pluginstats\mongoDB\DataBaseManager.class
+org\rage\pluginstats\commands\TagsCommand.class
 org\rage\pluginstats\medals\MLevel.class
 org\rage\pluginstats\listeners\PlayerListeners.class
 org\rage\pluginstats\medals\Medal.class

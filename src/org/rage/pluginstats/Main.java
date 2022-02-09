@@ -13,6 +13,7 @@ import org.rage.pluginstats.commands.MedalsCommand;
 import org.rage.pluginstats.commands.MergeCommand;
 import org.rage.pluginstats.commands.PlayerMedalsCommand;
 import org.rage.pluginstats.commands.PlayerStatsCommand;
+import org.rage.pluginstats.commands.TagsCommand;
 import org.rage.pluginstats.commands.UpdateAllCommand;
 import org.rage.pluginstats.commands.UploadAllCommand;
 import org.rage.pluginstats.commands.UploadCommand;
@@ -89,6 +90,8 @@ public class Main extends JavaPlugin {
 			getCommand("playermedals").setExecutor(new PlayerMedalsCommand(mongoDB, serverMan));
 			
 			getCommand("stats").setExecutor(new PlayerStatsCommand(mongoDB, serverMan));
+			
+			getCommand("tag").setExecutor(new TagsCommand(this.getServer(), mongoDB, serverMan));
 			
 			//Block Listener
 			pm.registerEvents(new BlockListeners(controller), this);

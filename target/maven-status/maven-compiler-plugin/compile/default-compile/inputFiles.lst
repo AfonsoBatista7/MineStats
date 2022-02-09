@@ -12,7 +12,9 @@ C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\listeners
 C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\listeners\EntityListeners.java
 C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\mongoDB\DataBaseManager.java
 C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\commands\MergeCommand.java
+C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\commands\TagsCommand.java
 C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\listeners\PlayerListeners.java
+C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\tags\Tags.java
 C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\commands\UpdateAllCommand.java
 C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\commands\UploadCommand.java
 C:\Users\Afonso\eclipse-workspace\PluginStats\src\org\rage\pluginstats\stats\MobStats.java

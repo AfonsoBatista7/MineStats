@@ -40,4 +40,8 @@ commands:
    
   stats:
    aliases: [playerstats, playerStats, PlayerStats, Playerstats, pstats]
-   description: Shows you all the current stats of the player.  
+   description: Shows you all the current stats of the player.
+  
+  tag:
+   aliases: [tg]
+   description: A list of tag commands :D.

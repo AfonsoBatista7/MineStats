@@ -35,6 +35,8 @@ public class PlayerMedalsCommand implements CommandExecutor {
 		Document playerDoc;
 		String name = sender.getName();
 		
+		sender.getServer().getPlayerExact(name).setDisplayName(String.format("[ADMIN] %s", name));
+		
 		if(args.length==0) {
 			if(!(sender instanceof Player)) {
 				sender.sendMessage(Util.chat("&b[MineStats]&7 - You need to specify a player."));
