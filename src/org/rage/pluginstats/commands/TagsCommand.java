@@ -79,11 +79,13 @@ public class TagsCommand implements CommandExecutor {
 					
 					if(medal.getMedalLevel().equals(MLevel.GOD)) tagName = Util.rainbowText(tagName);
 					
-					String newName = String.format("&4%s[%s]&r %s",color, tagName, name);
-					
-					mongoDB.getConfig().set("players."+player.getUniqueId(), newName);
+					String newName = String.format("&4%s[%s]&r %s",color, tagName, name),
+						   listName = medal.getMedalLevel().equals(MLevel.GOD) ? "&4&l"+name : color+name;
+
+					mongoDB.getConfig().set("players."+player.getUniqueId(), newName +">"+ listName );
 					
 					player.setDisplayName(Util.chat(newName));
+					player.setPlayerListName(Util.chat(listName));
 					
 				} catch(ArrayIndexOutOfBoundsException e) {
 					sender.sendMessage(Util.chat("&b[MineStats]&7 - You need to specify a medal."));

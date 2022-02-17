@@ -43,11 +43,11 @@ public class Util {
 		
 		for(int i=0; i<builder.length(); i+=3) {
 			
-		if(index == colors.size()) index=0;
-		
-		builder.insert(i, colors.get(index));
-		
-		index++;
+			if(index == colors.size()) index=0;
+			
+			builder.insert(i, colors.get(index));
+			
+			index++;
 			
 		}
 		

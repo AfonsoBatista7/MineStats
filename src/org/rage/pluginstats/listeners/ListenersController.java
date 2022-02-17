@@ -1,5 +1,6 @@
 package org.rage.pluginstats.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -36,8 +37,13 @@ public class ListenersController {
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.join();
 		
-		if(mongoDB.getConfig().getString("players."+player.getUniqueId())!=null)
-			player.setDisplayName(Util.chat(mongoDB.getConfig().getString("players."+player.getUniqueId())));
+		if(mongoDB.getConfig().getString("players."+player.getUniqueId())!=null) {
+			
+			String[] names = mongoDB.getConfig().getString("players."+player.getUniqueId()).split(">");
+	
+			player.setDisplayName(Util.chat(names[0]));
+			player.setPlayerListName(Util.chat(names[1]));
+		}
 		
 		mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), pp.getPlayerID()), Updates.set(Stats.ONLINE.getQuery(), true));
 		pp.startPersisting();
