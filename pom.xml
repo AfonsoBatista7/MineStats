@@ -18,6 +18,12 @@
 			<artifactId>mongo-java-driver</artifactId>
 			<version>3.12.0</version>
 		</dependency>
+		<dependency>
+		    <groupId>net.dv8tion</groupId>
+		    <artifactId>JDA</artifactId>
+		    <version>4.2.0_247</version>
+		</dependency>
+		
 	</dependencies>
 	<build>
 

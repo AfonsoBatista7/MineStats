@@ -4,24 +4,24 @@ public enum Tags {
 	
 	MEMBER(""),
 	ADMIN("admin"),
-	BETA("beta"),
+	BETA("beta", "&a"),
 	GOD("god", "&f&l"),
 	DONATOR("donator"),
-	BUILDER("builder"),
+	BUILDER("builder", "&e"),
 	DESTROYER("destroyer"),
-	PVP("pvp"),
+	PVP("pvp", "&1"),
 	MOBSLAYER("mobslayer"),
-	TRAVELLER("traveller"),
+	TRAVELLER("traveller", "&2"),
 	ARCHIVIST("archivist"),
 	REDSTONE("redstone", "&c"),
 	VETERAN("veteran"),
 	SKIPDEATH("skipdeath"),
-	ENDERKILLER("enderkiller"),
-	NETHERKILLER("netherkiller"),
+	ENDERKILLER("enderkiller", "&5"),
+	NETHERKILLER("netherkiller", "&4"),
 	TIMEWALKER("timewalker"),
 	FISHERMAN("fisherman", "&b"),
 	NAMEHOLDER("nameholder"),
-	MINER("miner");
+	MINER("miner", "&7");
 	
 	private String tag, color;
 	private boolean haveCustomColor;

@@ -32,7 +32,7 @@ public class MedalCommand implements CommandExecutor {
 		
 		if(medal.getTransition()!=0)
 			sender.sendMessage(
-				Util.chat("&b[MineStats]&7 - &c<medalName>&7:\n &6<level1>&7 -> &a<stat1>&7\n &6<level2>&7 -> &a<stat2>&7\n &6<level3>&7 -> &a<stat3>&7\n &6<level4>&7 -> &a<stat4>&7 <statName>\n How: &3<how>"
+				Util.chat("&b[MineStats]&7 - &c<medalName>&7:\n &6<level1>&7 -> &a<stat1>&7\n &6<level2>&7 -> &a<stat2>&7\n &6<level3>&7 -> &a<stat3>&7\n &6<level4>&7 -> &a<stat4>&7 <statName>\n &7Tag: <tag>\n &7How: &3<how>"
 						.replace("<medalName>", medal.toString())
 						.replace("<level1>", MLevel.I.toString())
 						.replace("<stat1>", String.valueOf(calculateTransition(medal, 0)))
@@ -43,6 +43,7 @@ public class MedalCommand implements CommandExecutor {
 						.replace("<level4>", MLevel.GOD.toString())
 						.replace("<stat4>", String.valueOf(calculateTransition(medal, 3)))
 						.replace("<statName>", medal.getStatName())
+						.replace("<tag>", Util.rainbowText("["+medal.getTag().getTag().toUpperCase()+"]"))
 						.replace("<how>", medal.getHowToGet())));
 		else
 			sender.sendMessage(

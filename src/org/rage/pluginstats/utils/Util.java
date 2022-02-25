@@ -15,7 +15,7 @@ import org.rage.pluginstats.stats.Stats;
  */
 public class Util {
 	
-	private static List<String> colors = Arrays.asList("&c", "&6", "&e", "&a", "&2", "&b", "&3", "&9", "&1", "&5", "&d");
+	private static List<String> colors = Arrays.asList("&4", "&c", "&6", "&e", "&a", "&2", "&b", "&3", "&9", "&1", "&5", "&d");
 	
 	public static String chat(String message) {
 		return ChatColor.translateAlternateColorCodes('&', message);

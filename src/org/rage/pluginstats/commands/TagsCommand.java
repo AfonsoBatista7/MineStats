@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.rage.pluginstats.medals.MLevel;
 import org.rage.pluginstats.medals.Medal;
+import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
@@ -65,7 +66,7 @@ public class TagsCommand implements CommandExecutor {
 				try {
 					tag = Tags.valueOf(args[1].toUpperCase());
 				
-					tagName = args[1].toUpperCase();
+					tagName = "["+args[1].toUpperCase()+"]";
 					
 					Medal medal = haveTag(tag, medals);
 					
@@ -74,13 +75,14 @@ public class TagsCommand implements CommandExecutor {
 						return false;
 					}
 					
-					if(tag.hasCustomColor()) color = tag.getColor();
-					else color = medal.getMedalLevel().getLevelColor();
+					if(tag.hasCustomColor() && (medal.getMedalLevel().equals(MLevel.III) || medal.getMedal().equals(Medals.GOD))) color = tag.getColor();
+					else if(medal.getMedalLevel().equals(MLevel.GOD)) {
+							color = tag.hasCustomColor() ? tag.getColor() : "&3";
+							tagName = Util.rainbowText(tagName);
+					} else color = medal.getMedalLevel().getLevelColor();
 					
-					if(medal.getMedalLevel().equals(MLevel.GOD)) tagName = Util.rainbowText(tagName);
-					
-					String newName = String.format("&4%s[%s]&r %s",color, tagName, name),
-						   listName = medal.getMedalLevel().equals(MLevel.GOD) ? "&4&l"+name : color+name;
+					String newName = String.format("%s%s&r %s",color, tagName, name),
+						   listName = medal.getMedalLevel().equals(MLevel.GOD) ? color+"&l"+name : color+name;
 
 					mongoDB.getConfig().set("players."+player.getUniqueId(), newName +">"+ listName );
 					
@@ -97,7 +99,7 @@ public class TagsCommand implements CommandExecutor {
 				
 				
 				
-				sender.sendMessage(Util.chat(String.format("&b[MineStats]&7 - &aSuccess! &7You set your tag to: &4%s[%s]", color, tagName)));
+				sender.sendMessage(Util.chat(String.format("&b[MineStats]&7 - &aSuccess! &7You set your tag to: %s%s", color, tagName)));
 				
 				break;
 			case "del":
@@ -105,6 +107,7 @@ public class TagsCommand implements CommandExecutor {
 				mongoDB.getConfig().set("players."+player.getUniqueId(), name);
 				
 				player.setDisplayName(String.format("%s", name));
+				player.setPlayerListName(String.format("%s", name));
 				
 				sender.sendMessage(Util.chat("&b[MineStats]&7 - &aSuccess! &7You deleted your tag!"));
 				
@@ -116,15 +119,16 @@ public class TagsCommand implements CommandExecutor {
 					if(medal!=null) {
 						
 						tag = medal.getMedal().getTag();
-						tagName = tag.getTag().toUpperCase();
+						tagName = "["+tag.getTag().toUpperCase()+"]";
 						
 						if(!tag.equals(Tags.MEMBER)) {
-							if(tag.hasCustomColor()) color = tag.getColor();
-							else color = medal.getMedalLevel().getLevelColor();
+							if(tag.hasCustomColor() && (medal.getMedalLevel().equals(MLevel.III) || medal.getMedal().equals(Medals.GOD))) color = tag.getColor();
+							else if(medal.getMedalLevel().equals(MLevel.GOD)) {
+									color = tag.hasCustomColor() ? tag.getColor() : "&3";
+									tagName = Util.rainbowText(tagName);
+							} else color = medal.getMedalLevel().getLevelColor();
 							
-							if(medal.getMedalLevel().equals(MLevel.GOD)) tagName = Util.rainbowText(tagName);
-							
-							sender.sendMessage(Util.chat(String.format("    &4%s[%s]", color, tagName)));
+							sender.sendMessage(Util.chat(String.format("    %s%s", color, tagName)));
 						}
 					}
 				}
