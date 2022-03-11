@@ -1,5 +1,7 @@
 package org.rage.pluginstats.player;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.rage.pluginstats.medals.MLevel;
 import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.medals.Medals;
@@ -10,9 +12,7 @@ import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -23,8 +23,6 @@ public class PlayerProfile {
 	
 	protected UUID playerID;
 	protected String name;
-
-	private List<String> names, versionsPlayed;
 	
 	private Medal[] medals;
 	private Stat[] stats;
@@ -34,11 +32,13 @@ public class PlayerProfile {
 	protected BlockStats blockStats;
 	protected MobStats mobStats;
 	
+	protected int numberOfVersions;
+	
 	protected long metersTraveled,
 				   kilometer,
 				   timePlayed,
 				   deaths,
-				   timesLogin;		   
+				   timesLogin; 
 	
 	protected Date lastLogin,
 				   playerSince;
@@ -52,9 +52,6 @@ public class PlayerProfile {
 		
 		blockStats = new BlockStats();
 		mobStats = new MobStats();
-		
-		names = new ArrayList<String>();
-		versionsPlayed = new ArrayList<String>();
 		
 		medals = new Medal[Medals.values().length];
 		stats = new Stat[Stats.values().length];
@@ -79,12 +76,12 @@ public class PlayerProfile {
 		this.mobStats = mobStats;
 	}
 	
-	public List<String> getVersions() {
-		return versionsPlayed;
-	}
-	
-	public void setVersionList(List<String> versionList) {
-		versionsPlayed = versionList;
+	public boolean isRealyOnline() {
+		Player[] players = Bukkit.getOnlinePlayers();
+		for(Player player: players) {
+			if(player.getName().equals(name)) return true;
+		}
+		return false;
 	}
 	
 	public boolean isOnline() {
@@ -119,12 +116,12 @@ public class PlayerProfile {
 		name = playerName;
 	}
 	
-	public List<String> getAllNames() {
-		return names;
+	public int getNumberOfVersions() {
+		return numberOfVersions;
 	}
 	
-	public void setNameList(List<String> allNames) {
-		names = allNames;
+	public void setNumberOfVersions(int numberOfVersions) {
+		 this.numberOfVersions = numberOfVersions;
 	}
 	
 	public Medal[] getMedals() {
@@ -137,10 +134,6 @@ public class PlayerProfile {
 	
 	public Stat[] getStatsArray() {
 		return stats;
-	}
-	
-	public int getNumVersions() {
-		return versionsPlayed.size();
 	}
 	
 	public Stat getStat(Stats stat) {
@@ -243,15 +236,5 @@ public class PlayerProfile {
 			return Long.toString(secondsInSession);
 			
 		} else return "-1";
-	}
-	
-	public boolean addNewVersion(String version) {
-		if(!versionsPlayed.contains(version)) {
-			versionsPlayed.add(version);
-			return true;
-		}
-		
-		return false;
-		
 	}
 }

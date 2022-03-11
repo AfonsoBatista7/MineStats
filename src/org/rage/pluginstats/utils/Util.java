@@ -68,7 +68,7 @@ public class Util {
 			case WORLDTRAVELLER:
 				return pp.getMetersTraveled();
 			case TIMETRAVELLER:
-				return pp.getVersions().size();
+				return pp.getNumberOfVersions();
 			case REDSTONENGINEER:
 				return pp.getBlockStats().getRedstoneUsed();
 			case VETERAN:
@@ -85,8 +85,6 @@ public class Util {
 				return pp.getTimePlayed()/3600;
 			case FISHERMAN:
 				return pp.getMobStats().getFishCaught();
-			case NAMEHOLDER:
-				return pp.getAllNames().size();
 			case MINER:
 				return pp.getBlockStats().getMinedBlocks();
 			default:
@@ -100,8 +98,6 @@ public class Util {
 				return pp.getPlayerID();
 			case NAME:
 				return pp.getName();
-			case NAMES:
-				return pp.getAllNames().size();
 			case BLOCKSDEST:
 				return pp.getBlockStats().getBlocksDestroyed();
 			case BLOCKSPLA:
@@ -135,7 +131,7 @@ public class Util {
 			case WITHERKILLS:
 				return pp.getMobStats().getWitherKills();
 			case VERSIONS:
-				return pp.getVersions().size();
+				return pp.getNumberOfVersions();
 			case MINEDBLOCKS:
 				return pp.getBlockStats().getMinedBlocks();
 			default:

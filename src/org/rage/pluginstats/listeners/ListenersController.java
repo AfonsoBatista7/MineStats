@@ -1,5 +1,6 @@
 package org.rage.pluginstats.listeners;
 
+import org.bson.Document;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -22,17 +23,15 @@ public class ListenersController {
 	
 	
 	private DataBaseManager mongoDB;
-	private ServerManager serverMan;
-	
 	
 	public ListenersController(DataBaseManager mongoDB, ServerManager serverMan) {
 		
 		this.mongoDB = mongoDB;
-		this.serverMan = serverMan;
 	}
 	
 	@SuppressWarnings("deprecation")
 	public void playerJoin(Player player) {
+				
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.join();
 		
@@ -47,7 +46,10 @@ public class ListenersController {
 		mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), pp.getPlayerID()), Updates.set(Stats.ONLINE.getQuery(), true));
 		pp.startPersisting();
 		
-		if(pp.addNewVersion(serverMan.getCurrentServerVersion())) pp.medalCheck(Medals.TIMETRAVELLER, pp.getNumVersions(), player);
+		Document doc = mongoDB.getPlayer(player.getUniqueId());
+		
+		if(mongoDB.checkVersions(ServerManager.getServerVersion(), doc)) 
+			pp.medalCheck(Medals.TIMETRAVELLER, pp.getNumberOfVersions(), player);
 		pp.medalCheck(Medals.VETERAN, pp.getLastLoginDate().getYear() - pp.getPlayerSinceDate().getYear(), player);
 		pp.medalCheck(Medals.LOGINNER, pp.getTimesLogin(), player);
 			

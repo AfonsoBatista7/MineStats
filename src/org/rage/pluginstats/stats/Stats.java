@@ -4,16 +4,16 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.rage.pluginstats.Main;
 import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.medals.Medals;
+import org.rage.pluginstats.server.ServerManager;
 
 /**
  * @author Afonso Batista
  * 2021 - 2022
  */
 public enum Stats {
-	//index, query, stat name, if is printable or not, first value
+	//index, query, stat name, if is printable or not, to Upload, first value
 	PLAYERID(0, "playerId", "Player ID", false, false),
 	NAME(1, "name", "Player Name", true, false),
 	NAMES(2, "names","Number of names", true, false),
@@ -28,7 +28,7 @@ public enum Stats {
 	FISHCAUGHT(11, "fishCaught", "Fish Caught", true, true, 0L),
 	ENDERDRAGONKILLS(12, "enderdragonKills", "Ender Dragon Kills", true, true, 0L),
 	WITHERKILLS(13, "witherKills", "Wither Kills", true, true, 0L),
-	VERSIONS(14, "versionPlayed", "Number of Versions Played", true, false, Arrays.asList(Main.currentServer.getVersion())),
+	VERSIONS(14, "versionPlayed", "Number of Versions Played", true, false, Arrays.asList(ServerManager.getServerVersion())),
 	TIMESLOGIN(15, "timeslogin", "Number of Logins", true, true, 0L),
 	LASTLOGIN(16, "lastLogin", "Last LogIn", true, true,new SimpleDateFormat("dd/MM/yyyy").format(new Date())),
 	PLAYERSINCE(17, "playerSince", "Player Since", true, false, new SimpleDateFormat("dd/MM/yyyy").format(new Date())),

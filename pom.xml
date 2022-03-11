@@ -7,11 +7,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
-			<groupId>craftbukkit-1.5-R0.1</groupId>
-			<artifactId>craftbukkit-1.5-R0.1</artifactId>
+			<groupId>bukkit_1.6.2</groupId>
+			<artifactId>bukkit_1.6.2</artifactId>
 			<scope>system</scope>
-			<version>1.0</version>
-			<systemPath>C:\Users\Afonso Batista\eclipse-workspace\PluginStats\craftbukkit-1.5-R0.1.jar</systemPath>
+			<version>1.6.2</version>
+			<systemPath>C:\Users\Afonso Batista\eclipse-workspace\PluginStats\bukkit_1.6.2.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
@@ -19,9 +19,19 @@
 			<version>3.12.0</version>
 		</dependency>
 		<dependency>
-		    <groupId>net.dv8tion</groupId>
-		    <artifactId>JDA</artifactId>
-		    <version>4.2.0_247</version>
+            <groupId>net.dv8tion</groupId>
+            <artifactId>JDA</artifactId>
+            <version>5.0.0-alpha.5</version>
+            <exclusions>
+            	<exclusion>
+            		<groupId>com.google.code.findbugs</groupId>
+            		<artifactId>jsr305</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>org.jetbrains</groupId>
+            		<artifactId>annotations</artifactId>
+            	</exclusion>
+            </exclusions>
 		</dependency>
 		
 	</dependencies>

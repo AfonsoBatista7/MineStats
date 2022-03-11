@@ -1,6 +1,7 @@
 package org.rage.pluginstats.commands;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -175,7 +176,16 @@ public class MergeCommand implements CommandExecutor{
 	}
 	
 	private UUID getUUIDRecentPlayer(Document playerDoc1, Document playerDoc2) {
-		return playerDoc1.getString(Stats.LASTLOGIN).compareTo(playerDoc2.getString(Stats.LASTLOGIN)) > 1 ? (UUID) playerDoc1.get(Stats.PLAYERID.getQuery()) : (UUID) playerDoc2.get(Stats.PLAYERID.getQuery()); 
+		
+		try { 
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy h:mm a"); 
+			return formatter.parse(playerDoc1.getString(Stats.LASTLOGIN.getQuery())).compareTo(formatter.parse(playerDoc2.getString(Stats.LASTLOGIN.getQuery()))) > 1 ?
+				(UUID) playerDoc1.get(Stats.PLAYERID.getQuery()) :
+				(UUID) playerDoc2.get(Stats.PLAYERID.getQuery()); 
+		} catch(ParseException e) {
+				System.out.println("[MineStats] - An error occurred parsing.");	
+		}
+		return null;
 	}
 
 }

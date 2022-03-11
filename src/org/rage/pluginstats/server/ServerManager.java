@@ -17,30 +17,23 @@ public class ServerManager {
 	
 	private HashMap<UUID, ServerPlayer> stats;
 	private DataBaseManager mongoDB;
-	private String currentVertion;
 	
 	public ServerManager(DataBase mongoDB, Logger log) {
 		this.stats = new HashMap<UUID, ServerPlayer>();
 		this.mongoDB = new DataBaseManager(mongoDB, log, this);
-		this.currentVertion = getServerVersion();
 	}
 	
 	public DataBaseManager gerDataBaseManager() {
 		return mongoDB;
 	}
 	
-	public String getCurrentServerVersion() {
-		return currentVertion;
-	}
-	
 	/**
 	 * @return Minecraft version the server is currently running on.
 	 */
-	public String getServerVersion() {
+	public static String getServerVersion() {
 		String version = Main.currentServer.getVersion();
 		int start = version.indexOf("MC: ") + 4;
 		int end = version.length() - 1;
-		System.out.println(version.substring(start, end));
 		return version.substring(start, end);
 	}
 	

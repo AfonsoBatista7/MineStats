@@ -1,5 +1,7 @@
 package org.rage.pluginstats;
 
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +27,11 @@ import org.rage.pluginstats.mongoDB.DataBase;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.server.ServerManager;
 
+import com.google.common.collect.Sets;
+
+
+import net.dv8tion.jda.api.requests.GatewayIntent;
+
 /**
  * @author Afonso Batista
  * 2021 - 2022
@@ -33,6 +40,16 @@ public class Main extends JavaPlugin {
 
 	private boolean initialized = false;
 	private boolean loadError = false;
+	
+	
+	public static final Set<GatewayIntent> api = Sets.immutableEnumSet(EnumSet.of(
+													GatewayIntent.GUILD_MEMBERS,
+													GatewayIntent.GUILD_BANS,
+													GatewayIntent.GUILD_EMOJIS,
+													GatewayIntent.GUILD_VOICE_STATES,
+													GatewayIntent.GUILD_MESSAGES,
+													GatewayIntent.DIRECT_MESSAGES
+												));
 	
 	public static Server currentServer;
 	

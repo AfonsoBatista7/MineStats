@@ -46,24 +46,21 @@ public class DataBaseManager {
 	}
 	
 	public Document newPlayer(Player player) {
-		
+				
 		Document playerDoc = new Document(Stats.PLAYERID.getQuery(), player.getUniqueId())
  				.append(Stats.NAME.getQuery(), player.getName())
  				.append(Stats.NAMES.getQuery(), Arrays.asList(player.getName()))
- 				.append(Stats.VERSIONS.getQuery(), Arrays.asList(serverManager.getCurrentServerVersion()))
 				.append(Stats.ONLINE.getQuery(), player.isOnline());
-		
+				
 		for(Stats stat: Stats.values()) {
 			if(stat.getFirstValue()!=null)
 				playerDoc.append(stat.getQuery(), stat.getFirstValue());
 		}
 							
-		
 		mongoDB.newDoc(playerDoc);
 		
 		Bukkit.broadcastMessage(
 				Util.chat("&b[MineStats]&7 - Heyyy &a<player>&7! Welcome to Minecraft Nostalgia :D. Try ./stats to see your stats and ./pm to see your medals.".replace("<player>", player.getName())));
-						
 		
 		return playerDoc;
 	}
@@ -105,9 +102,7 @@ public class DataBaseManager {
 				if(time.length>2) min = Integer.parseInt(time[2]);
 				
 				sp.setName((String) playerDoc.getString(Stats.NAME.getQuery()));
-				sp.setNameList(playerDoc.getList(Stats.NAMES.getQuery(), String.class));
-				sp.setVersionList(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class));
-				
+								
 				sp.setBlockStats(new BlockStats(playerDoc.getLong(Stats.BLOCKSDEST.getQuery()), 
 						playerDoc.getLong(Stats.BLOCKSPLA.getQuery()), 
 						playerDoc.getLong(Stats.REDSTONEUSED.getQuery()),
@@ -117,7 +112,7 @@ public class DataBaseManager {
 						playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),
 						playerDoc.getLong(Stats.WITHERKILLS.getQuery()), playerDoc.getLong(Stats.FISHCAUGHT.getQuery())));
 				
-				
+				sp.setNumberOfVersions(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class).size());
 				sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
 				sp.setTimePlayed(Long.parseLong(time[0])*3600+min*60);
 				sp.setDeaths(playerDoc.getLong(Stats.DEATHS.getQuery()));
@@ -163,6 +158,15 @@ public class DataBaseManager {
 				collection.updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), 
 						Updates.set(stat.getQuery(), Util.getStatVariable(sp, stat)));
 			}
+		}
+	}
+	
+	public boolean checkVersions(String version, Document playerDoc) {
+		if(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class).contains(version)) return true;
+		else {
+			updateStat(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc.get(Stats.PLAYERID.getQuery())),
+					Updates.addToSet(Stats.VERSIONS.getQuery(), version));
+			return false;
 		}
 	}
 	

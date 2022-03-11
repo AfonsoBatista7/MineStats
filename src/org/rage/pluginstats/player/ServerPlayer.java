@@ -194,9 +194,13 @@ public class ServerPlayer extends PlayerProfile {
 		
 		@Override
 		public void run() {
-			flushSessionPlaytime();
-			medalCheck(Medals.TIMEWALKER, getTimePlayed()/3600, Main.currentServer.getPlayer(getName()));
-			uploadToDataBase();
+			
+			if(!isRealyOnline()) quit();
+			else {
+				flushSessionPlaytime();
+				medalCheck(Medals.TIMEWALKER, getTimePlayed()/3600, Main.currentServer.getPlayer(getName()));
+				uploadToDataBase();
+			}
 		}
 	}
 	
