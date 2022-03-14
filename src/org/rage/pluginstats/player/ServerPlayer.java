@@ -19,7 +19,7 @@ import org.rage.pluginstats.utils.Util;
  */
 public class ServerPlayer extends PlayerProfile {
 
-	private final long TIME_BETWEEN_SAVES;
+	private final long TIME_BETWEEN_SAVES, TIME_DISCORD_LINK;
 	
 	private Date sessionMarkTime;
 	private DataBaseManager mongoDB;
@@ -31,8 +31,19 @@ public class ServerPlayer extends PlayerProfile {
 		
 		this.mongoDB = mongoDB;
 		
+		TIME_DISCORD_LINK = mongoDB.getConfig().getInt("timeDiscordLink");
 		TIME_BETWEEN_SAVES = mongoDB.getConfig().getInt("timeBetweenSaves");
 		timer = new Timer();
+	}
+	
+	public boolean resetLinkTrys() {
+		Date now = new Date();
+		long dif = now.getTime() - lastLogin.getTime() / 1000;
+		if(dif>TIME_DISCORD_LINK) {
+			setLinkTrys(0);
+			return true;
+		}
+		return false;
 	}
 	
 	public void setSessionMarkTime(Date sessionMarkTime) {
@@ -57,6 +68,7 @@ public class ServerPlayer extends PlayerProfile {
 	
 	public void join() {
 		sessionMarkTime = new Date();
+		resetLinkTrys();
 		lastLogin = new Date();
 		online = true;
 		timesLogin++;

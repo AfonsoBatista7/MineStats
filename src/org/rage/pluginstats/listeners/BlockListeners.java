@@ -16,7 +16,6 @@ public class BlockListeners implements Listener {
 	
 	public BlockListeners(ListenersController controller) {
 		this.controller = controller;
-		;
 	}
 	
 	@EventHandler(priority=EventPriority.MONITOR)

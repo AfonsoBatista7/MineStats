@@ -19,32 +19,40 @@ public class DataBase {
 	
 	private MongoClient client;
 	private MongoDatabase database;
-	private MongoCollection<Document> collection;		
+	private MongoCollection<Document> collection, discordCollection;		
 	
-	private final String CONNECTION = "mongoURL";
-	private final String DATABASE_NAME = "dataBaseName";
-	private final String COLLECTION_NAME = "collectionName";
-	private final FileConfiguration config;
-	
-	
+	private static FileConfiguration config;
+	private final String CONNECTION = "mongoURL", 
+						 DATABASE_NAME = "dataBaseName",
+						 COLLECTION_NAME = "collectionName",
+						 DISCORD_DATABASE_NAME = "discordCollectionName";
 	
 	public DataBase(FileConfiguration config){
-		this.config = config; 
+		DataBase.config = config; 
 		this.client = new MongoClient(new MongoClientURI(config.getString(CONNECTION)));
 		database = client.getDatabase(config.getString(DATABASE_NAME));
+		discordCollection = database.getCollection(config.getString(DISCORD_DATABASE_NAME));
 		collection = database.getCollection(config.getString(COLLECTION_NAME));
 	}
 	
-	public FileConfiguration getConfig() {
+	public static FileConfiguration getConfig() {
 		return config;
 	}
 	
-	public MongoCollection<Document> getCollection() {
+	public MongoCollection<Document> getServerCollection() {
 		return collection;
+	}
+	
+	public MongoCollection<Document> getDiscordCollection() {
+	 	return discordCollection;
 	}
 	
 	public MongoDatabase getDatabase() {
 		return database;
+	}
+	
+	public Document getDiscordUser(String userId) {
+		return discordCollection.find(new Document("userId", userId)).first();
 	}
 	
 	public Document getPlayer(UUID playerId) {

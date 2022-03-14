@@ -5,9 +5,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.security.auth.login.LoginException;
+
 import org.bukkit.Server;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.rage.pluginstats.commands.DiscordLinkCommand;
+import org.rage.pluginstats.commands.DiscordUnLinkCommand;
 import org.rage.pluginstats.commands.DownloadCommand;
 import org.rage.pluginstats.commands.GiveMedalCommand;
 import org.rage.pluginstats.commands.MedalCommand;
@@ -19,6 +23,7 @@ import org.rage.pluginstats.commands.TagsCommand;
 import org.rage.pluginstats.commands.UpdateAllCommand;
 import org.rage.pluginstats.commands.UploadAllCommand;
 import org.rage.pluginstats.commands.UploadCommand;
+import org.rage.pluginstats.discord.LinkManager;
 import org.rage.pluginstats.listeners.BlockListeners;
 import org.rage.pluginstats.listeners.EntityListeners;
 import org.rage.pluginstats.listeners.ListenersController;
@@ -26,11 +31,15 @@ import org.rage.pluginstats.listeners.PlayerListeners;
 import org.rage.pluginstats.mongoDB.DataBase;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.server.ServerManager;
+import org.rage.pluginstats.listeners.DiscordChatListener;
+import org.rage.pluginstats.listeners.DiscordLinkListener;
 
 import com.google.common.collect.Sets;
 
-
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 /**
  * @author Afonso Batista
@@ -41,7 +50,7 @@ public class Main extends JavaPlugin {
 	private boolean initialized = false;
 	private boolean loadError = false;
 	
-	
+	public static JDA jda = null;
 	public static final Set<GatewayIntent> api = Sets.immutableEnumSet(EnumSet.of(
 													GatewayIntent.GUILD_MEMBERS,
 													GatewayIntent.GUILD_BANS,
@@ -50,16 +59,18 @@ public class Main extends JavaPlugin {
 													GatewayIntent.GUILD_MESSAGES,
 													GatewayIntent.DIRECT_MESSAGES
 												));
-	
+		
 	public static Server currentServer;
 	
 	private Logger log;
 	private ListenersController controller;
 	private DataBaseManager mongoDB;
 	private ServerManager serverMan;
+	private LinkManager linkMan;
 	
 	@Override
 	public void onLoad() {
+		
 		log = this.getServer().getLogger();
 		try {
 			loadConfig();
@@ -69,7 +80,15 @@ public class Main extends JavaPlugin {
 			currentServer = getServer();
 			serverMan = new ServerManager(new DataBase(getConfig()), log);
 			mongoDB = serverMan.gerDataBaseManager();
+			linkMan = new LinkManager(mongoDB, serverMan);
 			controller = new ListenersController(mongoDB, serverMan);
+			
+			Thread initThread = new Thread(this::init, "[MineStats] - Initialization Discord Bot");
+	        initThread.setUncaughtExceptionHandler((t, e) -> {
+	            getLogger().severe("[MineStats] - failed to load Discord functions properly: " + e.getMessage());
+	        });
+	        initThread.start();
+			
 			initialized = true;
 			
 		} catch(Exception e) {
@@ -110,13 +129,32 @@ public class Main extends JavaPlugin {
 			
 			getCommand("tag").setExecutor(new TagsCommand(this.getServer(), mongoDB, serverMan));
 			
-			//Block Listener
+			getCommand("link").setExecutor(new DiscordLinkCommand(mongoDB, serverMan, linkMan));
+			
+			getCommand("unlink").setExecutor(new DiscordUnLinkCommand(mongoDB, serverMan, linkMan));
+
+			
 			pm.registerEvents(new BlockListeners(controller), this);
-			//Player Listener
 			pm.registerEvents(new PlayerListeners(controller), this);
-			//Entity Listener
 			pm.registerEvents(new EntityListeners(controller), this);
 			
+		}
+	}
+	
+	public void init() {
+		try {
+			jda = JDABuilder.create(api)
+				.setToken(getConfig().getString("token"))
+				.addEventListeners(new DiscordChatListener())
+				.addEventListeners(new DiscordLinkListener(linkMan))
+				.disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
+				.build();
+			
+			jda.awaitReady();
+		} catch (LoginException e) {
+			log.log(Level.SEVERE, "[MineStats] - The Discord bot Token is incorrect.", e);
+		} catch(InterruptedException e) {
+			log.log(Level.SEVERE, "[MineStats] - An error occurred while connecting.", e);
 		}
 	}
 	
@@ -132,5 +170,9 @@ public class Main extends JavaPlugin {
 			serverMan.uploadAll();
 		}
 	}
+	
+	public static JDA getJda() {
+		return jda;
+    }
 	
 }

@@ -69,6 +69,10 @@ public class PlayerStatsCommand implements CommandExecutor {
 															  	  .replace("<variable>", String.valueOf(Util.getStatVariable(pp, stat))));
 		}
 						
+		Document discUser = mongoDB.getDiscordUserByPlayer(playerId);
+		
+		if(discUser!=null) sender.sendMessage(Util.chat("    &a&lLink&7: &b&l<variable>").replace("<variable>", discUser.getString("userName")));
+		else sender.sendMessage(Util.chat("    &c&lLink&7: &b&l???"));
 		
 		return true;
 	}

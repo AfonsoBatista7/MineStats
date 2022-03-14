@@ -1,4 +1,5 @@
 org\rage\pluginstats\tags\Tags.class
+org\rage\pluginstats\listeners\DiscordChatListener.class
 org\rage\pluginstats\listeners\EntityListeners.class
 org\rage\pluginstats\player\PlayerProfile.class
 org\rage\pluginstats\mongoDB\DataBaseManager.class
@@ -8,7 +9,9 @@ org\rage\pluginstats\listeners\PlayerListeners.class
 org\rage\pluginstats\medals\Medal.class
 org\rage\pluginstats\stats\Stat.class
 org\rage\pluginstats\listeners\BlockListeners.class
+org\rage\pluginstats\commands\DiscordLinkCommand.class
 org\rage\pluginstats\utils\Util$1.class
+org\rage\pluginstats\listeners\DiscordLinkListener.class
 org\rage\pluginstats\commands\PlayerStatsCommand.class
 org\rage\pluginstats\commands\MergeCommand.class
 org\rage\pluginstats\player\ServerPlayer$StatsTimerTask.class
@@ -28,7 +31,10 @@ org\rage\pluginstats\player\ServerPlayer$1.class
 org\rage\pluginstats\commands\UpdateAllCommand.class
 org\rage\pluginstats\commands\MedalsCommand.class
 org\rage\pluginstats\commands\PlayerMedalsCommand.class
+org\rage\pluginstats\utils\DiscordUtil.class
 org\rage\pluginstats\commands\MedalCommand.class
+org\rage\pluginstats\commands\DiscordUnLinkCommand.class
+org\rage\pluginstats\discord\LinkManager.class
 org\rage\pluginstats\stats\BlockStats.class
 org\rage\pluginstats\Main.class
 org\rage\pluginstats\listeners\ListenersController$1.class

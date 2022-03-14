@@ -130,13 +130,13 @@ public class DataBaseManager {
 					if(!playerDoc.containsKey(stat.getQuery()))
 						playerDoc.append(stat.getQuery(), stat.getFirstValue());
 				}
-				mongoDB.getCollection().replaceOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), playerDoc);
+				mongoDB.getServerCollection().replaceOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), playerDoc);
 				downloadFromDataBase(sp, playerDoc);
 			} catch(ParseException e) {
 				
 				String lastLogin = playerDoc.getString(Stats.LASTLOGIN.getQuery()).concat(" 12:00 AM"); 	
 				
-				mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), 
+				mongoDB.getServerCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), 
 						Updates.set(Stats.LASTLOGIN.getQuery(), lastLogin));
 				
 				sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy h:mm a").parse(lastLogin));
@@ -151,7 +151,7 @@ public class DataBaseManager {
 	 * @param sp - Local Player
 	 */
 	public synchronized void uploadToDataBase(ServerPlayer sp) {
-		MongoCollection<Document> collection = mongoDB.getCollection();
+		MongoCollection<Document> collection = mongoDB.getServerCollection();
 		
 		for(Stats stat: Stats.values()) {
 			if(stat.toUpload()) {
@@ -183,7 +183,7 @@ public class DataBaseManager {
 			}
 		}
 		
-		mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), player.getUniqueId()), Updates.set(Stats.MEDALS.getQuery(), finalList));
+		mongoDB.getServerCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), player.getUniqueId()), Updates.set(Stats.MEDALS.getQuery(), finalList));
 	}
 	
 	/**
@@ -218,23 +218,23 @@ public class DataBaseManager {
 	
 	public void newMedalOnDataBase(Medal newMedal, Player player) {	
 		Document doc = newMedal.createMedalDoc();								//NEED TO TEST IF PLAYER IDs CHANGE WHEN NAME CHANGED
-		mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), player.getUniqueId()), Updates.addToSet(Stats.MEDALS.getQuery(), doc));
+		mongoDB.getServerCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), player.getUniqueId()), Updates.addToSet(Stats.MEDALS.getQuery(), doc));
 	}
 	
 	public void newMedalOnDataBase(Document medalDoc, ServerPlayer sp) {	
-		mongoDB.getCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), Updates.addToSet(Stats.MEDALS.getQuery(), medalDoc));
+		mongoDB.getServerCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), Updates.addToSet(Stats.MEDALS.getQuery(), medalDoc));
 	}
 	
 	public void updateStat(Bson filter, Bson update) {
-		mongoDB.getCollection().updateOne(filter, update);
+		mongoDB.getServerCollection().updateOne(filter, update);
 	}
 	
 	public void updateMultStats(Bson filter, Bson update) {
-		mongoDB.getCollection().updateMany(filter, update);
+		mongoDB.getServerCollection().updateMany(filter, update);
 	}
 	
 	public void deleteDoc(Bson filter) {
-		mongoDB.getCollection().deleteOne(filter);
+		mongoDB.getServerCollection().deleteOne(filter);
 	}
 	
 	public Document getPlayerByName(String name) {
@@ -245,12 +245,36 @@ public class DataBaseManager {
 		return mongoDB.getPlayer(playerId);
 	}
 	
+	public Document getDiscordUser(String userId) {
+		return mongoDB.getDiscordUser(userId);
+	}
+	
 	public FileConfiguration getConfig() {
-		return mongoDB.getConfig();
+		return DataBase.getConfig();
+	}
+	
+	public void updateOneDiscord(Bson filter, Bson update) {
+		mongoDB.getDiscordCollection().updateOne(filter, update);
+	}
+	
+	public void updateOneServer(Bson filter, Bson update) {
+		mongoDB.getServerCollection().updateOne(filter, update);
 	}
 	
 	public MongoCursor<Document> getCollectionIterator() {
-		return mongoDB.getCollection().find().iterator();
+		return mongoDB.getServerCollection().find().iterator();
+	}
+	
+	public MongoCursor<Document> getDiscordCollectionIterator() {
+		return mongoDB.getDiscordCollection().find().iterator();
+	}
+	
+	public Document getPlayerByDiscordUser(String userId) {
+		return getPlayer((UUID) getDiscordUser(userId).get("link"));
+	}
+	
+	public Document getDiscordUserByPlayer(UUID playerId) {
+		return getDiscordUser(getPlayer(playerId).getString("link"));
 	}
 	
 }

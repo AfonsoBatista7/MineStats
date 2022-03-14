@@ -34,8 +34,7 @@ public enum Stats {
 	PLAYERSINCE(17, "playerSince", "Player Since", true, false, new SimpleDateFormat("dd/MM/yyyy").format(new Date())),
 	TIMEPLAYED(18, "timePlayed", "Time Played", true, true, "0 Hr 0 Min"),
 	ONLINE(19, "online", "Is Online?", false, true),
-	MINEDBLOCKS(20, "blockMined", "Mined Blocks", true, true, 0L);
-	
+	MINEDBLOCKS(20, "blockMined", "Mined Blocks", true, true, 0L);	
 	
 	private int index;
 	private String query, text;

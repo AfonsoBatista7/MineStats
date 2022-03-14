@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.rage.pluginstats.Main;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.player.PlayerProfile;
 import org.rage.pluginstats.player.ServerPlayer;

@@ -32,7 +32,7 @@ public class PlayerProfile {
 	protected BlockStats blockStats;
 	protected MobStats mobStats;
 	
-	protected int numberOfVersions;
+	protected int numberOfVersions, numberOfLinkTrys;
 	
 	protected long metersTraveled,
 				   kilometer,
@@ -55,9 +55,18 @@ public class PlayerProfile {
 		
 		medals = new Medal[Medals.values().length];
 		stats = new Stat[Stats.values().length];
+		numberOfLinkTrys = 0;
 		
 		this.playerID = playerID;
 		
+	}
+	
+	public int getNumberOfLinkTrys() {
+		return numberOfLinkTrys;
+	}
+	
+	public void setLinkTrys(int numberOfLinkTrys) {
+		this.numberOfLinkTrys = numberOfLinkTrys;
 	}
 	
 	public BlockStats getBlockStats() {

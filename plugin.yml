@@ -45,3 +45,11 @@ commands:
   tag:
    aliases: [tg]
    description: A list of tag commands :D.
+   
+  link:
+   aliases: []
+   description: Link your minecraft account to your Discord account.
+   
+  unlink:
+   aliases: []
+   description: Unlink your minecraft account with your Discord account.

@@ -20,7 +20,7 @@ import org.rage.pluginstats.utils.Util;
  * @author Afonso Batista
  * 2021 - 2022
  */
-public class DownloadCommand implements CommandExecutor{
+public class DownloadCommand implements CommandExecutor {
 
 	private DataBaseManager mongoDB;
 	private ServerManager serverMan;
