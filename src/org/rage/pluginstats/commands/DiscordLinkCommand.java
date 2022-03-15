@@ -4,6 +4,7 @@ import org.bson.Document;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.rage.pluginstats.discord.LinkManager;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
@@ -32,10 +33,20 @@ public class DiscordLinkCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 				
 		Document playerDoc = mongoDB.getPlayerByName(sender.getName());
-		
-		if(playerDoc==null) {
-			sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
-			return false;
+				
+		if(playerDoc==null) {	
+			Player[] players = sender.getServer().getOnlinePlayers();
+			
+			for(Player player: players) {
+				if(sender.getName().equals(player.getName())) {
+					playerDoc = mongoDB.getPlayer(player.getUniqueId());
+					break;
+				}
+			}
+			if(playerDoc==null) {
+				sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
+				return false;
+			}
 		}
 		
 		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));

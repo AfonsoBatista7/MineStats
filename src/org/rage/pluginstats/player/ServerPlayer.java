@@ -5,13 +5,18 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
 
+import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.rage.pluginstats.Main;
+import org.rage.pluginstats.medals.MLevel;
 import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.rage.pluginstats.utils.DiscordUtil;
 import org.rage.pluginstats.utils.Util;
+
+import net.dv8tion.jda.api.entities.Guild;
 
 /**
  * @author Afonso Batista
@@ -172,6 +177,8 @@ public class ServerPlayer extends PlayerProfile {
 		if(haveTrasition) {
 			mongoDB.levelUpMedal(player, getMedalByMedal(medal));
 			
+			giveNewMedalRole(medal, playerId);
+			
 			Bukkit.broadcastMessage(
 					Util.chat("&b[&a<player>&b]&7 - &aLEVEL UP!").replace("<player>", getName()));
 		}
@@ -184,8 +191,20 @@ public class ServerPlayer extends PlayerProfile {
 																																					.replace("<statName>",medal.getStatName())
 																																				    .replace("<medalName>", medal.toString())
 																																					.replace("<level>", getMedalByMedal(medal).getMedalLevel().toString())));
-		if(haveAllMedalsGod()) newMedalOnDataBase(Medals.GOD, player);
+		if(haveAllMedalsGod()) {
+			newMedalOnDataBase(Medals.GOD, player);
+			giveNewMedalRole(medal, playerId);
+		}
 	
+	}
+	
+	public void giveNewMedalRole(Medals medal, UUID playerId) {
+		Document discUser = mongoDB.getDiscordUserByPlayer(playerId);
+		if(discUser!=null && medal.getRoleId()!=0 && getMedalByMedal(medal).getMedalLevel().equals(MLevel.GOD)) {
+			Guild guild = DiscordUtil.getJDA().getGuildById(DiscordUtil.getGuildId());
+    	
+    		guild.addRoleToMember(discUser.getString("userId"), guild.getRoleById(medal.getRoleId())).complete();
+		}
 	}
 	
 	// Utility methods

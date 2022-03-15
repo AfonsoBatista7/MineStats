@@ -21,7 +21,7 @@ import java.util.UUID;
  */
 public class PlayerProfile {
 	
-	protected UUID playerID;
+	protected UUID playerId;
 	protected String name;
 	
 	private Medal[] medals;
@@ -57,7 +57,7 @@ public class PlayerProfile {
 		stats = new Stat[Stats.values().length];
 		numberOfLinkTrys = 0;
 		
-		this.playerID = playerID;
+		this.playerId = playerID;
 		
 	}
 	
@@ -98,7 +98,7 @@ public class PlayerProfile {
 	}
 	
 	public UUID getPlayerID() {
-		return playerID;
+		return playerId;
 	}
 	
 	public void setLastLogin(Date lastLogin) {

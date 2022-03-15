@@ -145,7 +145,7 @@ public class Main extends JavaPlugin {
 		try {
 			jda = JDABuilder.create(api)
 				.setToken(getConfig().getString("token"))
-				.addEventListeners(new DiscordChatListener())
+				.addEventListeners(new DiscordChatListener(mongoDB))
 				.addEventListeners(new DiscordLinkListener(linkMan))
 				.disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.ONLINE_STATUS)
 				.build();
@@ -166,6 +166,12 @@ public class Main extends JavaPlugin {
 	@Override
 	public void onDisable() {
 		if(!loadError) {
+
+			 if (jda != null) {
+				 jda.getEventManager().getRegisteredListeners().forEach(listener -> jda.getEventManager().unregister(listener));
+				 jda.shutdownNow();
+			 }
+			
 			serverMan.logOutAllPlayers();
 			serverMan.uploadAll();
 		}

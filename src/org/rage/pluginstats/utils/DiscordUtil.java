@@ -18,4 +18,16 @@ public class DiscordUtil {
 	public static long getRoleLinkedId() {
 		return DataBase.getConfig().getLong("discordRoleLinkedId");
 	}
+	
+	public static long getChannelId() {
+		return DataBase.getConfig().getLong("channelId");
+	}
+	
+	public static String buildDiscordToMinecraft(String userName, String message) {		
+		return Util.chat(String.format("[&9&lDiscord&r] <%s> &f%s",userName, message));
+	}
+	
+	public static String buildMinecraftToDiscord(String message) {
+		return "";
+	}
 }
