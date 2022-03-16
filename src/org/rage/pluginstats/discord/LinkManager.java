@@ -88,7 +88,7 @@ public class LinkManager {
 		mongoDB.updateOneServer(Filters.eq(Stats.PLAYERID.getQuery(), playerId), Updates.unset(LINK));
 		mongoDB.updateOneDiscord(Filters.eq("userId", userId), Updates.unset(LINK));
 		
-		Guild guild = DiscordUtil.getJDA().getGuildById(DiscordUtil.getGuildId());
+		Guild guild = DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId());
     	
     	guild.removeRoleFromMember(userId, guild.getRoleById(DiscordUtil.getRoleLinkedId())).complete();
 
@@ -103,7 +103,7 @@ public class LinkManager {
 		
 		playerLinkCodes.remove(code);
 		
-		Guild guild = DiscordUtil.getJDA().getGuildById(DiscordUtil.getGuildId());
+		Guild guild = DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId());
     	
     	guild.addRoleToMember(userId, guild.getRoleById(DiscordUtil.getRoleLinkedId())).complete();
 		

@@ -4,11 +4,13 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Bukkit;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
-import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.DiscordUtil;
+
+import com.vdurmont.emoji.EmojiParser;
 
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -28,19 +30,30 @@ public class DiscordChatListener extends ListenerAdapter {
 	public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 	
 		
-		if (event.getMember() == null || DiscordUtil.getJDA() == null || event.getAuthor().equals(DiscordUtil.getJDA().getSelfUser()))
+		if(event.getMember() == null || DiscordUtil.getJda() == null || event.getAuthor().equals(DiscordUtil.getJda().getSelfUser()))
 	         	return;
 		
 		if(event.getChannel().getIdLong() != DiscordUtil.getChannelId()) return;
+		
+		event.getMessage().suppressEmbeds(true);
 		
 		String message = event.getMessage().getContentRaw();
 		User user = event.getAuthor();
 		Guild guild = event.getGuild();
 		
+		if(message.length() > mongoDB.getConfig().getInt("maxDiscordMessage")) {
+	            event.getMessage().addReaction("\uD83D\uDCAC").queue(v -> event.getMessage().addReaction("❗").queue());
+	            message = message.substring(0, mongoDB.getConfig().getInt("maxDiscordMessage"));
+	    }
+		
 		List<Member> members = guild.getMembersWithRoles(guild.getRoleById(DiscordUtil.getRoleLinkedId()));
 		
 		//If the message author dont have the Liked Role.
 		if(!members.contains(guild.getMemberById(user.getIdLong()))) return;
+		
+		if (StringUtils.isBlank(EmojiParser.removeAllEmojis(message))) return;
+		
+		message = DiscordUtil.convertMentionsToNames(message);
 		
 		String minecraftMessage = DiscordUtil.buildDiscordToMinecraft(mongoDB.getPlayerByDiscordUser(user.getId()).getString(Stats.NAME.getQuery()), message);
 		
