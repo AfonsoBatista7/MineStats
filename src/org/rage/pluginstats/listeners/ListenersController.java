@@ -10,6 +10,7 @@ import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.utils.DiscordUtil;
 import org.rage.pluginstats.utils.Util;
 
 import com.mongodb.client.model.Filters;
@@ -31,7 +32,11 @@ public class ListenersController {
 	
 	@SuppressWarnings("deprecation")
 	public void playerJoin(Player player) {
-				
+		
+		DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId())
+							.getTextChannelById(DiscordUtil.getChannelId())
+							.sendMessage("```fix\n"+ player.getName() +" joined the game.\n```").queue();
+		
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.join();
 		
@@ -56,6 +61,11 @@ public class ListenersController {
 	}
 	
 	public void playerQuit(Player player) {
+		
+		DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId())
+				   .getTextChannelById(DiscordUtil.getChannelId())
+				   .sendMessage("```fix\n"+ player.getName() +" left the game.\n```").queue();
+		
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.quit();
 		pp.stopPersisting();

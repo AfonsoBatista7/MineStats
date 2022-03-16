@@ -106,7 +106,7 @@ public class DataBaseManager {
 				sp.setBlockStats(new BlockStats(playerDoc.getLong(Stats.BLOCKSDEST.getQuery()), 
 						playerDoc.getLong(Stats.BLOCKSPLA.getQuery()), 
 						playerDoc.getLong(Stats.REDSTONEUSED.getQuery()),
-						playerDoc.getLong(Stats.MINEDBLOCKS.getQuery())));
+						playerDoc.getLong(Stats.BLOCKSMINED.getQuery())));
 				
 				sp.setMobStats(new MobStats(playerDoc.getLong(Stats.KILLS.getQuery()),
 						playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),

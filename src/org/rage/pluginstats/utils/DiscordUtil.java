@@ -3,6 +3,7 @@ package org.rage.pluginstats.utils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.entity.Player;
 import org.rage.pluginstats.Main;
 import org.rage.pluginstats.mongoDB.DataBase;
 
@@ -13,6 +14,11 @@ import net.dv8tion.jda.api.entities.User;
 
 public class DiscordUtil {
 
+	private static final Pattern USER_MENTION_PATTERN = Pattern.compile("(<@!?([0-9]{16,20})>)");
+    private static final Pattern CHANNEL_MENTION_PATTERN = Pattern.compile("(<#([0-9]{16,20})>)");
+    private static final Pattern ROLE_MENTION_PATTERN = Pattern.compile("(<@&([0-9]{16,20})>)");
+    private static final Pattern EMOTE_MENTION_PATTERN = Pattern.compile("(<a?:([a-zA-Z]{2,32}):[0-9]{16,20}>)");
+	
 	public static JDA getJda() {
 		return Main.getJda();
 	}
@@ -30,17 +36,12 @@ public class DiscordUtil {
 	}
 	
 	public static String buildDiscordToMinecraft(String userName, String message) {		
-		return Util.chat(String.format("[&9&lDiscord&r] <%s> &f%s",userName, message));
+		return Util.chat(String.format("[&9&lDiscord&r] <%s> %s",userName, message));
 	}
 	
-	public static String buildMinecraftToDiscord(String message) {
-		return "";
+	public static String buildMinecraftToDiscord(Player player, String message) {
+		return "**<"+player.getName()+">** "+message;
 	}
-	
-	private static final Pattern USER_MENTION_PATTERN = Pattern.compile("(<@!?([0-9]{16,20})>)");
-    private static final Pattern CHANNEL_MENTION_PATTERN = Pattern.compile("(<#([0-9]{16,20})>)");
-    private static final Pattern ROLE_MENTION_PATTERN = Pattern.compile("(<@&([0-9]{16,20})>)");
-    private static final Pattern EMOTE_MENTION_PATTERN = Pattern.compile("(<a?:([a-zA-Z]{2,32}):[0-9]{16,20}>)");
 
     /**
      * Converts Discord-compatible <@12345742934270> mentions to human readable @mentions
@@ -90,5 +91,5 @@ public class DiscordUtil {
     
     public static Role getRole(String userId) {
         return getJda().getRoleById(userId);
-}
+    }
 }

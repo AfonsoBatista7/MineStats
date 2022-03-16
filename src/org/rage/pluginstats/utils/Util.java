@@ -132,7 +132,7 @@ public class Util {
 				return pp.getMobStats().getWitherKills();
 			case VERSIONS:
 				return pp.getNumberOfVersions();
-			case MINEDBLOCKS:
+			case BLOCKSMINED:
 				return pp.getBlockStats().getMinedBlocks();
 			default:
 			

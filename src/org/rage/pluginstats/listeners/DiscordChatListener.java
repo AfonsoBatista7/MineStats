@@ -42,7 +42,7 @@ public class DiscordChatListener extends ListenerAdapter {
 		Guild guild = event.getGuild();
 		
 		if(message.length() > mongoDB.getConfig().getInt("maxDiscordMessage")) {
-	            event.getMessage().addReaction("\uD83D\uDCAC").queue(v -> event.getMessage().addReaction("❗").queue());
+	            event.getMessage().addReaction("\uD83D\uDCAC").queue();
 	            message = message.substring(0, mongoDB.getConfig().getInt("maxDiscordMessage"));
 	    }
 		

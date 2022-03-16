@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.bukkit.plugin.Plugin;
 import org.rage.pluginstats.Main;
 import org.rage.pluginstats.mongoDB.DataBase;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
@@ -17,14 +18,20 @@ public class ServerManager {
 	
 	private HashMap<UUID, ServerPlayer> stats;
 	private DataBaseManager mongoDB;
+	private static Plugin plugin;
 	
-	public ServerManager(DataBase mongoDB, Logger log) {
+	public ServerManager(DataBase mongoDB, Logger log, Plugin plugin) {
 		this.stats = new HashMap<UUID, ServerPlayer>();
 		this.mongoDB = new DataBaseManager(mongoDB, log, this);
+		ServerManager.plugin = plugin;
 	}
 	
-	public DataBaseManager gerDataBaseManager() {
+	public DataBaseManager getDataBaseManager() {
 		return mongoDB;
+	}
+	
+	public static Plugin getPlugin() {
+		return plugin;
 	}
 	
 	/**

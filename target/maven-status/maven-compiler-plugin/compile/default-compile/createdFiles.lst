@@ -18,6 +18,7 @@ org\rage\pluginstats\player\ServerPlayer$StatsTimerTask.class
 org\rage\pluginstats\commands\UploadAllCommand.class
 org\rage\pluginstats\player\ServerPlayer.class
 org\rage\pluginstats\listeners\ListenersController.class
+org\rage\pluginstats\listeners\MessageListener.class
 org\rage\pluginstats\server\ServerManager.class
 org\rage\pluginstats\stats\Stats.class
 org\rage\pluginstats\medals\Medal$1.class

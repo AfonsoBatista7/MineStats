@@ -81,7 +81,7 @@ public class MergeCommand implements CommandExecutor{
 						Updates.set(Stats.ONLINE.getQuery(), playerDoc1.getBoolean(Stats.ONLINE.getQuery()) || playerDoc2.getBoolean(Stats.ONLINE.getQuery())),
 						Updates.inc(Stats.BLOCKSDEST.getQuery(), playerDoc2.getLong(Stats.BLOCKSDEST.getQuery())),
 						Updates.inc(Stats.BLOCKSPLA.getQuery(), playerDoc2.getLong(Stats.BLOCKSPLA.getQuery())),
-						Updates.inc(Stats.MINEDBLOCKS.getQuery(), playerDoc2.getLong(Stats.MINEDBLOCKS.getQuery())),
+						Updates.inc(Stats.BLOCKSMINED.getQuery(), playerDoc2.getLong(Stats.BLOCKSMINED.getQuery())),
 						Updates.inc(Stats.KILLS.getQuery(), playerDoc2.getLong(Stats.KILLS.getQuery())),
 						Updates.inc(Stats.MOBKILLS.getQuery(), playerDoc2.getLong(Stats.MOBKILLS.getQuery())),
 						Updates.inc(Stats.TRAVELLED.getQuery(), playerDoc2.getLong(Stats.TRAVELLED.getQuery())),

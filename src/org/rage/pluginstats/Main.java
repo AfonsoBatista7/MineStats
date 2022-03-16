@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 
 import javax.security.auth.login.LoginException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.rage.pluginstats.commands.DiscordLinkCommand;
@@ -27,6 +29,7 @@ import org.rage.pluginstats.discord.LinkManager;
 import org.rage.pluginstats.listeners.BlockListeners;
 import org.rage.pluginstats.listeners.EntityListeners;
 import org.rage.pluginstats.listeners.ListenersController;
+import org.rage.pluginstats.listeners.MessageListener;
 import org.rage.pluginstats.listeners.PlayerListeners;
 import org.rage.pluginstats.mongoDB.DataBase;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
@@ -78,8 +81,8 @@ public class Main extends JavaPlugin {
 			Logger.getLogger( "org.mongodb.driver" ).setLevel(Level.SEVERE);  //TO NOT HAVE LOGS ON CONSOLE
 			
 			currentServer = getServer();
-			serverMan = new ServerManager(new DataBase(getConfig()), log);
-			mongoDB = serverMan.gerDataBaseManager();
+			serverMan = new ServerManager(new DataBase(getConfig()), log, this);
+			mongoDB = serverMan.getDataBaseManager();
 			linkMan = new LinkManager(mongoDB, serverMan);
 			controller = new ListenersController(mongoDB, serverMan);
 			
@@ -137,6 +140,7 @@ public class Main extends JavaPlugin {
 			pm.registerEvents(new BlockListeners(controller), this);
 			pm.registerEvents(new PlayerListeners(controller), this);
 			pm.registerEvents(new EntityListeners(controller), this);
+			pm.registerEvents(new MessageListener(), this);
 			
 		}
 	}
