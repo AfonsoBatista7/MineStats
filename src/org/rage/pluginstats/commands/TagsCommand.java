@@ -21,6 +21,8 @@ import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.tags.Tags;
 import org.rage.pluginstats.utils.Util;
 
+import com.mongodb.client.model.ReturnDocument;
+
 public class TagsCommand implements CommandExecutor {
 	
 	private ServerManager serverMan;
@@ -83,9 +85,11 @@ public class TagsCommand implements CommandExecutor {
 						fileTags = oldTags.split(",");
 						
 						for(String fileTag: fileTags) {
-							if(fileTag.toUpperCase().contains(args[1].toUpperCase())) {
-								 color = args[1].subSequence(0, 2).toString();
-								 newName = String.format("%s[%s&r] %s",color ,args[1].substring(2).toUpperCase(), name);
+							
+							if(removeColorFromTag(fileTag.toUpperCase()).equals(args[1].toUpperCase())) {
+								 color = fileTag.subSequence(0, 2).toString();
+								 tagName = "["+fileTag.substring(2).toUpperCase()+"]&r";
+								 newName = String.format("%s[%s]&r %s",color ,fileTag.substring(2).toUpperCase(), name);
 								 listName = color+name;
 								 
 								 haveFileTag = true;
@@ -123,6 +127,7 @@ public class TagsCommand implements CommandExecutor {
 					return false;
 				} catch(IllegalArgumentException e) {
 					sender.sendMessage(Util.chat("&b[MineStats]&7 - This Medal doesn't exist yet."));
+					//e.printStackTrace();
 					return false;
 				} 
 				
@@ -240,5 +245,16 @@ public class TagsCommand implements CommandExecutor {
 		}
 			
 		return null;
+	}
+	
+	private String removeColorFromTag(String tag) {
+		
+		String done="";
+		
+		for(String a: tag.split("&")) {
+			done = done.concat(a.replaceFirst("([a-z])", "").replaceFirst("([1-9])", ""));
+		}
+		
+		return done;
 	}
 }
