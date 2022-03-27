@@ -7,11 +7,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
-			<groupId>bukkit_1.6.2</groupId>
-			<artifactId>bukkit_1.6.2</artifactId>
+			<groupId>bukkit_1.6.4</groupId>
+			<artifactId>bukkit_1.6.4</artifactId>
 			<scope>system</scope>
-			<version>1.6.2</version>
-			<systemPath>C:\Users\Afonso Batista\eclipse-workspace\PluginStats\bukkit_1.6.2.jar</systemPath>
+			<version>1.6.4</version>
+			<systemPath>C:\Users\Afonso Batista\eclipse-workspace\PluginStats\bukkit_1.6.4.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>

@@ -44,8 +44,18 @@ public class MedalsCommand implements CommandExecutor {
 		playerDoc = mongoDB.getPlayerByName(name);
 		
 		if(playerDoc==null) {
-			sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
-			return false;
+			Player[] players = sender.getServer().getOnlinePlayers();
+			
+			for(Player player: players) {
+				if(sender.getName().equals(player.getName())) {
+					playerDoc = mongoDB.getPlayer(player.getUniqueId());
+					break;
+				}
+			}
+			if(playerDoc==null) {
+				sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
+				return false;
+			}
 		}
 		
 		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));       

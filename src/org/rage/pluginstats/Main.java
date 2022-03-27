@@ -1,5 +1,8 @@
 package org.rage.pluginstats;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -7,9 +10,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.login.LoginException;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.rage.pluginstats.commands.DiscordLinkCommand;
@@ -176,6 +177,7 @@ public class Main extends JavaPlugin {
 				 jda.shutdownNow();
 			 }
 			
+			saveConfig();
 			serverMan.logOutAllPlayers();
 			serverMan.uploadAll();
 		}

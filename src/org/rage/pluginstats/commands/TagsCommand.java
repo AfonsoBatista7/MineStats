@@ -1,12 +1,16 @@
 package org.rage.pluginstats.commands;
 
 
+import java.util.UUID;
+
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionDefault;
 import org.rage.pluginstats.medals.MLevel;
 import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.medals.Medals;
@@ -45,7 +49,8 @@ public class TagsCommand implements CommandExecutor {
 		}
 		
 		Tags tag;
-		String tagName, color;
+		String tagName, color = "", oldTags="",
+				fromFile;
 		Player player = server.getPlayerExact(name);
 		
 		ServerPlayer pp = serverMan.getPlayerFromHashMap(player.getUniqueId());       
@@ -56,6 +61,8 @@ public class TagsCommand implements CommandExecutor {
 		if(pp==null) medals = mongoDB.loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class));
 		else medals = pp.getMedals();
 		
+		String[] fileTags = new String[0]; 
+		
 		switch(args[0].toLowerCase()) {
 			case "set":
 				if(args.length==1) {
@@ -64,27 +71,49 @@ public class TagsCommand implements CommandExecutor {
 				}
 				
 				try {
-					tag = Tags.valueOf(args[1].toUpperCase());
-				
 					tagName = "["+args[1].toUpperCase()+"]";
 					
-					Medal medal = haveTag(tag, medals);
+					String newName = name, listName = name;					
+					boolean haveFileTag = false;
 					
-					if(medal==null) { 
-						sender.sendMessage(Util.chat("&b[MineStats]&7 - You dont have this tag."));
-						return false;
+					fromFile = mongoDB.getConfig().getString("players."+playerDoc.get(Stats.PLAYERID.getQuery()));
+					
+					if(fromFile!=null && fromFile.split(">").length==3) {
+						oldTags = fromFile.split(">")[2];
+						fileTags = oldTags.split(",");
+						
+						for(String fileTag: fileTags) {
+							if(fileTag.toUpperCase().contains(args[1].toUpperCase())) {
+								 color = args[1].subSequence(0, 2).toString();
+								 newName = String.format("%s[%s&r] %s",color ,args[1].substring(2).toUpperCase(), name);
+								 listName = color+name;
+								 
+								 haveFileTag = true;
+								 
+								break;
+							}	
+						}
+					}
+					if(!haveFileTag) {
+						tag = Tags.valueOf(args[1].toUpperCase());
+						Medal medal = haveTag(tag, medals);
+						
+						if(medal==null) { 
+							sender.sendMessage(Util.chat("&b[MineStats]&7 - You dont have this tag."));
+							return false;
+						}
+						
+						if(tag.hasCustomColor() && (medal.getMedalLevel().equals(MLevel.III) || medal.getMedal().equals(Medals.GOD))) color = tag.getColor();
+						else if(medal.getMedalLevel().equals(MLevel.GOD)) {
+								color = tag.hasCustomColor() ? tag.getColor() : "&3";
+								tagName = Util.rainbowText(tagName);
+						} else color = medal.getMedalLevel().getLevelColor();
+						
+						newName = String.format("%s%s&r %s",color, tagName, name);
+						listName = medal.getMedalLevel().equals(MLevel.GOD) ? color+"&l"+name : color+name;		
 					}
 					
-					if(tag.hasCustomColor() && (medal.getMedalLevel().equals(MLevel.III) || medal.getMedal().equals(Medals.GOD))) color = tag.getColor();
-					else if(medal.getMedalLevel().equals(MLevel.GOD)) {
-							color = tag.hasCustomColor() ? tag.getColor() : "&3";
-							tagName = Util.rainbowText(tagName);
-					} else color = medal.getMedalLevel().getLevelColor();
-					
-					String newName = String.format("%s%s&r %s",color, tagName, name),
-						   listName = medal.getMedalLevel().equals(MLevel.GOD) ? color+"&l"+name : color+name;
-
-					mongoDB.getConfig().set("players."+player.getUniqueId(), newName +">"+ listName );
+					mongoDB.getConfig().set("players."+player.getUniqueId(), newName +">"+ listName +">"+oldTags);
 					
 					player.setDisplayName(Util.chat(newName));
 					player.setPlayerListName(Util.chat(listName));
@@ -97,14 +126,17 @@ public class TagsCommand implements CommandExecutor {
 					return false;
 				} 
 				
-				
-				
 				sender.sendMessage(Util.chat(String.format("&b[MineStats]&7 - &aSuccess! &7You set your tag to: %s%s", color, tagName)));
 				
 				break;
 			case "del":
 				
-				mongoDB.getConfig().set("players."+player.getUniqueId(), name);
+				fromFile = mongoDB.getConfig().getString("players."+playerDoc.get(Stats.PLAYERID.getQuery()));
+				
+				if(fromFile!=null && fromFile.split(">").length==3)
+					oldTags = mongoDB.getConfig().getString("players."+playerDoc.get(Stats.PLAYERID.getQuery())).split(">")[2];
+				
+				mongoDB.getConfig().set("players."+player.getUniqueId(), name +">"+ name +">"+oldTags);
 				
 				player.setDisplayName(String.format("%s", name));
 				player.setPlayerListName(String.format("%s", name));
@@ -113,6 +145,11 @@ public class TagsCommand implements CommandExecutor {
 				
 				break;
 			case "list":
+				
+				fromFile = mongoDB.getConfig().getString("players."+playerDoc.get(Stats.PLAYERID.getQuery()));
+				
+				if(fromFile!=null && fromFile.split(">").length==3)
+					fileTags = mongoDB.getConfig().getString("players."+playerDoc.get(Stats.PLAYERID.getQuery())).split(">")[2].split(",");
 				
 				sender.sendMessage(Util.chat("&b[MineStats]&7 - &cYour Tags:"));
 				for(Medal medal: medals) {
@@ -132,6 +169,60 @@ public class TagsCommand implements CommandExecutor {
 						}
 					}
 				}
+				
+				for(String fileTag: fileTags) {
+					color = fileTag.subSequence(0, 2).toString();
+					tagName = color+"["+fileTag.substring(2).toUpperCase()+"]";
+					sender.sendMessage(Util.chat(String.format("    %s", tagName)));
+				}
+				
+				break;
+			case "give":
+				
+				
+				
+				if(!sender.hasPermission(PermissionDefault.OP.name())) {
+					sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't have permission to do that :(("));
+					return false;
+				}
+				
+				if(args.length==1 || args.length==2) {
+					sender.sendMessage(Util.chat("&b[MineStats]&7 - You forgot to specify some arguments try: /tag give <playerName> <&Color|TagName>"));
+					return false;
+				}
+				
+				tagName = args[2];
+				color = tagName.subSequence(0, 2).toString();
+				
+				String playerName = args[1],
+					   newName = String.format("%s[%s]&r %s", color, tagName.substring(2).toUpperCase(), playerName),
+					   listName = args[2].subSequence(0, 2)+playerName;
+				
+				Document givePlayerDoc = mongoDB.getPlayerByName(playerName);
+				
+				if(givePlayerDoc==null) {
+					sender.sendMessage(Util.chat("&b[MineStats]&7 - This player doesn't exist on DataBase."));
+					return false;
+				}
+				
+				Player playerGive = server.getPlayerExact(playerName);
+				
+				UUID playerId = (UUID) givePlayerDoc.get(Stats.PLAYERID.getQuery());
+				
+				fromFile = mongoDB.getConfig().getString("players."+playerId);
+				
+				if(fromFile!=null && fromFile.split(">").length==3) {
+					oldTags = ","+mongoDB.getConfig().getString("players."+playerId).split(">")[2];
+				}
+				
+				mongoDB.getConfig().set("players."+playerId, newName +">"+ listName +">"+ tagName+oldTags);
+				
+				playerGive.setDisplayName(Util.chat(newName));
+				playerGive.setPlayerListName(Util.chat(listName));
+				
+				sender.sendMessage(Util.chat(String.format("&b[MineStats]&7 - &aSuccess! &7You gave the %s&7 tag to %s", tagName, playerName)));
+				
+				Bukkit.broadcastMessage(Util.chat(String.format("&b[MineStats]&7 - %s received the %s&7 tag! :D",playerName, tagName)));
 				
 				break;
 			default:
