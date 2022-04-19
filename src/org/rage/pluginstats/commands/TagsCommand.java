@@ -60,6 +60,21 @@ public class TagsCommand implements CommandExecutor {
 		Medal[] medals;
 		Document playerDoc = mongoDB.getPlayerByName(name);
 		
+		if(playerDoc==null) {
+			Player[] players = sender.getServer().getOnlinePlayers();
+			
+			for(Player pl: players) {
+				if(sender.getName().equals(pl.getName())) {
+					playerDoc = mongoDB.getPlayer(pl.getUniqueId());
+					break;
+				}
+			}
+			if(playerDoc==null) {
+				sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
+				return false;
+			}
+		}
+	
 		if(pp==null) medals = mongoDB.loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class));
 		else medals = pp.getMedals();
 		
@@ -206,8 +221,18 @@ public class TagsCommand implements CommandExecutor {
 				Document givePlayerDoc = mongoDB.getPlayerByName(playerName);
 				
 				if(givePlayerDoc==null) {
-					sender.sendMessage(Util.chat("&b[MineStats]&7 - This player doesn't exist on DataBase."));
-					return false;
+					Player[] players = sender.getServer().getOnlinePlayers();
+					
+					for(Player pl: players) {
+						if(sender.getName().equals(pl.getName())) {
+							givePlayerDoc = mongoDB.getPlayer(pl.getUniqueId());
+							break;
+						}
+					}
+					if(givePlayerDoc==null) {
+						sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
+						return false;
+					}
 				}
 				
 				Player playerGive = server.getPlayerExact(playerName);

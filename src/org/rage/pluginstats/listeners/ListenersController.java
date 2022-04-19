@@ -128,6 +128,13 @@ public class ListenersController {
 	}
 	
 	public void die(Player player) {
+		
+		player.getLastDamageCause().getCause().toString();
+		
+		DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId())
+		.getTextChannelById(DiscordUtil.getChannelId())
+		.sendMessage("```fix\n"+ player.getName() +"died by "+ player.getLastDamageCause().getCause().toString() +".\n```").queue();
+		
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.medalCheck(Medals.ZOMBIE, pp.die(), player);
 	}
