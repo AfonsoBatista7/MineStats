@@ -4,6 +4,7 @@ import org.bson.Document;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.rage.pluginstats.Main;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
@@ -133,10 +134,25 @@ public class ListenersController {
 		
 		DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId())
 		.getTextChannelById(DiscordUtil.getChannelId())
-		.sendMessage("```fix\n"+ player.getName() +"died by "+ player.getLastDamageCause().getCause().toString() +".\n```").queue();
-		
+		.sendMessage("```diff\n-"+ player.getName() + getDeathCause(player).toLowerCase().replace("_", " ") +"-\n```").queue();
+				
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.medalCheck(Medals.ZOMBIE, pp.die(), player);
+	}
+	
+	private String getDeathCause(Player player) {
+		
+		DamageCause cause = player.getLastDamageCause().getCause();
+		
+		switch(cause) {
+		case BLOCK_EXPLOSION:
+		case ENTITY_EXPLOSION:
+			return " blew up";
+		case ENTITY_ATTACK:
+			return " was killed by a mob";
+		default:
+			return " was killed by " +cause.toString();
+		}
 	}
 	
 	public void kill(Player player, Entity entity) {

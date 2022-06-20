@@ -1,8 +1,5 @@
 package org.rage.pluginstats;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.logging.Level;

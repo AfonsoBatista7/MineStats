@@ -21,8 +21,6 @@ import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.tags.Tags;
 import org.rage.pluginstats.utils.Util;
 
-import com.mongodb.client.model.ReturnDocument;
-
 public class TagsCommand implements CommandExecutor {
 	
 	private ServerManager serverMan;

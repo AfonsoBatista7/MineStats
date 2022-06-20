@@ -5,13 +5,18 @@
 	<groupId>PluginStats</groupId>
 	<artifactId>PluginStats</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	
 	<dependencies>
 		<dependency>
-			<groupId>bukkit_1.6.4</groupId>
-			<artifactId>bukkit_1.6.4</artifactId>
-			<scope>system</scope>
-			<version>1.6.4</version>
-			<systemPath>C:\Users\Afonso Batista\eclipse-workspace\PluginStats\bukkit_1.6.4.jar</systemPath>
+		    <groupId>org.bukkit</groupId>
+		    <artifactId>bukkit</artifactId>
+		    <version>1.6.2-R1.0</version>
+		    <scope>provided</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-lang3</artifactId>
+		    <version>3.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mongodb</groupId>
@@ -41,6 +46,10 @@
         <name>m2-dv8tion</name>
         <url>https://m2.dv8tion.net/releases</url>
     </repository>
+    <repository>
+  		<id>bukkit-repo</id>
+  		<url>https://repo.codemc.io/repository/nms/</url>
+	</repository>
 	</repositories>
 	<build>
 
