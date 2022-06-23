@@ -51,9 +51,7 @@ public class TagsCommand implements CommandExecutor {
 		Tags tag;
 		String tagName, color = "", oldTags="",
 				fromFile;
-		Player player = server.getPlayerExact(name);
-		
-		ServerPlayer pp = serverMan.getPlayerFromHashMap(player.getUniqueId());       
+		Player player = server.getPlayerExact(name);      
 		
 		Medal[] medals;
 		Document playerDoc = mongoDB.getPlayerByName(name);
@@ -72,6 +70,8 @@ public class TagsCommand implements CommandExecutor {
 				return false;
 			}
 		}
+		
+		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));
 	
 		if(pp==null) medals = mongoDB.loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class));
 		else medals = pp.getMedals();
@@ -140,7 +140,7 @@ public class TagsCommand implements CommandExecutor {
 					return false;
 				} catch(IllegalArgumentException e) {
 					sender.sendMessage(Util.chat("&b[MineStats]&7 - This Medal doesn't exist yet."));
-					//e.printStackTrace();
+					e.printStackTrace();
 					return false;
 				} 
 				
@@ -171,18 +171,19 @@ public class TagsCommand implements CommandExecutor {
 				
 				sender.sendMessage(Util.chat("&b[MineStats]&7 - &cYour Tags:"));
 				for(Medal medal: medals) {
-					if(medal!=null) {
+					if(medal!=null) {						
 						
 						tag = medal.getMedal().getTag();
 						tagName = "["+tag.getTag().toUpperCase()+"]";
 						
 						if(!tag.equals(Tags.MEMBER)) {
+							
 							if(tag.hasCustomColor() && (medal.getMedalLevel().equals(MLevel.III) || medal.getMedal().equals(Medals.GOD))) color = tag.getColor();
 							else if(medal.getMedalLevel().equals(MLevel.GOD)) {
 									color = tag.hasCustomColor() ? tag.getColor() : "&3";
 									tagName = Util.rainbowText(tagName);
 							} else color = medal.getMedalLevel().getLevelColor();
-							
+														
 							sender.sendMessage(Util.chat(String.format("    %s%s", color, tagName)));
 						}
 					}
@@ -275,7 +276,7 @@ public class TagsCommand implements CommandExecutor {
 		String done="";
 		
 		for(String a: tag.split("&")) {
-			done = done.concat(a.replaceFirst("([a-z])", "").replaceFirst("([1-9])", ""));
+			done = done.concat(a.replaceFirst("[A-Z1-9]", ""));
 		}
 		
 		return done;
