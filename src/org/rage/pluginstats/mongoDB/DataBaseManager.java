@@ -241,6 +241,10 @@ public class DataBaseManager {
 		return mongoDB.getPlayerByName(name);
 	}
 	
+	public MongoCursor<Document> getAllPlayersByName(String playerName) {
+		return mongoDB.getAllPlayersByName(playerName);
+	}
+	
 	public Document getPlayer(UUID playerId) {
 		return mongoDB.getPlayer(playerId);
 	}
@@ -276,5 +280,7 @@ public class DataBaseManager {
 	public Document getDiscordUserByPlayer(UUID playerId) {
 		return getDiscordUser(getPlayer(playerId).getString("link"));
 	}
+	
+	
 	
 }
