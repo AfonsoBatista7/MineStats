@@ -26,8 +26,7 @@ public enum Medals {
 	WITHERSLAYER(1, 10, 15, "Whither Kills", "Kill the Whither B)", Tags.NETHERKILLER),			  							// #15 Kill Wither
 	TIMEWALKER(100, 2, 16, "Time Played", "Play some time on the server :DDD", Tags.TIMEWALKER, 952897726901813258L),		// #16 Time Played					 
 	FISHERMAN(10, 2, 17, "Fish Caught", "Catch some fish", Tags.FISHERMAN, 824004714479878144L),							// #17 Fish Caught
-	NAMEHOLDER(2, 1.5, 18, "Number of names", "Change your minecraft player name", Tags.NAMEHOLDER),			  			// #18 Number of names
-	MINER(10000, 3, 19, "Mined Blocks", "Break blocks under the sea level (63)", Tags.MINER);								// #19 Mined Blocks
+	MINER(10000, 3, 18, "Mined Blocks", "Break blocks under the sea level (63)", Tags.MINER);								// #18 Mined Blocks
 	
 	private int index;
 	private long transition, roleId=0;

@@ -49,7 +49,6 @@ public class DataBaseManager {
 				
 		Document playerDoc = new Document(Stats.PLAYERID.getQuery(), player.getUniqueId())
  				.append(Stats.NAME.getQuery(), player.getName())
- 				.append(Stats.NAMES.getQuery(), Arrays.asList(player.getName()))
 				.append(Stats.ONLINE.getQuery(), player.isOnline());
 				
 		for(Stats stat: Stats.values()) {

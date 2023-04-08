@@ -94,7 +94,6 @@ public class MergeCommand implements CommandExecutor{
 							Updates.max(Stats.LASTLOGIN.getQuery(), playerDoc2.getString(Stats.LASTLOGIN.getQuery())),
 							Updates.min(Stats.PLAYERSINCE.getQuery(), playerDoc2.getString(Stats.PLAYERSINCE.getQuery())),
 							Updates.set(Stats.TIMEPLAYED.getQuery(), mergeTimePlayed(playerDoc1.getString(Stats.TIMEPLAYED.getQuery()), playerDoc2.getString(Stats.TIMEPLAYED.getQuery()))),
-							Updates.addEachToSet(Stats.NAMES.getQuery(), playerDoc2.getList(Stats.NAMES.getQuery(), String.class)),
 							Updates.addEachToSet(Stats.MEDALS.getQuery(), playerDoc2.getList(Stats.MEDALS.getQuery(), Document.class)),
 							Updates.addEachToSet(Stats.VERSIONS.getQuery(),playerDoc2.getList(Stats.VERSIONS.getQuery(), String.class))
 				)
@@ -132,11 +131,7 @@ public class MergeCommand implements CommandExecutor{
 				Util.chat("&b[MineStats]&7 - Player &a<player1>&7 and &a<player2>&7 now are one B)."
 						.replace("<player1>", playerDoc1.getString(Stats.NAME.getQuery()))
 						.replace("<player2>", playerDoc2.getString(Stats.NAME.getQuery()))));
-		
-		Player player = Main.currentServer.getPlayer(playerDoc1.getString(Stats.NAME.getQuery()));
-		
-		serverMan.getPlayerStats(playerId).medalCheck(Medals.NAMEHOLDER, playerDoc1.getList(Stats.NAMES.getQuery(), String.class).size(), player);
-		
+						
 		return true;
 	}
 	

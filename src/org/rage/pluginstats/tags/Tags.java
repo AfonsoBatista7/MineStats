@@ -20,7 +20,6 @@ public enum Tags {
 	NETHERKILLER("netherkiller", "&4"),
 	TIMEWALKER("timewalker"),
 	FISHERMAN("fisherman", "&b"),
-	NAMEHOLDER("nameholder"),
 	MINER("miner", "&7");
 	
 	private String tag, color;

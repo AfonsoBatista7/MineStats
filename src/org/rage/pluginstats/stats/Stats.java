@@ -16,7 +16,6 @@ public enum Stats {
 	//index, query, stat name, if is printable or not, to Upload, first value
 	PLAYERID(0, "playerId", "Player ID", false, false),
 	NAME(1, "name", "Player Name", true, false),
-	NAMES(2, "names","Number of names", true, false),
 	BLOCKSDEST(3, "blcksDestroyed", "Blocks Destroyed", true, true, 0L),
 	BLOCKSPLA(4, "blcksPlaced", "Blocks Placed", true, true, 0L),
 	BLOCKSMINED(5, "blockMined", "Blocks Mined", true, true, 0L),
