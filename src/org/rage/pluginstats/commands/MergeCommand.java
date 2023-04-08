@@ -150,6 +150,7 @@ public class MergeCommand implements CommandExecutor{
 				Util.chat("&b[MineStats]&7 - Player &a<player1>&7 and &a<player2>&7 now are one B)."
 						.replace("<player1>", playerDoc1.getString(Stats.NAME.getQuery()))
 						.replace("<player2>", playerDoc2.getString(Stats.NAME.getQuery()))));
+		
 		//Player player = Main.currentServer.getPlayer(playerDoc1.getString(Stats.NAME.getQuery()));
 		
 		//serverMan.getPlayerStats(playerId).medalCheck(Medals.NAMEHOLDER, playerDoc1.getList(Stats.NAMES.getQuery(), String.class).size(), player);
