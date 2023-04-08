@@ -1,5 +1,6 @@
 package org.rage.pluginstats.mongoDB;
 
+import java.util.Iterator;
 import java.util.UUID;
 
 import org.bson.Document;
@@ -10,6 +11,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 
 /**
  * @author Afonso Batista
@@ -61,6 +63,10 @@ public class DataBase {
 	
 	public Document getPlayerByName(String playerName) {
 		return collection.find(new Document(Stats.NAME.getQuery(), playerName)).first();
+	}
+	
+	public MongoCursor<Document> getAllPlayersByName(String playerName) {
+		return collection.find(new Document(Stats.NAME.getQuery(), playerName)).iterator();
 	}
 	
 	public void newDoc(Document playerDoc) {

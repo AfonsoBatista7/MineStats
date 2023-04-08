@@ -1,3 +1,4 @@
 config.yml
 private.asc
-/target/
+MineStats.jar
+target/
