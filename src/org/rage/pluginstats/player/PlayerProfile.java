@@ -12,6 +12,8 @@ import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
 import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Date;
 import java.util.UUID;
 
@@ -86,10 +88,13 @@ public class PlayerProfile {
 	}
 	
 	public boolean isRealyOnline() {
-		Player[] players = Bukkit.getOnlinePlayers();
-		for(Player player: players) {
-			if(player.getName().equals(name)) return true;
-		}
+                Collection<? extends Player> players = Bukkit.getOnlinePlayers();
+
+                Iterator<? extends Player> it = players.iterator();
+
+                while(it.hasNext()) 
+                    if(it.next().getUniqueId().equals(playerId)) return true;
+                
 		return false;
 	}
 	

@@ -1,6 +1,8 @@
 package org.rage.pluginstats.commands;
 
 import java.util.UUID;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.bson.Document;
 import org.bukkit.command.Command;
@@ -44,14 +46,18 @@ public class MedalsCommand implements CommandExecutor {
 		playerDoc = mongoDB.getPlayerByName(name);
 		
 		if(playerDoc==null) {
-			Player[] players = sender.getServer().getOnlinePlayers();
+			Collection<? extends Player> players = sender.getServer().getOnlinePlayers();
+
+                        Iterator<? extends Player> iterator = players.iterator();
 			
-			for(Player player: players) {
-				if(sender.getName().equals(player.getName())) {
-					playerDoc = mongoDB.getPlayer(player.getUniqueId());
-					break;
-				}
-			}
+                        while(iterator.hasNext()) {
+                            Player player = iterator.next();
+                            if(sender.getName().equals(player.getName())) {
+                                    playerDoc = mongoDB.getPlayer(player.getUniqueId());
+                                    break;
+                            }
+                        }
+
 			if(playerDoc==null) {
 				sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
 				return false;

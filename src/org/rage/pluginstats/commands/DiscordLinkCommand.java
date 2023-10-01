@@ -13,6 +13,8 @@ import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
 import java.util.UUID;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class DiscordLinkCommand implements CommandExecutor {
 
@@ -35,14 +37,18 @@ public class DiscordLinkCommand implements CommandExecutor {
 		Document playerDoc = mongoDB.getPlayerByName(sender.getName());
 				
 		if(playerDoc==null) {	
-			Player[] players = sender.getServer().getOnlinePlayers();
+			Collection<? extends Player> players = sender.getServer().getOnlinePlayers();
+
+                        Iterator<? extends Player> iterator = players.iterator();
 			
-			for(Player player: players) {
-				if(sender.getName().equals(player.getName())) {
-					playerDoc = mongoDB.getPlayer(player.getUniqueId());
-					break;
-				}
-			}
+                        while(iterator.hasNext()) {
+                            Player player = iterator.next();
+                            if(sender.getName().equals(player.getName())) {
+                                playerDoc = mongoDB.getPlayer(player.getUniqueId());
+                                break;
+                            }
+                        }
+			
 			if(playerDoc==null) {
 				sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
 				return false;

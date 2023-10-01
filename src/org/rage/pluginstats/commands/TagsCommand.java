@@ -1,7 +1,8 @@
 package org.rage.pluginstats.commands;
 
-
 import java.util.UUID;
+import java.util.Collection;
+import java.util.Iterator;
 
 import org.bson.Document;
 import org.bukkit.Bukkit;
@@ -39,7 +40,7 @@ public class TagsCommand implements CommandExecutor {
 		String name = sender.getName();
 		
 		if(!(sender instanceof Player)) {
-			sender.sendMessage(Util.chat("&b[MineStats]&7 - Just players can performe this command."));
+			sender.sendMessage(Util.chat("&b[MineStats]&7 - Only players can performe this command."));
 			return false;
 		}
 		
@@ -57,18 +58,23 @@ public class TagsCommand implements CommandExecutor {
 		Document playerDoc = mongoDB.getPlayerByName(name);
 		
 		if(playerDoc==null) {
-			Player[] players = sender.getServer().getOnlinePlayers();
+                    Collection<? extends Player> players = sender.getServer().getOnlinePlayers();
+
+                    Iterator<? extends Player> iterator = players.iterator();
+
+                    while(iterator.hasNext()) {
+                        Player pl = iterator.next();
+
+                        if(sender.getName().equals(pl.getName())) {
+                                playerDoc = mongoDB.getPlayer(pl.getUniqueId());
+                                break;
+                        }
+                    }
 			
-			for(Player pl: players) {
-				if(sender.getName().equals(pl.getName())) {
-					playerDoc = mongoDB.getPlayer(pl.getUniqueId());
-					break;
-				}
-			}
-			if(playerDoc==null) {
-				sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
-				return false;
-			}
+                    if(playerDoc==null) {
+                            sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
+                            return false;
+                    }
 		}
 		
 		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));
@@ -220,13 +226,16 @@ public class TagsCommand implements CommandExecutor {
 				Document givePlayerDoc = mongoDB.getPlayerByName(playerName);
 				
 				if(givePlayerDoc==null) {
-					Player[] players = sender.getServer().getOnlinePlayers();
-					
-					for(Player pl: players) {
-						if(sender.getName().equals(pl.getName())) {
-							givePlayerDoc = mongoDB.getPlayer(pl.getUniqueId());
-							break;
-						}
+                                        Collection<? extends Player> players = sender.getServer().getOnlinePlayers();
+
+                                        Iterator<? extends Player> iterator = players.iterator();
+
+                                        while(iterator.hasNext()) {
+                                            Player pl = iterator.next();
+                                            if(sender.getName().equals(pl.getName())) {
+                                                    givePlayerDoc = mongoDB.getPlayer(pl.getUniqueId());
+                                                    break;
+                                            }
 					}
 					if(givePlayerDoc==null) {
 						sender.sendMessage(Util.chat("&b[MineStats]&7 - You don't exist on DataBase."));
