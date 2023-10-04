@@ -64,7 +64,7 @@ public class Util {
 			case PVPMASTER:
 				return pp.getMobStats().getPlayersKilled();
 			case MOBSLAYER:
-				return pp.getMobStats().getMobsKilled();
+				return pp.getMobStats().getTotalNumMobsKilled();
 			case WORLDTRAVELLER:
 				return pp.getMetersTraveled();
 			case TIMETRAVELLER:
@@ -105,7 +105,7 @@ public class Util {
 			case KILLS:
 				return pp.getMobStats().getPlayersKilled();
 			case MOBKILLS:
-				return pp.getMobStats().getMobsKilled();
+				return pp.getMobStats().getTotalNumMobsKilled();
 			case TRAVELLED:
 				return pp.getMetersTraveled();
 			case DEATHS:
@@ -134,6 +134,8 @@ public class Util {
 				return pp.getNumberOfVersions();
 			case BLOCKSMINED:
 				return pp.getBlockStats().getMinedBlocks();
+			case MOBSKILLED:
+				return pp.getMobStats().getNumMobsKilledList();
 			default:
 			
 		}

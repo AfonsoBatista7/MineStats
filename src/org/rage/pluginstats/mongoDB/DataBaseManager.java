@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 import java.util.logging.Logger;
@@ -20,6 +21,7 @@ import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.stats.BlockStats;
+import org.rage.pluginstats.stats.Mob;
 import org.rage.pluginstats.stats.MobStats;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
@@ -109,7 +111,8 @@ public class DataBaseManager {
 				
 				sp.setMobStats(new MobStats(playerDoc.getLong(Stats.KILLS.getQuery()),
 						playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),
-						playerDoc.getLong(Stats.WITHERKILLS.getQuery()), playerDoc.getLong(Stats.FISHCAUGHT.getQuery())));
+						playerDoc.getLong(Stats.WITHERKILLS.getQuery()), playerDoc.getLong(Stats.FISHCAUGHT.getQuery()),
+						loadMobStats(playerDoc.getList(Stats.MOBSKILLED.getQuery(), Document.class))));
 				
 				sp.setNumberOfVersions(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class).size());
 				sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
@@ -222,6 +225,24 @@ public class DataBaseManager {
 	
 	public void newMedalOnDataBase(Document medalDoc, ServerPlayer sp) {	
 		mongoDB.getServerCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), Updates.addToSet(Stats.MEDALS.getQuery(), medalDoc));
+	}
+	
+	public HashMap<String, Mob> loadMobStats(List<Document> mobStats) {
+		HashMap<String, Mob> mapMobStats = new HashMap<>();
+		
+		int mId;
+		String mName;
+		long mNumKilled;
+		for(Document doc : mobStats) {
+			mId = doc.getInteger("mId");
+			mName = doc.getString("mName");
+			mNumKilled = doc.getLong("mNumKilled");
+			Mob newMob = new Mob(mId, mName, mNumKilled);
+			
+			mapMobStats.put(mName, newMob);	
+		}
+		
+		return mapMobStats;
 	}
 	
 	public void updateStat(Bson filter, Bson update) {

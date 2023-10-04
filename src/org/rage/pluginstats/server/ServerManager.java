@@ -19,7 +19,7 @@ public class ServerManager {
 	private HashMap<UUID, ServerPlayer> stats;
 	private DataBaseManager mongoDB;
 	private static Plugin plugin;
-	
+
 	public ServerManager(DataBase mongoDB, Logger log, Plugin plugin) {
 		this.stats = new HashMap<UUID, ServerPlayer>();
 		this.mongoDB = new DataBaseManager(mongoDB, log, this);

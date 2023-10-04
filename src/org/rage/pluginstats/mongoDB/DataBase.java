@@ -1,6 +1,5 @@
 package org.rage.pluginstats.mongoDB;
 
-import java.util.Iterator;
 import java.util.UUID;
 
 import org.bson.Document;

@@ -108,8 +108,8 @@ public class ServerPlayer extends PlayerProfile {
 		return mobStats.killPlayer();
 	}
 	
-	public long killMob() {
-		return mobStats.killMob();
+	public long killMob(int mobId, String mobName) {
+		return mobStats.killMob(mobId, mobName);
 	}
 	
 	public long killEnderDragon() {

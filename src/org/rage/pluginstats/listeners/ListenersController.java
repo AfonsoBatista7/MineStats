@@ -1,6 +1,7 @@
 package org.rage.pluginstats.listeners;
 
 import org.bson.Document;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -144,12 +145,14 @@ public class ListenersController {
 		
 		DamageCause cause = player.getLastDamageCause().getCause();
 		
+		System.out.println(cause.toString());
+		
 		switch(cause) {
 		case BLOCK_EXPLOSION:
 		case ENTITY_EXPLOSION:
 			return " blew up";
 		case ENTITY_ATTACK:
-			return " was killed by a mob";
+			return " was killed by " +player.getLastDamageCause().getEntityType().name();
 		default:
 			return " was killed by " +cause.toString();
 		}
@@ -161,7 +164,7 @@ public class ListenersController {
 		if(entity instanceof Player)
 			pp.medalCheck(Medals.PVPMASTER, pp.killPlayer(), player);
 		else {
-			pp.medalCheck(Medals.MOBSLAYER, pp.killMob(), player);
+			pp.medalCheck(Medals.MOBSLAYER, pp.killMob(entity.getEntityId(), entity.getType().name()), player);
 			
 			switch(entity.getType()) {
 			case ENDER_DRAGON:
