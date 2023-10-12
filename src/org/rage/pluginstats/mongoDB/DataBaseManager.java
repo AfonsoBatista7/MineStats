@@ -20,6 +20,7 @@ import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
+import org.rage.pluginstats.stats.Block;
 import org.rage.pluginstats.stats.BlockStats;
 import org.rage.pluginstats.stats.Mob;
 import org.rage.pluginstats.stats.MobStats;
@@ -107,7 +108,8 @@ public class DataBaseManager {
 				sp.setBlockStats(new BlockStats(playerDoc.getLong(Stats.BLOCKSDEST.getQuery()), 
 						playerDoc.getLong(Stats.BLOCKSPLA.getQuery()), 
 						playerDoc.getLong(Stats.REDSTONEUSED.getQuery()),
-						playerDoc.getLong(Stats.BLOCKSMINED.getQuery())));
+						playerDoc.getLong(Stats.BLOCKSMINED.getQuery()),
+						loadBlockStats(playerDoc.getList(Stats.BLOCKS.getQuery(), Document.class))));
 				
 				sp.setMobStats(new MobStats(playerDoc.getLong(Stats.KILLS.getQuery()),
 						playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),
@@ -233,6 +235,7 @@ public class DataBaseManager {
 		int mId;
 		String mName;
 		long mNumKilled;
+		
 		for(Document doc : mobStats) {
 			mId = doc.getInteger("mId");
 			mName = doc.getString("mName");
@@ -243,6 +246,27 @@ public class DataBaseManager {
 		}
 		
 		return mapMobStats;
+	}
+	
+	public HashMap<String, Block> loadBlockStats(List<Document> blockStats) {
+		HashMap<String, Block> mapBlockStats = new HashMap<>();
+		
+		int bId;
+		String bName;
+		long bNumBreaked,
+			 bNumPlaced;
+		
+		for(Document doc : blockStats) {
+			bId = doc.getInteger("bId");
+			bName = doc.getString("bName");
+			bNumBreaked = doc.getLong("bNumBreaked");
+			bNumPlaced = doc.getLong("bNumPlaced");
+			Block newBlock = new Block(bId, bName, bNumBreaked, bNumPlaced);
+			
+			mapBlockStats.put(bName, newBlock);	
+		}
+		
+		return mapBlockStats;
 	}
 	
 	public void updateStat(Bson filter, Bson update) {

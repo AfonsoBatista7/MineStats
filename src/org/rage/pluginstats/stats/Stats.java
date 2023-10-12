@@ -34,7 +34,9 @@ public enum Stats {
 	PLAYERSINCE(18, "playerSince", "Player Since", true, false, new SimpleDateFormat("dd/MM/yyyy").format(new Date())),
 	TIMEPLAYED(19, "timePlayed", "Time Played", true, true, "0 Hr 0 Min"),
 	ONLINE(20, "online", "Is Online?", false, true),
-	MOBSKILLED(21, "mobsKilled", "Mobs Killed", false, true, Arrays.asList());
+	MOBSKILLED(21, "mobsKilled", "Mobs Killed", false, true, Arrays.asList()),
+	BLOCKS(22, "blocks", "Blocks", false, true, Arrays.asList());
+
 	
 	private int index;
 	private String query, text;

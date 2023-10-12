@@ -92,12 +92,12 @@ public class ServerPlayer extends PlayerProfile {
 		kilometer = 0;
 	}
 	
-	public long breakBlock() {
-		return blockStats.breakBlock();
+	public long breakBlock(int blockId, String blockName) {
+		return blockStats.breakBlock(blockId, blockName);
 	}
 	
-	public long placeBlock() {
-		return blockStats.placeBlock();
+	public long placeBlock(int blockId, String blockName) {
+		return blockStats.placeBlock(blockId, blockName);
 	}
 	
 	public long useRedstone() {

@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.rage.pluginstats.Main;
 import org.rage.pluginstats.medals.Medals;
@@ -96,21 +97,10 @@ public class ListenersController {
 	public void placeBlock(Player player, Block block) {
 		if(block.getType().getId() > 0) {
 			ServerPlayer pp = mongoDB.getPlayerStats(player);
-			pp.medalCheck(Medals.BUILDER, pp.placeBlock(), player);
-			
-			switch(block.getType()) {
-			case REDSTONE:
-			case REDSTONE_BLOCK:
-			case REDSTONE_COMPARATOR:
-			case REDSTONE_WIRE:
-			case REDSTONE_ORE:
-			case REDSTONE_LAMP_OFF:
-			case REDSTONE_TORCH_ON:
-			case REDSTONE_TORCH_OFF:
+			pp.medalCheck(Medals.BUILDER, pp.placeBlock(block.getType().getId() ,block.getType().name()), player);
+						
+			if(isRedstone(block))
 				pp.medalCheck(Medals.REDSTONENGINEER, pp.useRedstone(), player);
-				break;
-			default:
-			}
 		}
 	}
 	
@@ -118,9 +108,9 @@ public class ListenersController {
 		if(block.getType().getId() > 0) {
 			int Ycord = player.getEyeLocation().getBlockY();
 			ServerPlayer pp = mongoDB.getPlayerStats(player);
-			
-			pp.medalCheck(Medals.DESTROYER, pp.breakBlock(), player);
-			if(Ycord>=1 && Ycord<=63 && isMining(block)) pp.medalCheck(Medals.MINER, pp.mineBlock(), player);
+						
+			pp.medalCheck(Medals.DESTROYER, pp.breakBlock(block.getType().getId() ,block.getType().name()), player);
+			if(Ycord>=1 && Ycord<=63) pp.medalCheck(Medals.MINER, pp.mineBlock(), player);
 		}
 	}
 	
@@ -130,8 +120,6 @@ public class ListenersController {
 	}
 	
 	public void die(Player player) {
-		
-		player.getLastDamageCause().getCause().toString();
 		
 		DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId())
 		.getTextChannelById(DiscordUtil.getChannelId())
@@ -143,18 +131,16 @@ public class ListenersController {
 	
 	private String getDeathCause(Player player) {
 		
-		DamageCause cause = player.getLastDamageCause().getCause();
+		EntityDamageEvent cause = player.getLastDamageCause();
 		
-		System.out.println(cause.toString());
-		
-		switch(cause) {
+		switch(cause.getCause()) {
 		case BLOCK_EXPLOSION:
 		case ENTITY_EXPLOSION:
 			return " blew up";
 		case ENTITY_ATTACK:
-			return " was killed by " +player.getLastDamageCause().getEntityType().name();
+			return " was killed by " +cause.getEntityType().name();
 		default:
-			return " was killed by " +cause.toString();
+			return " was killed by " +cause.getCause().name();
 		}
 	}
 	
@@ -178,19 +164,16 @@ public class ListenersController {
 		}
 	}
 	
-	public boolean isMining(Block block) {
+	private boolean isRedstone(Block block) {
 		switch(block.getType()) {
-		case STONE:
-		case COAL_ORE:
-		case IRON_ORE:
-		case GOLD_ORE:
-		case DIAMOND_ORE:
-		case LAPIS_ORE:
+		case REDSTONE:
+		case REDSTONE_BLOCK:
+		case REDSTONE_COMPARATOR:
+		case REDSTONE_WIRE:
 		case REDSTONE_ORE:
-		case EMERALD_ORE:
-		case GRAVEL:
-		case SANDSTONE:
-		case OBSIDIAN:
+		case REDSTONE_LAMP_OFF:
+		case REDSTONE_TORCH_ON:
+		case REDSTONE_TORCH_OFF:
 			return true;
 		default:
 			return false;

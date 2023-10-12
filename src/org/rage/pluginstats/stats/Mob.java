@@ -45,7 +45,7 @@ public class Mob {
 		this.mName = mName;
 	}
 	
-	public void setNumMobKilled(int mNumKilled) {
+	public void setNumMobKilled(long mNumKilled) {
 		this.mNumKilled = mNumKilled;
 	}
 	
