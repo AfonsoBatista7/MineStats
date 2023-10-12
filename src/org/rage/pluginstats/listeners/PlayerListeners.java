@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class PlayerListeners implements Listener {
 

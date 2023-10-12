@@ -14,6 +14,10 @@ import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public class DiscordUnLinkCommand implements CommandExecutor {
 
 	private DataBaseManager mongoDB;

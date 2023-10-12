@@ -19,7 +19,7 @@ import org.rage.pluginstats.stats.Stats;
 /**
  * Prints all current specified player stats
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class PlayerStatsCommand implements CommandExecutor {
 

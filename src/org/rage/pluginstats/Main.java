@@ -44,7 +44,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class Main extends JavaPlugin {
 

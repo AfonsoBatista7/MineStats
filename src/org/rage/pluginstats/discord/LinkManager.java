@@ -17,6 +17,10 @@ import com.mongodb.client.model.Updates;
 
 import net.dv8tion.jda.api.entities.Guild;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public class LinkManager {
 	
 	private Map<Integer, UUID> playerLinkCodes;

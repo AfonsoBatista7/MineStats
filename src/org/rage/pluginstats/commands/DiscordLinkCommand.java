@@ -16,6 +16,10 @@ import java.util.UUID;
 import java.util.Collection;
 import java.util.Iterator;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public class DiscordLinkCommand implements CommandExecutor {
 
 	private DataBaseManager mongoDB;

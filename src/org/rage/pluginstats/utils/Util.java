@@ -11,7 +11,7 @@ import org.rage.pluginstats.stats.Stats;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class Util {
 	
@@ -136,6 +136,8 @@ public class Util {
 				return pp.getBlockStats().getMinedBlocks();
 			case MOBSKILLED:
 				return pp.getMobStats().getNumMobsKilledList();
+			case BLOCKS:
+				return pp.getBlockStats().getBlockStatsList();
 			default:
 			
 		}

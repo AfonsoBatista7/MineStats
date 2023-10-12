@@ -10,7 +10,7 @@ import org.rage.pluginstats.utils.Util;
 /**
  * Uploads to database all the current player stats to update it.
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class UploadAllCommand implements CommandExecutor{
 	private ServerManager serverMan;

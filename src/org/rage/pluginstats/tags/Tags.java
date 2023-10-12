@@ -1,5 +1,9 @@
 package org.rage.pluginstats.tags;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public enum Tags {
 	
 	MEMBER(""),

@@ -8,7 +8,7 @@ import org.bson.Document;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class BlockStats {
 	
@@ -46,7 +46,7 @@ public class BlockStats {
 		List<Document> blockDocs = new ArrayList<Document>(blocks.size());
 		
 		for(Block block : blocks.values())
-			blockDocs.add(block.createMobDocument());
+			blockDocs.add(block.createBlockDocument());
 		
 		return blockDocs;
 	}
@@ -68,14 +68,14 @@ public class BlockStats {
 	}
 	
 	public long breakBlock(int blockId, String blockName) {
-		Block blockBreaked = getBlockStatsByName(blockName);
+		Block blockDestroyed = getBlockStatsByName(blockName);
 		
-		if(blockBreaked == null)
-			blockBreaked = new Block(blockId, blockName);	
+		if(blockDestroyed == null)
+			blockDestroyed = new Block(blockId, blockName);	
 		 
-		blockBreaked.incNumBlocksBreaked();
+		blockDestroyed.incNumBlocksDestroyed();
 		
-		blocks.put(blockName, blockBreaked);	
+		blocks.put(blockName, blockDestroyed);	
 		
 		return blocksDestroyed++;
 	}

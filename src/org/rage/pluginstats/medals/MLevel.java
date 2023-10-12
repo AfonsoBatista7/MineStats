@@ -2,7 +2,7 @@ package org.rage.pluginstats.medals;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public enum MLevel {
 	

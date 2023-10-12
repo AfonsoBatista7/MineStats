@@ -10,7 +10,7 @@ import org.rage.pluginstats.server.ServerManager;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public enum Stats {
 	//index, query, stat name, if is printable or not, to Upload, first value

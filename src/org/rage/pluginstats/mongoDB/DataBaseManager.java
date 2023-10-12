@@ -3,7 +3,6 @@ package org.rage.pluginstats.mongoDB;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.HashMap;
@@ -253,15 +252,15 @@ public class DataBaseManager {
 		
 		int bId;
 		String bName;
-		long bNumBreaked,
+		long bNumDestroyed,
 			 bNumPlaced;
 		
 		for(Document doc : blockStats) {
 			bId = doc.getInteger("bId");
 			bName = doc.getString("bName");
-			bNumBreaked = doc.getLong("bNumBreaked");
+			bNumDestroyed = doc.getLong("bNumDestroyed");
 			bNumPlaced = doc.getLong("bNumPlaced");
-			Block newBlock = new Block(bId, bName, bNumBreaked, bNumPlaced);
+			Block newBlock = new Block(bId, bName, bNumDestroyed, bNumPlaced);
 			
 			mapBlockStats.put(bName, newBlock);	
 		}

@@ -2,6 +2,10 @@ package org.rage.pluginstats.stats;
 
 import org.bson.Document;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public class Mob {
 	
 	private String mName;
@@ -16,7 +20,8 @@ public class Mob {
 	
 	public Mob(int mId, String mName) {
 		this.mId = mId;
-		this.mName = mName;
+		this.mName = mName;		
+		this.mNumKilled = 0;
 	}
 	
 	public Document createMobDocument() {

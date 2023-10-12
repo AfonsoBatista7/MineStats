@@ -14,7 +14,7 @@ import com.mongodb.client.MongoCursor;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class DataBase {
 	

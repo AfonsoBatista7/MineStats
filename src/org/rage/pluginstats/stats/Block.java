@@ -5,14 +5,14 @@ import org.bson.Document;
 public class Block {
 	private String bName;
 	private int bId;
-	private long bNumBreaked,
+	private long bNumDestroyed,
 				 bNumPlaced;
 
 	
-	public Block(int bId, String bName, long bNumBreaked, long bNumPlaced) {
+	public Block(int bId, String bName, long bNumDestroyed, long bNumPlaced) {
 		this.bId = bId;
 		this.bName = bName;
-		this.bNumBreaked = bNumBreaked;
+		this.bNumDestroyed = bNumDestroyed;
 		this.bNumPlaced = bNumPlaced;
 
 	}
@@ -20,12 +20,14 @@ public class Block {
 	public Block(int bId, String bName) {
 		this.bId = bId;
 		this.bName = bName;
+		this.bNumDestroyed = 0;
+		this.bNumPlaced = 0;
 	}
 	
-	public Document createMobDocument() {
+	public Document createBlockDocument() {
 		return new Document("bId", bId)
 				.append("bName", bName)
-				.append("bNumBreaked", bNumBreaked)
+				.append("bNumDestroyed", bNumDestroyed)
 				.append("bNumPlaced", bNumPlaced);
 
 	}
@@ -38,8 +40,8 @@ public class Block {
 		return bName;
 	}
 	
-	public long getBlockBreaked() {
-		return bNumBreaked;
+	public long getBlockDestroyed() {
+		return bNumDestroyed;
 	}
 	
 	public long getBlockPlaced() {
@@ -54,12 +56,12 @@ public class Block {
 		this.bName = bName;
 	}
 	
-	public void setNumBlocksBreaked(long bNumBreaked) {
-		this.bNumBreaked = bNumBreaked;
+	public void setNumBlocksDestroyed(long bNumBreaked) {
+		this.bNumDestroyed = bNumBreaked;
 	}
 	
-	public void incNumBlocksBreaked() {
-		this.bNumBreaked++;
+	public void incNumBlocksDestroyed() {
+		this.bNumDestroyed++;
 	}
 	
 	public void setNumBlocksPlaced(long bNumPlaced) {
@@ -67,6 +69,6 @@ public class Block {
 	}
 	
 	public void incNumBlocksPlaced() {
-		this.bNumBreaked++;
+		this.bNumPlaced++;
 	}
 }

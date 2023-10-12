@@ -12,9 +12,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.rage.pluginstats.stats.Stats;
-import org.rage.pluginstats.Main;
 import org.rage.pluginstats.medals.MLevel;
-import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
@@ -27,7 +25,7 @@ import com.mongodb.client.model.Updates;
 /**
  * If a player have changed is name, you can execute this command to merge two player profiles. 
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class MergeCommand implements CommandExecutor{
 

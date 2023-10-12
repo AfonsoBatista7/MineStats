@@ -20,7 +20,7 @@ import net.dv8tion.jda.api.entities.Guild;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class ServerPlayer extends PlayerProfile {
 

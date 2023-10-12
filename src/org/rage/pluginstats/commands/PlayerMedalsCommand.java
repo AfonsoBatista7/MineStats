@@ -19,7 +19,7 @@ import org.rage.pluginstats.utils.Util;
 /**
  * Print all medals of the specified player
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class PlayerMedalsCommand implements CommandExecutor {
 

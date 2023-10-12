@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class Medal {
 	

@@ -19,7 +19,7 @@ import java.util.UUID;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class PlayerProfile {
 	

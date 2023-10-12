@@ -4,7 +4,7 @@ import org.rage.pluginstats.tags.Tags;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public enum Medals {
 	

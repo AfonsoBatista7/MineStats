@@ -11,6 +11,10 @@ import org.rage.pluginstats.utils.DiscordUtil;
 
 import net.dv8tion.jda.api.JDA;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public class MessageListener implements Listener {
 	
 	@EventHandler(priority=EventPriority.MONITOR)

@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 
 /**
  * @author Afonso Batista
- * 2021 - 2022
+ * 2021 - 2023
  */
 public class EntityListeners implements Listener {
 

@@ -22,6 +22,10 @@ import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.tags.Tags;
 import org.rage.pluginstats.utils.Util;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public class TagsCommand implements CommandExecutor {
 	
 	private ServerManager serverMan;

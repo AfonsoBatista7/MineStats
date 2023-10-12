@@ -17,7 +17,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 
-
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public class DiscordChatListener extends ListenerAdapter {
 	
 	private DataBaseManager mongoDB;
