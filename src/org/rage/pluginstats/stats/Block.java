@@ -2,6 +2,10 @@ package org.rage.pluginstats.stats;
 
 import org.bson.Document;
 
+/**
+ * @author Afonso Batista
+ * 2021 - 2023
+ */
 public class Block {
 	private String bName;
 	private int bId;
