@@ -95,34 +95,11 @@ public class MergeCommand implements CommandExecutor{
 			return false;
 		}
 			
-		UUID playerId = getUUIDRecentPlayer(playerDoc1 ,playerDoc2);
+		Document recentPlayer = getRecentPlayer(playerDoc1 ,playerDoc2);
+		
 		try {
-			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc2.get(Stats.PLAYERID.getQuery())));
-			
-			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc1.get(Stats.PLAYERID.getQuery())),
-					Updates.combine(
-							Updates.set(Stats.PLAYERID.getQuery(), playerId),
-							Updates.set(Stats.ONLINE.getQuery(), playerDoc1.getBoolean(Stats.ONLINE.getQuery()) || playerDoc2.getBoolean(Stats.ONLINE.getQuery())),
-							Updates.inc(Stats.BLOCKSDEST.getQuery(), playerDoc2.getLong(Stats.BLOCKSDEST.getQuery())),
-							Updates.inc(Stats.BLOCKSPLA.getQuery(), playerDoc2.getLong(Stats.BLOCKSPLA.getQuery())),
-							Updates.inc(Stats.BLOCKSMINED.getQuery(), playerDoc2.getLong(Stats.BLOCKSMINED.getQuery())),
-							Updates.inc(Stats.KILLS.getQuery(), playerDoc2.getLong(Stats.KILLS.getQuery())),
-							Updates.inc(Stats.MOBKILLS.getQuery(), playerDoc2.getLong(Stats.MOBKILLS.getQuery())),
-							Updates.inc(Stats.TRAVELLED.getQuery(), playerDoc2.getLong(Stats.TRAVELLED.getQuery())),
-							Updates.inc(Stats.DEATHS.getQuery(), playerDoc2.getLong(Stats.DEATHS.getQuery())),
-							Updates.inc(Stats.TIMESLOGIN.getQuery(), playerDoc2.getLong(Stats.TIMESLOGIN.getQuery())),
-							Updates.inc(Stats.FISHCAUGHT.getQuery(), playerDoc2.getLong(Stats.FISHCAUGHT.getQuery())),
-							Updates.inc(Stats.REDSTONEUSED.getQuery(), playerDoc2.getLong(Stats.REDSTONEUSED.getQuery())),
-							Updates.max(Stats.LASTLOGIN.getQuery(), playerDoc2.getString(Stats.LASTLOGIN.getQuery())),
-							Updates.min(Stats.PLAYERSINCE.getQuery(), playerDoc2.getString(Stats.PLAYERSINCE.getQuery())),
-							Updates.set(Stats.TIMEPLAYED.getQuery(), mergeTimePlayed(playerDoc1.getString(Stats.TIMEPLAYED.getQuery()), playerDoc2.getString(Stats.TIMEPLAYED.getQuery()))),
-							Updates.addEachToSet(Stats.MEDALS.getQuery(), playerDoc2.getList(Stats.MEDALS.getQuery(), Document.class)),
-							Updates.addEachToSet(Stats.VERSIONS.getQuery(),playerDoc2.getList(Stats.VERSIONS.getQuery(), String.class))
-				)
-			);
-			
-			mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), playerId),
-					Updates.set(Stats.MEDALS.getQuery(), getMedalList(playerDoc1.getList(Stats.MEDALS.getQuery(), Document.class))));
+		
+			mergePlayerDocs(recentPlayer, recentPlayer.equals(playerDoc1) ? playerDoc2 : playerDoc1 , mongoDB);
 			
 		} catch(Exception e) {
 			
@@ -134,6 +111,8 @@ public class MergeCommand implements CommandExecutor{
 		
 		serverMan.deleteFromHashMap((UUID) playerDoc2.get(Stats.PLAYERID.getQuery()));
 		serverMan.deleteFromHashMap((UUID) playerDoc1.get(Stats.PLAYERID.getQuery()));
+		
+		UUID playerId = (UUID) recentPlayer.get(Stats.PLAYERID.getQuery());
 		
 		playerDoc1 = mongoDB.getPlayer(playerId);
 		
@@ -153,6 +132,35 @@ public class MergeCommand implements CommandExecutor{
 		
 		//serverMan.getPlayerStats(playerId).medalCheck(Medals.NAMEHOLDER, playerDoc1.getList(Stats.NAMES.getQuery(), String.class).size(), player);
 		return true;
+	}
+	
+	private void mergePlayerDocs(Document recentPlayer, Document oldPlayer, DataBaseManager mongoDB) {
+		
+			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), oldPlayer.get(Stats.PLAYERID.getQuery())));
+			
+			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
+					Updates.combine(
+							Updates.set(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
+							Updates.set(Stats.ONLINE.getQuery(), recentPlayer.getBoolean(Stats.ONLINE.getQuery()) || oldPlayer.getBoolean(Stats.ONLINE.getQuery())),
+							Updates.inc(Stats.BLOCKSDEST.getQuery(), oldPlayer.getLong(Stats.BLOCKSDEST.getQuery())),
+							Updates.inc(Stats.BLOCKSPLA.getQuery(), oldPlayer.getLong(Stats.BLOCKSPLA.getQuery())),
+							Updates.inc(Stats.BLOCKSMINED.getQuery(), oldPlayer.getLong(Stats.BLOCKSMINED.getQuery())),
+							Updates.inc(Stats.KILLS.getQuery(), oldPlayer.getLong(Stats.KILLS.getQuery())),
+							Updates.inc(Stats.MOBKILLS.getQuery(), oldPlayer.getLong(Stats.MOBKILLS.getQuery())),
+							Updates.inc(Stats.TRAVELLED.getQuery(), oldPlayer.getLong(Stats.TRAVELLED.getQuery())),
+							Updates.inc(Stats.DEATHS.getQuery(), oldPlayer.getLong(Stats.DEATHS.getQuery())),
+							Updates.inc(Stats.TIMESLOGIN.getQuery(), oldPlayer.getLong(Stats.TIMESLOGIN.getQuery())),
+							Updates.inc(Stats.FISHCAUGHT.getQuery(), oldPlayer.getLong(Stats.FISHCAUGHT.getQuery())),
+							Updates.inc(Stats.REDSTONEUSED.getQuery(), oldPlayer.getLong(Stats.REDSTONEUSED.getQuery())),
+							Updates.min(Stats.PLAYERSINCE.getQuery(), oldPlayer.getString(Stats.PLAYERSINCE.getQuery())),
+							Updates.set(Stats.TIMEPLAYED.getQuery(), mergeTimePlayed(recentPlayer.getString(Stats.TIMEPLAYED.getQuery()), oldPlayer.getString(Stats.TIMEPLAYED.getQuery()))),
+							Updates.addEachToSet(Stats.MEDALS.getQuery(), oldPlayer.getList(Stats.MEDALS.getQuery(), Document.class)),
+							Updates.addEachToSet(Stats.VERSIONS.getQuery(),oldPlayer.getList(Stats.VERSIONS.getQuery(), String.class))
+				)
+			);
+			
+			mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
+					Updates.set(Stats.MEDALS.getQuery(), getMedalList(recentPlayer.getList(Stats.MEDALS.getQuery(), Document.class))));
 	}
 	
 	private String mergeTimePlayed(String timePlayed1, String timePlayed2) {
@@ -206,13 +214,14 @@ public class MergeCommand implements CommandExecutor{
 		return newList;
 	}
 	
-	private UUID getUUIDRecentPlayer(Document playerDoc1, Document playerDoc2) {
+	private Document getRecentPlayer(Document playerDoc1, Document playerDoc2) {
 		
 		try { 
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy h:mm a"); 
-			return formatter.parse(playerDoc1.getString(Stats.LASTLOGIN.getQuery())).compareTo(formatter.parse(playerDoc2.getString(Stats.LASTLOGIN.getQuery()))) > 1 ?
-				(UUID) playerDoc1.get(Stats.PLAYERID.getQuery()) :
-				(UUID) playerDoc2.get(Stats.PLAYERID.getQuery()); 
+			return formatter.parse(playerDoc1.getString(Stats.LASTLOGIN.getQuery())).
+					compareTo(formatter.parse(playerDoc2.getString(Stats.LASTLOGIN.getQuery()))) > 1 ?
+				playerDoc1 :
+				playerDoc2; 
 		} catch(ParseException e) {
 				System.out.println("[MineStats] - An error occurred parsing.");	
 		}

@@ -26,6 +26,7 @@ import org.rage.pluginstats.stats.MobStats;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -74,7 +75,20 @@ public class DataBaseManager {
 			
 			Document playerDoc = mongoDB.getPlayer(player.getUniqueId());
 			
-			if(playerDoc==null) playerDoc = newPlayer(player);
+			if(playerDoc==null) {
+				
+				playerDoc = getPlayerByName(player.getName());
+				
+				if(playerDoc!=null) {
+					serverManager.deleteFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));
+					
+					updateStat(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc.get(Stats.PLAYERID.getQuery())),
+							Updates.set(Stats.PLAYERID.getQuery(), player.getUniqueId()));
+					
+				}
+					
+				playerDoc = newPlayer(player);
+			}
 			
 			try {
 				downloadFromDataBase(pp, playerDoc);
