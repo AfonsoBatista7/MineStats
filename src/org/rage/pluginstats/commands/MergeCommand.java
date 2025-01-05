@@ -138,6 +138,15 @@ public class MergeCommand implements CommandExecutor{
 		
 			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), oldPlayer.get(Stats.PLAYERID.getQuery())));
 			
+			//Merge all duplicate data, incrising the stats
+			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
+					Updates.combine(
+							Updates.set(Stats.BLOCKS.getQuery(), mergeBlockData(recentPlayer.getList(Stats.BLOCKS.getQuery(), Document.class),
+									oldPlayer.getList(Stats.BLOCKS.getQuery(), Document.class))),
+							Updates.set(Stats.MOBSKILLED.getQuery(), mergeMobData(recentPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class),
+									oldPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class)))
+					));
+			
 			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
 					Updates.combine(
 							Updates.set(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
@@ -155,7 +164,10 @@ public class MergeCommand implements CommandExecutor{
 							Updates.min(Stats.PLAYERSINCE.getQuery(), oldPlayer.getString(Stats.PLAYERSINCE.getQuery())),
 							Updates.set(Stats.TIMEPLAYED.getQuery(), mergeTimePlayed(recentPlayer.getString(Stats.TIMEPLAYED.getQuery()), oldPlayer.getString(Stats.TIMEPLAYED.getQuery()))),
 							Updates.addEachToSet(Stats.MEDALS.getQuery(), oldPlayer.getList(Stats.MEDALS.getQuery(), Document.class)),
-							Updates.addEachToSet(Stats.VERSIONS.getQuery(),oldPlayer.getList(Stats.VERSIONS.getQuery(), String.class))
+							Updates.addEachToSet(Stats.VERSIONS.getQuery(),oldPlayer.getList(Stats.VERSIONS.getQuery(), String.class)),
+							Updates.addEachToSet(Stats.BLOCKS.getQuery(), oldPlayer.getList(Stats.BLOCKS.getQuery(), Document.class)),
+							Updates.addEachToSet(Stats.MOBSKILLED.getQuery(), oldPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class))
+
 				)
 			);
 			
@@ -176,6 +188,37 @@ public class MergeCommand implements CommandExecutor{
 					   (Long.parseLong(time2[0])*3600+min2*60);
 		
 		return Util.secondsToTimestamp(seconds);
+	}
+	
+	private List<Document> mergeBlockData(List<Document> rpBlocks, List<Document> opBlocks) {
+		
+		for(Document rDoc : rpBlocks) {
+			for(Document oDoc : opBlocks) {
+				if(rDoc.getString("bId").equals(oDoc.getString("bId"))) {
+					int placed = rDoc.getInteger("bNumPlaced") + oDoc.getInteger("bNumPlaced");
+					int destroyed = rDoc.getInteger("bNumDestroyed") + oDoc.getInteger("bNumDestroyed");
+					
+					rDoc.put("bNumPlaced", placed);
+					rDoc.put("bNumDestroyed", destroyed);
+				}
+			}
+		}
+		
+		return rpBlocks;
+	}
+	
+	private List<Document> mergeMobData(List<Document> rpMobs, List<Document> opMobs) {
+		for(Document rDoc : rpMobs) {
+			for(Document oDoc : opMobs) {
+				if(rDoc.getString("mId").equals(oDoc.getString("mId"))) {
+					int killed = rDoc.getInteger("mNumKilled") + oDoc.getInteger("mNumKilled");
+					
+					rDoc.put("mNumKilled", killed);
+				}
+			}
+		}
+		
+		return rpMobs;
 	}
 	
 	private List<Document> getMedalList(List<Document> badMedals) {
