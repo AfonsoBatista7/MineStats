@@ -2,6 +2,7 @@ package org.rage.pluginstats.commands;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -135,8 +136,6 @@ public class MergeCommand implements CommandExecutor{
 	}
 	
 	private void mergePlayerDocs(Document recentPlayer, Document oldPlayer, DataBaseManager mongoDB) {
-		
-			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), oldPlayer.get(Stats.PLAYERID.getQuery())));
 			
 			//Merge all duplicate data, incrising the stats
 			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
@@ -150,6 +149,9 @@ public class MergeCommand implements CommandExecutor{
 			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
 					Updates.combine(
 							Updates.set(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
+							Updates.set(Stats.LINK.getQuery(),  recentPlayer.getString(Stats.LINK.getQuery())!=null ?
+									recentPlayer.getString(Stats.LINK.getQuery()) :
+									oldPlayer.getString(Stats.LINK.getQuery())),
 							Updates.set(Stats.ONLINE.getQuery(), recentPlayer.getBoolean(Stats.ONLINE.getQuery()) || oldPlayer.getBoolean(Stats.ONLINE.getQuery())),
 							Updates.inc(Stats.BLOCKSDEST.getQuery(), oldPlayer.getLong(Stats.BLOCKSDEST.getQuery())),
 							Updates.inc(Stats.BLOCKSPLA.getQuery(), oldPlayer.getLong(Stats.BLOCKSPLA.getQuery())),
@@ -173,6 +175,8 @@ public class MergeCommand implements CommandExecutor{
 			
 			mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
 					Updates.set(Stats.MEDALS.getQuery(), getMedalList(recentPlayer.getList(Stats.MEDALS.getQuery(), Document.class))));
+			
+			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), oldPlayer.get(Stats.PLAYERID.getQuery())));
 	}
 	
 	private String mergeTimePlayed(String timePlayed1, String timePlayed2) {
@@ -194,9 +198,9 @@ public class MergeCommand implements CommandExecutor{
 		
 		for(Document rDoc : rpBlocks) {
 			for(Document oDoc : opBlocks) {
-				if(rDoc.getString("bId").equals(oDoc.getString("bId"))) {
-					int placed = rDoc.getInteger("bNumPlaced") + oDoc.getInteger("bNumPlaced");
-					int destroyed = rDoc.getInteger("bNumDestroyed") + oDoc.getInteger("bNumDestroyed");
+				if(rDoc.getInteger("bId").equals(oDoc.getInteger("bId"))) {
+					long placed = rDoc.getLong("bNumPlaced") + oDoc.getLong("bNumPlaced");
+					long destroyed = rDoc.getLong("bNumDestroyed") + oDoc.getLong("bNumDestroyed");
 					
 					rDoc.put("bNumPlaced", placed);
 					rDoc.put("bNumDestroyed", destroyed);
@@ -210,8 +214,8 @@ public class MergeCommand implements CommandExecutor{
 	private List<Document> mergeMobData(List<Document> rpMobs, List<Document> opMobs) {
 		for(Document rDoc : rpMobs) {
 			for(Document oDoc : opMobs) {
-				if(rDoc.getString("mId").equals(oDoc.getString("mId"))) {
-					int killed = rDoc.getInteger("mNumKilled") + oDoc.getInteger("mNumKilled");
+				if(rDoc.getInteger("mId").equals(oDoc.getInteger("mId"))) {
+					long killed = rDoc.getLong("mNumKilled") + oDoc.getLong("mNumKilled");
 					
 					rDoc.put("mNumKilled", killed);
 				}
@@ -238,14 +242,14 @@ public class MergeCommand implements CommandExecutor{
 	private List<Document> findAndRemoveMedal(String medalName, String level, Document badDoc, List<Document> badMedals) {
 		
 		String medalName2, medalLevel2;
-		List<Document> newList = badMedals;
+		List<Document> newList = new ArrayList<>(badMedals);
 		
 		for(Document badDoc2: badMedals) {
 			medalName2 = badDoc.getString("medalName");
 			medalLevel2 = badDoc.getString("medalLevel");
 			
 			if(medalName.equals(medalName2) && !badDoc.equals(badDoc2)) {
-				if(MLevel.valueOf(level).getNumber() > MLevel.valueOf(badDoc2.getString(medalLevel2)).getNumber()) {
+				if(MLevel.valueOf(level).getNumber() > MLevel.valueOf(medalLevel2).getNumber()) {
 					newList.remove(badDoc2);
 					return newList;
 				} else {
