@@ -116,11 +116,15 @@ public class MergeCommand implements CommandExecutor{
 		UUID playerId = (UUID) recentPlayer.get(Stats.PLAYERID.getQuery());
 		
 		playerDoc1 = mongoDB.getPlayer(playerId);
-		
+				
 		try {
 			mongoDB.downloadFromDataBase(new ServerPlayer(playerId, mongoDB), playerDoc1);
 		} catch (ParseException e) {
+			Bukkit.broadcastMessage(Util.chat("&b[MineStats]&7 - An ERROR occurred while merging..."));
+
 			e.printStackTrace();
+			
+			return false;
 		}
 		
 		
@@ -143,7 +147,9 @@ public class MergeCommand implements CommandExecutor{
 							Updates.set(Stats.BLOCKS.getQuery(), mergeBlockData(recentPlayer.getList(Stats.BLOCKS.getQuery(), Document.class),
 									oldPlayer.getList(Stats.BLOCKS.getQuery(), Document.class))),
 							Updates.set(Stats.MOBSKILLED.getQuery(), mergeMobData(recentPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class),
-									oldPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class)))
+									oldPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class))),
+							Updates.set(Stats.MEDALS.getQuery(), mergeMedalData(recentPlayer.getList(Stats.MEDALS.getQuery(), Document.class),
+									oldPlayer.getList(Stats.MEDALS.getQuery(), Document.class)))
 					));
 			
 			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
@@ -173,9 +179,6 @@ public class MergeCommand implements CommandExecutor{
 				)
 			);
 			
-			mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
-					Updates.set(Stats.MEDALS.getQuery(), getMedalList(recentPlayer.getList(Stats.MEDALS.getQuery(), Document.class))));
-			
 			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), oldPlayer.get(Stats.PLAYERID.getQuery())));
 	}
 	
@@ -198,7 +201,7 @@ public class MergeCommand implements CommandExecutor{
 		
 		for(Document rDoc : rpBlocks) {
 			for(Document oDoc : opBlocks) {
-				if(rDoc.getInteger("bId").equals(oDoc.getInteger("bId"))) {
+				if(rDoc.getString("bName").equals(oDoc.getString("bName"))) {
 					long placed = rDoc.getLong("bNumPlaced") + oDoc.getLong("bNumPlaced");
 					long destroyed = rDoc.getLong("bNumDestroyed") + oDoc.getLong("bNumDestroyed");
 					
@@ -214,7 +217,7 @@ public class MergeCommand implements CommandExecutor{
 	private List<Document> mergeMobData(List<Document> rpMobs, List<Document> opMobs) {
 		for(Document rDoc : rpMobs) {
 			for(Document oDoc : opMobs) {
-				if(rDoc.getInteger("mId").equals(oDoc.getInteger("mId"))) {
+				if(rDoc.getString("mName").equals(oDoc.getString("mName"))) {
 					long killed = rDoc.getLong("mNumKilled") + oDoc.getLong("mNumKilled");
 					
 					rDoc.put("mNumKilled", killed);
@@ -225,39 +228,30 @@ public class MergeCommand implements CommandExecutor{
 		return rpMobs;
 	}
 	
-	private List<Document> getMedalList(List<Document> badMedals) {
+	private List<Document> mergeMedalData(List<Document> recentBadMedals, List<Document> oldBadMedals) {
 		
-		String medalName, level;
-		List<Document> newList = badMedals;
+		String medalName, medalName2, level, level2;
+		List<Document> newList = new ArrayList<>(recentBadMedals);
 		
-		for(Document badDoc: badMedals) {
-			medalName = badDoc.getString("medalName");
-			level = badDoc.getString("medalLevel");
-			newList = findAndRemoveMedal(medalName, level, badDoc, newList);
-		}
-		
-		return newList;
-	}
-	
-	private List<Document> findAndRemoveMedal(String medalName, String level, Document badDoc, List<Document> badMedals) {
-		
-		String medalName2, medalLevel2;
-		List<Document> newList = new ArrayList<>(badMedals);
-		
-		for(Document badDoc2: badMedals) {
-			medalName2 = badDoc.getString("medalName");
-			medalLevel2 = badDoc.getString("medalLevel");
-			
-			if(medalName.equals(medalName2) && !badDoc.equals(badDoc2)) {
-				if(MLevel.valueOf(level).getNumber() > MLevel.valueOf(medalLevel2).getNumber()) {
-					newList.remove(badDoc2);
-					return newList;
-				} else {
-					newList.remove(badDoc);
-					return newList;
+		for(Document badDoc: recentBadMedals) {
+			for(Document badDoc2: oldBadMedals) {
+				medalName = badDoc.getString("medalName");
+				medalName2 = badDoc2.getString("medalName");
+				
+				if(medalName.equals(medalName2)) {
+					
+					level = badDoc.getString("medalLevel");
+					level2 = badDoc2.getString("medalLevel");
+					
+					if(MLevel.valueOf(level).getNumber() < MLevel.valueOf(level2).getNumber()) {
+						newList.remove(badDoc);
+						badDoc.put("medalLevel", level2);
+						newList.add(badDoc);
+					}
 				}
 			}
 		}
+		
 		return newList;
 	}
 	
