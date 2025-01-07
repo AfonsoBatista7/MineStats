@@ -2,6 +2,8 @@ package org.rage.pluginstats.commands;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -95,34 +97,11 @@ public class MergeCommand implements CommandExecutor{
 			return false;
 		}
 			
-		UUID playerId = getUUIDRecentPlayer(playerDoc1 ,playerDoc2);
+		Document recentPlayer = getRecentPlayer(playerDoc1 ,playerDoc2);
+		
 		try {
-			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc2.get(Stats.PLAYERID.getQuery())));
-			
-			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc1.get(Stats.PLAYERID.getQuery())),
-					Updates.combine(
-							Updates.set(Stats.PLAYERID.getQuery(), playerId),
-							Updates.set(Stats.ONLINE.getQuery(), playerDoc1.getBoolean(Stats.ONLINE.getQuery()) || playerDoc2.getBoolean(Stats.ONLINE.getQuery())),
-							Updates.inc(Stats.BLOCKSDEST.getQuery(), playerDoc2.getLong(Stats.BLOCKSDEST.getQuery())),
-							Updates.inc(Stats.BLOCKSPLA.getQuery(), playerDoc2.getLong(Stats.BLOCKSPLA.getQuery())),
-							Updates.inc(Stats.BLOCKSMINED.getQuery(), playerDoc2.getLong(Stats.BLOCKSMINED.getQuery())),
-							Updates.inc(Stats.KILLS.getQuery(), playerDoc2.getLong(Stats.KILLS.getQuery())),
-							Updates.inc(Stats.MOBKILLS.getQuery(), playerDoc2.getLong(Stats.MOBKILLS.getQuery())),
-							Updates.inc(Stats.TRAVELLED.getQuery(), playerDoc2.getLong(Stats.TRAVELLED.getQuery())),
-							Updates.inc(Stats.DEATHS.getQuery(), playerDoc2.getLong(Stats.DEATHS.getQuery())),
-							Updates.inc(Stats.TIMESLOGIN.getQuery(), playerDoc2.getLong(Stats.TIMESLOGIN.getQuery())),
-							Updates.inc(Stats.FISHCAUGHT.getQuery(), playerDoc2.getLong(Stats.FISHCAUGHT.getQuery())),
-							Updates.inc(Stats.REDSTONEUSED.getQuery(), playerDoc2.getLong(Stats.REDSTONEUSED.getQuery())),
-							Updates.max(Stats.LASTLOGIN.getQuery(), playerDoc2.getString(Stats.LASTLOGIN.getQuery())),
-							Updates.min(Stats.PLAYERSINCE.getQuery(), playerDoc2.getString(Stats.PLAYERSINCE.getQuery())),
-							Updates.set(Stats.TIMEPLAYED.getQuery(), mergeTimePlayed(playerDoc1.getString(Stats.TIMEPLAYED.getQuery()), playerDoc2.getString(Stats.TIMEPLAYED.getQuery()))),
-							Updates.addEachToSet(Stats.MEDALS.getQuery(), playerDoc2.getList(Stats.MEDALS.getQuery(), Document.class)),
-							Updates.addEachToSet(Stats.VERSIONS.getQuery(),playerDoc2.getList(Stats.VERSIONS.getQuery(), String.class))
-				)
-			);
-			
-			mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), playerId),
-					Updates.set(Stats.MEDALS.getQuery(), getMedalList(playerDoc1.getList(Stats.MEDALS.getQuery(), Document.class))));
+		
+			mergePlayerDocs(recentPlayer, recentPlayer.equals(playerDoc1) ? playerDoc2 : playerDoc1 , mongoDB);
 			
 		} catch(Exception e) {
 			
@@ -135,12 +114,18 @@ public class MergeCommand implements CommandExecutor{
 		serverMan.deleteFromHashMap((UUID) playerDoc2.get(Stats.PLAYERID.getQuery()));
 		serverMan.deleteFromHashMap((UUID) playerDoc1.get(Stats.PLAYERID.getQuery()));
 		
-		playerDoc1 = mongoDB.getPlayer(playerId);
+		UUID playerId = (UUID) recentPlayer.get(Stats.PLAYERID.getQuery());
 		
+		playerDoc1 = mongoDB.getPlayer(playerId);
+				
 		try {
 			mongoDB.downloadFromDataBase(new ServerPlayer(playerId, mongoDB), playerDoc1);
 		} catch (ParseException e) {
+			Bukkit.broadcastMessage(Util.chat("&b[MineStats]&7 - An ERROR occurred while merging..."));
+
 			e.printStackTrace();
+			
+			return false;
 		}
 		
 		
@@ -153,6 +138,47 @@ public class MergeCommand implements CommandExecutor{
 		
 		//serverMan.getPlayerStats(playerId).medalCheck(Medals.NAMEHOLDER, playerDoc1.getList(Stats.NAMES.getQuery(), String.class).size(), player);
 		return true;
+	}
+	
+	private void mergePlayerDocs(Document recentPlayer, Document oldPlayer, DataBaseManager mongoDB) {
+			
+			//Merge all duplicate data, incrising the stats
+			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
+					Updates.combine(
+							Updates.set(Stats.BLOCKS.getQuery(), mergeBlockData(recentPlayer.getList(Stats.BLOCKS.getQuery(), Document.class),
+									oldPlayer.getList(Stats.BLOCKS.getQuery(), Document.class))),
+							Updates.set(Stats.MOBSKILLED.getQuery(), mergeMobData(recentPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class),
+									oldPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class))),
+							Updates.set(Stats.MEDALS.getQuery(), mergeMedalData(recentPlayer.getList(Stats.MEDALS.getQuery(), Document.class),
+									oldPlayer.getList(Stats.MEDALS.getQuery(), Document.class)))
+					));
+			
+			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
+					Updates.combine(
+							Updates.set(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
+							Updates.set(Stats.LINK.getQuery(),  recentPlayer.getString(Stats.LINK.getQuery())!=null ?
+									recentPlayer.getString(Stats.LINK.getQuery()) :
+									oldPlayer.getString(Stats.LINK.getQuery())),
+							Updates.set(Stats.ONLINE.getQuery(), recentPlayer.getBoolean(Stats.ONLINE.getQuery()) || oldPlayer.getBoolean(Stats.ONLINE.getQuery())),
+							Updates.inc(Stats.BLOCKSDEST.getQuery(), oldPlayer.getLong(Stats.BLOCKSDEST.getQuery())),
+							Updates.inc(Stats.BLOCKSPLA.getQuery(), oldPlayer.getLong(Stats.BLOCKSPLA.getQuery())),
+							Updates.inc(Stats.BLOCKSMINED.getQuery(), oldPlayer.getLong(Stats.BLOCKSMINED.getQuery())),
+							Updates.inc(Stats.KILLS.getQuery(), oldPlayer.getLong(Stats.KILLS.getQuery())),
+							Updates.inc(Stats.MOBKILLS.getQuery(), oldPlayer.getLong(Stats.MOBKILLS.getQuery())),
+							Updates.inc(Stats.TRAVELLED.getQuery(), oldPlayer.getLong(Stats.TRAVELLED.getQuery())),
+							Updates.inc(Stats.DEATHS.getQuery(), oldPlayer.getLong(Stats.DEATHS.getQuery())),
+							Updates.inc(Stats.TIMESLOGIN.getQuery(), oldPlayer.getLong(Stats.TIMESLOGIN.getQuery())),
+							Updates.inc(Stats.FISHCAUGHT.getQuery(), oldPlayer.getLong(Stats.FISHCAUGHT.getQuery())),
+							Updates.inc(Stats.REDSTONEUSED.getQuery(), oldPlayer.getLong(Stats.REDSTONEUSED.getQuery())),
+							Updates.min(Stats.PLAYERSINCE.getQuery(), oldPlayer.getString(Stats.PLAYERSINCE.getQuery())),
+							Updates.set(Stats.TIMEPLAYED.getQuery(), mergeTimePlayed(recentPlayer.getString(Stats.TIMEPLAYED.getQuery()), oldPlayer.getString(Stats.TIMEPLAYED.getQuery()))),
+							Updates.addEachToSet(Stats.MEDALS.getQuery(), oldPlayer.getList(Stats.MEDALS.getQuery(), Document.class)),
+							Updates.addEachToSet(Stats.VERSIONS.getQuery(),oldPlayer.getList(Stats.VERSIONS.getQuery(), String.class))
+
+				)
+			);
+			
+			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), oldPlayer.get(Stats.PLAYERID.getQuery())));
 	}
 	
 	private String mergeTimePlayed(String timePlayed1, String timePlayed2) {
@@ -170,49 +196,101 @@ public class MergeCommand implements CommandExecutor{
 		return Util.secondsToTimestamp(seconds);
 	}
 	
-	private List<Document> getMedalList(List<Document> badMedals) {
+	private List<Document> mergeBlockData(List<Document> rpBlocks, List<Document> opBlocks) {
 		
-		String medalName, level;
-		List<Document> newList = badMedals;
+		int toRemove = -1;
 		
-		for(Document badDoc: badMedals) {
-			medalName = badDoc.getString("medalName");
-			level = badDoc.getString("medalLevel");
-			newList = findAndRemoveMedal(medalName, level, badDoc, newList);
+		for(Document rDoc : rpBlocks) {
+			for(Document oDoc : opBlocks) {
+				if(rDoc.getString("bName").equals(oDoc.getString("bName"))) {
+					long placed = rDoc.getLong("bNumPlaced") + oDoc.getLong("bNumPlaced");
+					long destroyed = rDoc.getLong("bNumDestroyed") + oDoc.getLong("bNumDestroyed");
+					
+					rDoc.put("bNumPlaced", placed);
+					rDoc.put("bNumDestroyed", destroyed);
+					
+					toRemove = opBlocks.indexOf(oDoc);
+					
+					continue;
+				}
+			}
+			
+			if(toRemove!=-1) {
+				opBlocks.remove(toRemove);
+				toRemove = -1;
+			}
 		}
 		
-		return newList;
+		rpBlocks.addAll(opBlocks);
+		
+		return rpBlocks;
 	}
 	
-	private List<Document> findAndRemoveMedal(String medalName, String level, Document badDoc, List<Document> badMedals) {
+	private List<Document> mergeMobData(List<Document> rpMobs, List<Document> opMobs) {
 		
-		String medalName2, medalLevel2;
-		List<Document> newList = badMedals;
+		int toRemove = -1;
 		
-		for(Document badDoc2: badMedals) {
-			medalName2 = badDoc.getString("medalName");
-			medalLevel2 = badDoc.getString("medalLevel");
+		for(Document rDoc : rpMobs) {
+			for(Document oDoc : opMobs) {
+				if(rDoc.getString("mName").equals(oDoc.getString("mName"))) {
+					long killed = rDoc.getLong("mNumKilled") + oDoc.getLong("mNumKilled");
+					
+					rDoc.put("mNumKilled", killed);
+					
+					toRemove = opMobs.indexOf(oDoc);
+					
+					continue;
+				}
+			}
 			
-			if(medalName.equals(medalName2) && !badDoc.equals(badDoc2)) {
-				if(MLevel.valueOf(level).getNumber() > MLevel.valueOf(badDoc2.getString(medalLevel2)).getNumber()) {
-					newList.remove(badDoc2);
-					return newList;
-				} else {
-					newList.remove(badDoc);
-					return newList;
+			if(toRemove!=-1) {
+				opMobs.remove(toRemove);
+				toRemove = -1;
+			}
+			
+
+		}
+				
+		rpMobs.addAll(opMobs);
+		
+		return rpMobs;
+	}
+	
+	private List<Document> mergeMedalData(List<Document> recentBadMedals, List<Document> oldBadMedals) {
+		
+		String medalName, medalName2, level, level2;
+		List<Document> newList = new ArrayList<>(recentBadMedals);
+		
+		for(Document badDoc: recentBadMedals) {
+			for(Document badDoc2: oldBadMedals) {
+				medalName = badDoc.getString("medalName");
+				medalName2 = badDoc2.getString("medalName");
+				
+				if(medalName.equals(medalName2)) {
+					
+					level = badDoc.getString("medalLevel");
+					level2 = badDoc2.getString("medalLevel");
+					
+					if(MLevel.valueOf(level).getNumber() < MLevel.valueOf(level2).getNumber()) {
+						newList.remove(badDoc);
+						badDoc.put("medalLevel", level2);
+						newList.add(badDoc);
+					}
 				}
 			}
 		}
+		
 		return newList;
 	}
 	
-	private UUID getUUIDRecentPlayer(Document playerDoc1, Document playerDoc2) {
+	private Document getRecentPlayer(Document playerDoc1, Document playerDoc2) {
 		
 		try { 
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy h:mm a"); 
-			return formatter.parse(playerDoc1.getString(Stats.LASTLOGIN.getQuery())).compareTo(formatter.parse(playerDoc2.getString(Stats.LASTLOGIN.getQuery()))) > 1 ?
-				(UUID) playerDoc1.get(Stats.PLAYERID.getQuery()) :
-				(UUID) playerDoc2.get(Stats.PLAYERID.getQuery()); 
+			return formatter.parse(playerDoc1.getString(Stats.LASTLOGIN.getQuery())).
+					compareTo(formatter.parse(playerDoc2.getString(Stats.LASTLOGIN.getQuery()))) > 1 ?
+				playerDoc1 :
+				playerDoc2; 
 		} catch(ParseException e) {
 				System.out.println("[MineStats] - An error occurred parsing.");	
 		}

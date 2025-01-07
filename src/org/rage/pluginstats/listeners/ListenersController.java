@@ -93,9 +93,9 @@ public class ListenersController {
 	}
 	
 	public void placeBlock(Player player, Block block) {
-		if(block.getType().getId() > 0) {
+		if(block.getType().isBlock()) {
 			ServerPlayer pp = mongoDB.getPlayerStats(player);
-			pp.medalCheck(Medals.BUILDER, pp.placeBlock(block.getType().getId() ,block.getType().name()), player);
+			pp.medalCheck(Medals.BUILDER, pp.placeBlock(block.getType().name()), player);
 						
 			if(isRedstone(block))
 				pp.medalCheck(Medals.REDSTONENGINEER, pp.useRedstone(), player);
@@ -103,11 +103,11 @@ public class ListenersController {
 	}
 	
 	public void breakBlock(Player player, Block block) {
-		if(block.getType().getId() > 0) {
+		if(block.getType().isBlock()) {
 			int Ycord = player.getEyeLocation().getBlockY();
 			ServerPlayer pp = mongoDB.getPlayerStats(player);
 						
-			pp.medalCheck(Medals.DESTROYER, pp.breakBlock(block.getType().getId() ,block.getType().name()), player);
+			pp.medalCheck(Medals.DESTROYER, pp.breakBlock(block.getType().name()), player);
 			if(Ycord>=1 && Ycord<=63) pp.medalCheck(Medals.MINER, pp.mineBlock(), player);
 		}
 	}

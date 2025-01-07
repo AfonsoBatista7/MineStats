@@ -9,6 +9,7 @@ import org.rage.pluginstats.stats.Stats;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
@@ -66,6 +67,10 @@ public class DataBase {
 	
 	public MongoCursor<Document> getAllPlayersByName(String playerName) {
 		return collection.find(new Document(Stats.NAME.getQuery(), playerName)).iterator();
+	}
+	
+	public FindIterable<Document> getAllPlayersByNameIt(String playerName) {
+		return collection.find(new Document(Stats.NAME.getQuery(), playerName));
 	}
 	
 	public void newDoc(Document playerDoc) {

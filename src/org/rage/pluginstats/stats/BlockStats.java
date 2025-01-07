@@ -67,11 +67,11 @@ public class BlockStats {
 		return minedBlocks;
 	}
 	
-	public long breakBlock(int blockId, String blockName) {
+	public long breakBlock(String blockName) {
 		Block blockDestroyed = getBlockStatsByName(blockName);
 		
 		if(blockDestroyed == null)
-			blockDestroyed = new Block(blockId, blockName);	
+			blockDestroyed = new Block(blockName);	
 		 
 		blockDestroyed.incNumBlocksDestroyed();
 		
@@ -80,11 +80,11 @@ public class BlockStats {
 		return blocksDestroyed++;
 	}
 	
-	public long placeBlock(int blockId, String blockName) {
+	public long placeBlock(String blockName) {
 		Block blockPlaced = getBlockStatsByName(blockName);
 		
 		if(blockPlaced == null)
-			blockPlaced = new Block(blockId, blockName);	
+			blockPlaced = new Block(blockName);	
 		 
 		blockPlaced.incNumBlocksPlaced();
 		
