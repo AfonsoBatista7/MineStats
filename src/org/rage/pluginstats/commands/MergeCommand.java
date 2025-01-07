@@ -3,6 +3,7 @@ package org.rage.pluginstats.commands;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -172,9 +173,7 @@ public class MergeCommand implements CommandExecutor{
 							Updates.min(Stats.PLAYERSINCE.getQuery(), oldPlayer.getString(Stats.PLAYERSINCE.getQuery())),
 							Updates.set(Stats.TIMEPLAYED.getQuery(), mergeTimePlayed(recentPlayer.getString(Stats.TIMEPLAYED.getQuery()), oldPlayer.getString(Stats.TIMEPLAYED.getQuery()))),
 							Updates.addEachToSet(Stats.MEDALS.getQuery(), oldPlayer.getList(Stats.MEDALS.getQuery(), Document.class)),
-							Updates.addEachToSet(Stats.VERSIONS.getQuery(),oldPlayer.getList(Stats.VERSIONS.getQuery(), String.class)),
-							Updates.addEachToSet(Stats.BLOCKS.getQuery(), oldPlayer.getList(Stats.BLOCKS.getQuery(), Document.class)),
-							Updates.addEachToSet(Stats.MOBSKILLED.getQuery(), oldPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class))
+							Updates.addEachToSet(Stats.VERSIONS.getQuery(),oldPlayer.getList(Stats.VERSIONS.getQuery(), String.class))
 
 				)
 			);
@@ -199,6 +198,8 @@ public class MergeCommand implements CommandExecutor{
 	
 	private List<Document> mergeBlockData(List<Document> rpBlocks, List<Document> opBlocks) {
 		
+		int toRemove = -1;
+		
 		for(Document rDoc : rpBlocks) {
 			for(Document oDoc : opBlocks) {
 				if(rDoc.getString("bName").equals(oDoc.getString("bName"))) {
@@ -207,23 +208,42 @@ public class MergeCommand implements CommandExecutor{
 					
 					rDoc.put("bNumPlaced", placed);
 					rDoc.put("bNumDestroyed", destroyed);
+					
+					toRemove = opBlocks.indexOf(oDoc);
+					
+					continue;
 				}
 			}
+			
+			if(toRemove!=-1) opBlocks.remove(toRemove);
 		}
+		
+		rpBlocks.addAll(opBlocks);
 		
 		return rpBlocks;
 	}
 	
 	private List<Document> mergeMobData(List<Document> rpMobs, List<Document> opMobs) {
+		
+		int toRemove = -1;
+		
 		for(Document rDoc : rpMobs) {
 			for(Document oDoc : opMobs) {
 				if(rDoc.getString("mName").equals(oDoc.getString("mName"))) {
 					long killed = rDoc.getLong("mNumKilled") + oDoc.getLong("mNumKilled");
 					
 					rDoc.put("mNumKilled", killed);
+					
+					toRemove = opMobs.indexOf(oDoc);
+					
+					continue;
 				}
 			}
+			
+			if(toRemove!=-1) opMobs.remove(toRemove);
 		}
+				
+		rpMobs.addAll(opMobs);
 		
 		return rpMobs;
 	}
