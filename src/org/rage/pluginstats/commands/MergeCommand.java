@@ -215,7 +215,10 @@ public class MergeCommand implements CommandExecutor{
 				}
 			}
 			
-			if(toRemove!=-1) opBlocks.remove(toRemove);
+			if(toRemove!=-1) {
+				opBlocks.remove(toRemove);
+				toRemove = -1;
+			}
 		}
 		
 		rpBlocks.addAll(opBlocks);
@@ -240,7 +243,12 @@ public class MergeCommand implements CommandExecutor{
 				}
 			}
 			
-			if(toRemove!=-1) opMobs.remove(toRemove);
+			if(toRemove!=-1) {
+				opMobs.remove(toRemove);
+				toRemove = -1;
+			}
+			
+
 		}
 				
 		rpMobs.addAll(opMobs);

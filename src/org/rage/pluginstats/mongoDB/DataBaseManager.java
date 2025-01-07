@@ -265,17 +265,15 @@ public class DataBaseManager {
 	public HashMap<String, Block> loadBlockStats(List<Document> blockStats) {
 		HashMap<String, Block> mapBlockStats = new HashMap<>();
 		
-		int bId;
 		String bName;
 		long bNumDestroyed,
 			 bNumPlaced;
 		
 		for(Document doc : blockStats) {
-			bId = doc.getInteger("bId");
 			bName = doc.getString("bName");
 			bNumDestroyed = doc.getLong("bNumDestroyed");
 			bNumPlaced = doc.getLong("bNumPlaced");
-			Block newBlock = new Block(bId, bName, bNumDestroyed, bNumPlaced);
+			Block newBlock = new Block(bName, bNumDestroyed, bNumPlaced);
 			
 			mapBlockStats.put(bName, newBlock);	
 		}
