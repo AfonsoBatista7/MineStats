@@ -68,7 +68,7 @@ public class Medal {
 	
 	public void newMedalEffect(Player player) {
 		Location location = player.getLocation();
-		player.playSound(location, Sound.LEVEL_UP, level.getSoudLevel(), 2);
+		player.playSound(location, Sound.ENTITY_PLAYER_LEVELUP, level.getSoudLevel(), 2);
 		location.getWorld().playEffect(location, Effect.MOBSPAWNER_FLAMES, 2020);	
 	}
 	

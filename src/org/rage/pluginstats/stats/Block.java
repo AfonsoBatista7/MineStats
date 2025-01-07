@@ -8,36 +8,27 @@ import org.bson.Document;
  */
 public class Block {
 	private String bName;
-	private int bId;
 	private long bNumDestroyed,
 				 bNumPlaced;
 
 	
-	public Block(int bId, String bName, long bNumDestroyed, long bNumPlaced) {
-		this.bId = bId;
+	public Block(String bName, long bNumDestroyed, long bNumPlaced) {
 		this.bName = bName;
 		this.bNumDestroyed = bNumDestroyed;
 		this.bNumPlaced = bNumPlaced;
 
 	}
 	
-	public Block(int bId, String bName) {
-		this.bId = bId;
+	public Block(String bName) {
 		this.bName = bName;
 		this.bNumDestroyed = 0;
 		this.bNumPlaced = 0;
 	}
 	
 	public Document createBlockDocument() {
-		return new Document("bId", bId)
-				.append("bName", bName)
+		return new Document("bName", bName)
 				.append("bNumDestroyed", bNumDestroyed)
 				.append("bNumPlaced", bNumPlaced);
-
-	}
-	
-	public int getBlockId() {
-		return bId;
 	}
 	
 	public String getBlockName() {
@@ -50,10 +41,6 @@ public class Block {
 	
 	public long getBlockPlaced() {
 		return bNumPlaced;
-	}
-	
-	public void setBlockId(int bId) {
-		this.bId = bId;
 	}
 	
 	public void setBlockName(String bName) {

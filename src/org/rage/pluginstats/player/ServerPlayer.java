@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.bson.Document;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.rage.pluginstats.Main;
 import org.rage.pluginstats.medals.MLevel;
@@ -92,12 +93,12 @@ public class ServerPlayer extends PlayerProfile {
 		kilometer = 0;
 	}
 	
-	public long breakBlock(int blockId, String blockName) {
-		return blockStats.breakBlock(blockId, blockName);
+	public long breakBlock(String blockName) {
+		return blockStats.breakBlock(blockName);
 	}
 	
-	public long placeBlock(int blockId, String blockName) {
-		return blockStats.placeBlock(blockId, blockName);
+	public long placeBlock(String blockName) {
+		return blockStats.placeBlock(blockName);
 	}
 	
 	public long useRedstone() {

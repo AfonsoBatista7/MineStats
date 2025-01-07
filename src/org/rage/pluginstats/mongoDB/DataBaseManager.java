@@ -26,6 +26,7 @@ import org.rage.pluginstats.stats.MobStats;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.Util;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
@@ -74,7 +75,20 @@ public class DataBaseManager {
 			
 			Document playerDoc = mongoDB.getPlayer(player.getUniqueId());
 			
-			if(playerDoc==null) playerDoc = newPlayer(player);
+			if(playerDoc==null) {
+				
+				playerDoc = getPlayerByName(player.getName());
+				
+				if(playerDoc!=null) {
+					serverManager.deleteFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));
+					
+					updateStat(Filters.eq(Stats.PLAYERID.getQuery(), playerDoc.get(Stats.PLAYERID.getQuery())),
+							Updates.set(Stats.PLAYERID.getQuery(), player.getUniqueId()));
+					
+				}
+					
+				playerDoc = newPlayer(player);
+			}
 			
 			try {
 				downloadFromDataBase(pp, playerDoc);
@@ -114,7 +128,7 @@ public class DataBaseManager {
 						playerDoc.getLong(Stats.MOBKILLS.getQuery()), playerDoc.getLong(Stats.ENDERDRAGONKILLS.getQuery()),
 						playerDoc.getLong(Stats.WITHERKILLS.getQuery()), playerDoc.getLong(Stats.FISHCAUGHT.getQuery()),
 						loadMobStats(playerDoc.getList(Stats.MOBSKILLED.getQuery(), Document.class))));
-				
+								
 				sp.setNumberOfVersions(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class).size());
 				sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
 				sp.setTimePlayed(Long.parseLong(time[0])*3600+min*60);
@@ -126,7 +140,7 @@ public class DataBaseManager {
 				
 				sp.setPlayerSince(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.PLAYERSINCE.getQuery())));
 				sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy h:mm a").parse(playerDoc.getString(Stats.LASTLOGIN.getQuery())));
-				
+								
 				serverManager.newPlayerOnServer(sp);
 			} catch(NullPointerException e) {
 				for(Stats stat: Stats.values()) {
@@ -135,6 +149,7 @@ public class DataBaseManager {
 				}
 				mongoDB.getServerCollection().replaceOne(Filters.eq(Stats.PLAYERID.getQuery(), sp.getPlayerID()), playerDoc);
 				downloadFromDataBase(sp, playerDoc);
+				e.printStackTrace();
 			} catch(ParseException e) {
 				
 				String lastLogin = playerDoc.getString(Stats.LASTLOGIN.getQuery()).concat(" 12:00 AM"); 	
@@ -230,7 +245,7 @@ public class DataBaseManager {
 	
 	public HashMap<String, Mob> loadMobStats(List<Document> mobStats) {
 		HashMap<String, Mob> mapMobStats = new HashMap<>();
-		
+				
 		int mId;
 		String mName;
 		long mNumKilled;
@@ -250,17 +265,15 @@ public class DataBaseManager {
 	public HashMap<String, Block> loadBlockStats(List<Document> blockStats) {
 		HashMap<String, Block> mapBlockStats = new HashMap<>();
 		
-		int bId;
 		String bName;
 		long bNumDestroyed,
 			 bNumPlaced;
 		
 		for(Document doc : blockStats) {
-			bId = doc.getInteger("bId");
 			bName = doc.getString("bName");
 			bNumDestroyed = doc.getLong("bNumDestroyed");
 			bNumPlaced = doc.getLong("bNumPlaced");
-			Block newBlock = new Block(bId, bName, bNumDestroyed, bNumPlaced);
+			Block newBlock = new Block(bName, bNumDestroyed, bNumPlaced);
 			
 			mapBlockStats.put(bName, newBlock);	
 		}
