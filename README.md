@@ -75,12 +75,6 @@ Key Features:
 
 ---
 
-## 🛠️ Built With
-
-
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ## 🚀 Getting Started
 
 Follow these steps to compile and run the MineStats plugin on your own Minecraft server.
@@ -101,7 +95,7 @@ Follow these steps to compile and run the MineStats plugin on your own Minecraft
    ```
 2. **Build the plugin**
    - On Windows:
-   Run FinishBuild.bat by double-clicking it.
+   Run `FinishBuild.bat` by double-clicking it.
 
    - On macOS/Linux:
    ```bash
@@ -165,6 +159,8 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 - Email: [afonsobatista13@gmail.com](mailto://afonsobatista13@gmail.com)
 
 - GitHub: [https://github.com/AfonsoBatista7/MineStats](https://github.com/AfonsoBatista7/MineStats)
+
+---
 
 Made with ❤️ for Minecraft server admins and their communities.
 
