@@ -14,7 +14,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/AfonsoBatista7/MineStats">
-    <img src="./source/favicon.ico" alt="Logo" width="80" height="80">
+    <img src="./src/org/rage/pluginstats/img/favicon.ico" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">MineStats Plugin</h3>
