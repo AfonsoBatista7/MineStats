@@ -158,12 +158,20 @@ Any contributions are welcomed from the community!
 
 1. Fork this repo
 
-2. Create a branch: git checkout -b feature/my-feature
+2. Create a branch: 
+```bash
+git checkout -b feature/my-feature
+```
 
-3. Make changes and commit: git commit -m 'Add some feature'
+3. Make changes and commit:
+  ```bash
+  git commit -m 'Add some feature'
+  ```
 
-4. Push to your branch: git push origin feature/my-feature
-
+4. Push to your branch: 
+```bash
+git push origin feature/my-feature
+```
 5. Open a pull request
 
 Please follow good coding practices and include a clear description of your changes.
