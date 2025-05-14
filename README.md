@@ -128,7 +128,23 @@ After the plugin runs once, a config.yml file is generated. Update it to point t
 
 - Each medal gives the player a special in-game tag they can use or show off.
 
-Commands and more advanced configuration options are coming soon.
+### 📋 Commands
+
+| Command         | Aliases                                                  | Description                                              |
+|-----------------|----------------------------------------------------------|----------------------------------------------------------|
+| `/upload`       | –                                                        | Uploads all the player stats to the database.            |
+| `/uploadall`    | `uploadAll`                                              | Uploads all the stats from all players.                  |
+| `/download`     | –                                                        | Downloads all the stats for a player from the database.  |
+| `/merge`        | –                                                        | Merges two player documents from the database.           |
+| `/givemedal`    | `giveMedal`                                              | Gives a medal to a player.                               |
+| `/updateall`    | `updateAll`                                              | Updates all documents in the database.                   |
+| `/medal`        | `Medal`, `medalinfo`, `Medalinfo`, `medalInfo`, `MedalInfo` | Shows information about a specific medal.            |
+| `/medals`       | `Medals`, `allmedals`, `allMedals`                       | Displays all available medals.                           |
+| `/playermedals` | `playerMedals`, `playermedal`, `playerMedal`, `pmedals`, `pm` | Shows all the medals a specified player has.      |
+| `/stats`        | `playerstats`, `playerStats`, `PlayerStats`, `Playerstats`, `pstats` | Displays current stats for the player.   |
+| `/tag`          | `tg`                                                     | Shows a list of tag commands.                            |
+| `/link`         | –                                                        | Links your Minecraft account with your Discord account.  |
+| `/unlink`       | –                                                        | Unlinks your Minecraft account from your Discord account.|
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
