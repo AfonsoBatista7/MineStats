@@ -1,6 +1,9 @@
 <a id="readme-top"></a>
 
 <!-- PROJECT SHIELDS -->
+<!--
+*** https://www.markdownguide.org/basic-syntax/#reference-style-links
+-->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -28,6 +31,34 @@
   </p>
 </div>
 
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-project">About The Project</a>
+    </li>
+    <li>
+      <a href="#getting-started">Getting Started</a>
+      <ul>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#compile">Compile</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+      </ul>
+    </li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ol>
+</details>
+
+[![Java][java-shield]][java-url]
+[![Spigot][spigot-shield]][spigot-url]
+[![MongoDB][mongodb-shield]][mongodb-url]
+[![Maven][maven-shield]][maven-url]
+
 ---
 
 ## 🧩 About The Project
@@ -46,14 +77,9 @@ Key Features:
 
 ## 🛠️ Built With
 
-- [Java](https://openjdk.org/)
-- [Spigot API](https://www.spigotmc.org/)
-- [MongoDB Java Driver](https://mongodb.github.io/mongo-java-driver/)
-- [Maven](https://maven.apache.org/)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
----
 
 ## 🚀 Getting Started
 
@@ -66,7 +92,7 @@ Follow these steps to compile and run the MineStats plugin on your own Minecraft
 - A MongoDB instance (local or remote)
 - A Minecraft Java server (e.g. Spigot or Paper)
 
-### 💾 Compile The Plugin
+### 💾 Compile
 
 1. **Clone the repository**:
    ```bash
@@ -110,6 +136,10 @@ After the plugin runs once, a config.yml file is generated. Update it to point t
 
 Commands and more advanced configuration options are coming soon.
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+---
+
 ## 🤝 Contributing
 
 Any contributions are welcomed from the community!
@@ -128,12 +158,39 @@ Please follow good coding practices and include a clear description of your chan
 
 ## 📄 License
 
-Distributed under the MIT License. See LICENSE for more information.
+Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## 📬 Contact
 
-- Email: afonsobatista13@gmail.com
+- Email: [afonsobatista13@gmail.com](mailto://afonsobatista13@gmail.com)
 
-- GitHub: MineStats Project
+- GitHub: [https://github.com/AfonsoBatista7/MineStats](https://github.com/AfonsoBatista7/MineStats)
 
 Made with ❤️ for Minecraft server admins and their communities.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- MARKDOWN LINKS & IMAGES -->
+<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
+<!-- From own repo -->
+[contributors-shield]: https://img.shields.io/github/contributors/AfonsoBatista7/MineStats.svg?style=for-the-badge
+[contributors-url]: https://github.com/AfonsoBatista7/MineStats/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/AfonsoBatista7/MineStats.svg?style=for-the-badge
+[forks-url]: https://github.com/AfonsoBatista7/MineStats/network/members
+[issues-shield]: https://img.shields.io/github/issues/AfonsoBatista7/MineStats.svg?style=for-the-badge
+[issues-url]: https://github.com/AfonsoBatista7/MineStats/issues
+[license-shield]: https://img.shields.io/github/license/AfonsoBatista7/MineStats.svg?style=for-the-badge
+[license-url]: https://github.com/AfonsoBatista7/MineStats/blob/master/LICENSE.txt
+[stars-shield]: https://img.shields.io/github/stars/AfonsoBatista7/MineStats.svg?style=for-the-badge
+[stars-url]: https://github.com/AfonsoBatista7/MineStats/stargazers
+<!-- From repo images -->
+[product-screenshot]: ./docs/images/product.png
+<!-- From badges -->
+[java-shield]: https://img.shields.io/badge/Java-FF0000?logoColor=white
+[java-url]: https://openjdk.org/
+[mongodb-shield]: https://img.shields.io/badge/MongoDB-%234ea94b.svg?logo=mongodb&logoColor=white
+[mongodb-url]: https://mongodb.github.io/mongo-java-driver/
+[maven-shield]: https://img.shields.io/badge/Maven-purple?logoColor=white
+[maven-url]: https://maven.apache.org/
+[spigot-shield]: https://img.shields.io/badge/Spigot-yellow?logoColor=black
+[spigot-url]: https://www.spigotmc.org/
