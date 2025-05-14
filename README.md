@@ -130,21 +130,23 @@ After the plugin runs once, a config.yml file is generated. Update it to point t
 
 ### 📋 Commands
 
-| Command         | Aliases                                                  | Description                                              |
-|-----------------|----------------------------------------------------------|----------------------------------------------------------|
-| `/upload`       | –                                                        | Uploads all the player stats to the database.            |
-| `/uploadall`    | `uploadAll`                                              | Uploads all the stats from all players.                  |
-| `/download`     | –                                                        | Downloads all the stats for a player from the database.  |
-| `/merge`        | –                                                        | Merges two player documents from the database.           |
-| `/givemedal`    | `giveMedal`                                              | Gives a medal to a player.                               |
-| `/updateall`    | `updateAll`                                              | Updates all documents in the database.                   |
-| `/medal`        | `Medal`, `medalinfo`, `Medalinfo`, `medalInfo`, `MedalInfo` | Shows information about a specific medal.            |
-| `/medals`       | `Medals`, `allmedals`, `allMedals`                       | Displays all available medals.                           |
-| `/playermedals` | `playerMedals`, `playermedal`, `playerMedal`, `pmedals`, `pm` | Shows all the medals a specified player has.      |
-| `/stats`        | `playerstats`, `playerStats`, `PlayerStats`, `Playerstats`, `pstats` | Displays current stats for the player.   |
-| `/tag`          | `tg`                                                     | Shows a list of tag commands.                            |
-| `/link`         | –                                                        | Links your Minecraft account with your Discord account.  |
-| `/unlink`       | –                                                        | Unlinks your Minecraft account from your Discord account.|
+| Command                                | Description                                              |
+|----------------------------------------|----------------------------------------------------------|
+| `/upload`                              | Uploads all the player stats to the database.            |
+| `/uploadall`                           | Uploads all the stats from all players.                  |
+| `/download <player>`                   | Downloads all the stats for a player from the database.  |
+| `/merge <player1> <player2>`           | Merges two player documents from the database.           |
+| `/givemedal <player> <medal> <level>`  | Gives a medal to a player.                               |
+| `/updateall`                           | Updates all documents in the database.                   |
+| `/medal <medal>`                       | Shows information about a specific medal.                |
+| `/medals`                              | Displays all available medals.                           |
+| `/playermedals <player>`               | Shows all the medals a specified player has.             |
+| `/stats <player>`                      | Displays current stats for the player.                   |
+| `/tag set <tag>`                       | Set a tag on your name                                   |
+| `/tag del`                             | Delete your current tag                                  |
+| `/tag list`                            | List all of your tags.                                   |
+| `/link`                                | Links your Minecraft account with your Discord account.  |
+| `/unlink`                              | Unlinks your Minecraft account from your Discord account.|
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
