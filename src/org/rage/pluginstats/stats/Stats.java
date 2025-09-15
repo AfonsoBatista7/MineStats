@@ -32,7 +32,7 @@ public enum Stats {
 	TIMESLOGIN(16, "timeslogin", "Number of Logins", true, true, 0L),
 	LASTLOGIN(17, "lastLogin", "Last LogIn", true, true,new SimpleDateFormat("dd/MM/yyyy").format(new Date())),
 	PLAYERSINCE(18, "playerSince", "Player Since", true, false, new SimpleDateFormat("dd/MM/yyyy").format(new Date())),
-	TIMEPLAYED(19, "timePlayed", "Time Played", true, true, "0 Hr 0 Min"),
+	TIMEPLAYED(19, "timePlayedMinutes", "Time Played", false, true, 0L),
 	ONLINE(20, "online", "Is Online?", false, true),
 	MOBSKILLED(21, "mobsKilled", "Mobs Killed", false, true, Arrays.asList()),
 	BLOCKS(22, "blocks", "Blocks", false, true, Arrays.asList()),

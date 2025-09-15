@@ -171,7 +171,7 @@ public class MergeCommand implements CommandExecutor{
 							Updates.inc(Stats.FISHCAUGHT.getQuery(), oldPlayer.getLong(Stats.FISHCAUGHT.getQuery())),
 							Updates.inc(Stats.REDSTONEUSED.getQuery(), oldPlayer.getLong(Stats.REDSTONEUSED.getQuery())),
 							Updates.min(Stats.PLAYERSINCE.getQuery(), oldPlayer.getString(Stats.PLAYERSINCE.getQuery())),
-							Updates.set(Stats.TIMEPLAYED.getQuery(), mergeTimePlayed(recentPlayer.getString(Stats.TIMEPLAYED.getQuery()), oldPlayer.getString(Stats.TIMEPLAYED.getQuery()))),
+							Updates.set(Stats.TIMEPLAYED.getQuery(), recentPlayer.getLong(Stats.TIMEPLAYED.getQuery())+oldPlayer.getLong(Stats.TIMEPLAYED.getQuery())),
 							Updates.addEachToSet(Stats.MEDALS.getQuery(), oldPlayer.getList(Stats.MEDALS.getQuery(), Document.class)),
 							Updates.addEachToSet(Stats.VERSIONS.getQuery(),oldPlayer.getList(Stats.VERSIONS.getQuery(), String.class))
 
@@ -179,21 +179,6 @@ public class MergeCommand implements CommandExecutor{
 			);
 			
 			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), oldPlayer.get(Stats.PLAYERID.getQuery())));
-	}
-	
-	private String mergeTimePlayed(String timePlayed1, String timePlayed2) {
-		String[] time1 = timePlayed1.split(" "),
-				 time2 = timePlayed2.split(" ");
-		
-		int min1 = 0, min2 = 0;
-		
-		if(time1.length>2) min1 = Integer.parseInt(time1[2]);
-		if(time2.length>2) min2 = Integer.parseInt(time2[2]);
-		
-		long seconds = (Long.parseLong(time1[0])*3600+min1*60) +
-					   (Long.parseLong(time2[0])*3600+min2*60);
-		
-		return Util.secondsToTimestamp(seconds);
 	}
 	
 	private List<Document> mergeBlockData(List<Document> rpBlocks, List<Document> opBlocks) {
