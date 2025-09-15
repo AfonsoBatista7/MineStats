@@ -112,9 +112,6 @@ public class DataBaseManager {
 	public void downloadFromDataBase(ServerPlayer sp, Document playerDoc) throws ParseException {
 		synchronized (serverManager) {
 			try {
-				String[] time = playerDoc.getString(Stats.TIMEPLAYED.getQuery()).split(" ");
-				int min = 0;
-				if(time.length>2) min = Integer.parseInt(time[2]);
 				
 				sp.setName((String) playerDoc.getString(Stats.NAME.getQuery()));
 								
@@ -131,7 +128,7 @@ public class DataBaseManager {
 								
 				sp.setNumberOfVersions(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class).size());
 				sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
-				sp.setTimePlayed(Long.parseLong(time[0])*3600+min*60);
+				sp.setTimePlayed(playerDoc.getLong(Stats.TIMEPLAYED.getQuery()));
 				sp.setDeaths(playerDoc.getLong(Stats.DEATHS.getQuery()));
 				sp.setTimesLogin(playerDoc.getLong(Stats.TIMESLOGIN.getQuery()));
 				sp.setSessionMarkTime(null);

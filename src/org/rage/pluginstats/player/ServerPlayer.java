@@ -60,7 +60,7 @@ public class ServerPlayer extends PlayerProfile {
 		if(sessionMarkTime != null)
 		{
 			Date now = new Date();
-			long dif = (now.getTime() - sessionMarkTime.getTime()) / 1000;
+			long dif = (now.getTime() - sessionMarkTime.getTime()) / 60000;
 			timePlayed += dif;
 			sessionMarkTime = now;
 		}
@@ -230,7 +230,7 @@ public class ServerPlayer extends PlayerProfile {
 			if(!isRealyOnline()) quit();
 			else {
 				flushSessionPlaytime();
-				medalCheck(Medals.TIMEWALKER, getTimePlayed()/3600, Main.currentServer.getPlayer(getName()));
+				medalCheck(Medals.TIMEWALKER, getTimePlayed()/60, Main.currentServer.getPlayer(getName()));
 				uploadToDataBase();
 			}
 		}

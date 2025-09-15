@@ -81,14 +81,23 @@ public class PlayerStatsCommand implements CommandExecutor {
 		sender.sendMessage(Util.chat("&b[MineStats]&7 - &c<player>&7 Stats:").replace("<player>", name));
 		for(Stats stat: Stats.values()) {
 			if(stat.toPrint())
-				sender.sendMessage(Util.chat("    &e<stat>&7: &b<variable>").replace("<stat>", stat.getText())
-															  	  .replace("<variable>", String.valueOf(Util.getStatVariable(pp, stat))));
+				sender.sendMessage(Util.chat("    &e<stat>&7: &b<variable>")
+                                        .replace("<stat>", stat.getText())
+                                        .replace("<variable>", String.valueOf(Util.getStatVariable(pp, stat))));
 		}
+
+                sender.sendMessage(Util.chat("    &e<stat>&7: &b<variable>")
+                        .replace("<stat>", Stats.TIMEPLAYED.getText())
+                        .replace("<variable>", Util.minutesToTimestamp(pp.getTotalPlaytimeMinutes())));
 						
 		Document discUser = mongoDB.getDiscordUserByPlayer(playerId);
-		
-		if(discUser!=null) sender.sendMessage(Util.chat("    &a&lLink&7: &b&l<variable>").replace("<variable>", discUser.getString("userName")));
-		else sender.sendMessage(Util.chat("    &c&lLink&7: &b&l???"));
+
+		String chatMessage = discUser!=null ? 
+                            Util.chat("    &a&lLink&7: &b&l<variable>")
+                                        .replace("<variable>", discUser.getString("userName"))
+                          : Util.chat("    &c&lLink&7: &b&l???");
+
+                sender.sendMessage(chatMessage);
 		
 		return true;
 	}

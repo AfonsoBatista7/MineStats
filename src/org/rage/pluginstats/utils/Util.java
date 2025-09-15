@@ -21,16 +21,14 @@ public class Util {
 		return ChatColor.translateAlternateColorCodes('&', message);
 	}
 	
-	public static String secondsToTimestamp(long seconds) {
+	public static String minutesToTimestamp(long minutes) {
 		
-		long hours = seconds / 3600;
-		double decimal = seconds/3600.0F-hours;
-		int minutes = (int) ((decimal*3600)/60);
+		long hours = minutes/60;
+		int minutesInt = (int) (minutes % 60);
+
+                String timeStr = minutesInt==0 ? "%s Hours" : "%s Hr %s Min";
 		
-		if(minutes==0)
-			return String.format("%s Hours", hours);
-		else
-			return String.format("%s Hr %s Min", hours, minutes);
+                return String.format(timeStr, hours, minutesInt);
 	}
 	
 	public static String rainbowText(String message) {
@@ -38,8 +36,6 @@ public class Util {
 		StringBuilder builder = new StringBuilder(message);
 				
 		int index = 0;
-		
-		
 		
 		for(int i=0; i<builder.length(); i+=3) {
 			
@@ -82,7 +78,7 @@ public class Util {
 			case WITHERSLAYER:
 				return pp.getMobStats().getWitherKills();
 			case TIMEWALKER:
-				return pp.getTimePlayed()/3600;
+				return pp.getTimePlayed()/60;
 			case FISHERMAN:
 				return pp.getMobStats().getFishCaught();
 			case MINER:
@@ -116,8 +112,6 @@ public class Util {
 				return pp.getLastLogin();
 			case PLAYERSINCE:
 				return pp.getPlayerSince();
-			case TIMEPLAYED:
-				return pp.getTotalPlaytime();
 			case ONLINE:
 				return pp.isOnline();
 			case MEDALS:
@@ -138,6 +132,8 @@ public class Util {
 				return pp.getMobStats().getNumMobsKilledList();
 			case BLOCKS:
 				return pp.getBlockStats().getBlockStatsList();
+			case TIMEPLAYED:
+				return pp.getTimePlayed();
 			default:
 			
 		}

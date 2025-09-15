@@ -25,9 +25,9 @@ public class DataBase {
 	
 	private static FileConfiguration config;
 	private final String CONNECTION = "mongoURL", 
-						 DATABASE_NAME = "dataBaseName",
-						 COLLECTION_NAME = "collectionName",
-						 DISCORD_DATABASE_NAME = "discordCollectionName";
+                             DATABASE_NAME = "dataBaseName",
+                             COLLECTION_NAME = "collectionName",
+                             DISCORD_DATABASE_NAME = "discordCollectionName";
 	
 	public DataBase(FileConfiguration config){
 		DataBase.config = config; 

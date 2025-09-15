@@ -37,13 +37,13 @@ public class PlayerProfile {
 	protected int numberOfVersions, numberOfLinkTrys;
 	
 	protected long metersTraveled,
-				   kilometer,
-				   timePlayed,
-				   deaths,
-				   timesLogin; 
+                       kilometer,
+                       timePlayed,
+                       deaths,
+                       timesLogin; 
 	
 	protected Date lastLogin,
-				   playerSince;
+                       playerSince;
 	
 	private SimpleDateFormat formatterLastLogin = new SimpleDateFormat("dd/MM/yyyy h:mm a");
 	private SimpleDateFormat formatterPlayerSince = new SimpleDateFormat("dd/MM/yyyy");
@@ -60,7 +60,6 @@ public class PlayerProfile {
 		numberOfLinkTrys = 0;
 		
 		this.playerId = playerID;
-		
 	}
 	
 	public int getNumberOfLinkTrys() {
@@ -230,25 +229,20 @@ public class PlayerProfile {
 	}
 
 	public String getTotalPlaytime() {
-		return Util.secondsToTimestamp(timePlayed);
+		return Util.minutesToTimestamp(timePlayed);
 	}
 	
-	public String getTotalPlaytimeSeconds() {
-		return Long.toString(timePlayed);
+	public long getTotalPlaytimeMinutes() {
+		return timePlayed;
 	}
 	
-	public String getSessionPlaytime() {
-		if(isOnline()) {
-			long seccondsInSession = (new Date().getTime() - lastLogin.getTime()) / 1000;
-			return Util.secondsToTimestamp(seccondsInSession);
-		} else return "-1";
+	public String getSessionPlaytimeString() {
+                return Util.minutesToTimestamp(getSessionPlaytimeMinutes());
 	}
 	
-	public String getSessionPlaytimeSeconds() {
-		if(isOnline()) {
-			long secondsInSession = (new Date().getTime() - lastLogin.getTime()) / 1000;
-			return Long.toString(secondsInSession);
-			
-		} else return "-1";
+	public long getSessionPlaytimeMinutes() {
+                return isOnline() ?
+                    (new Date().getTime() - lastLogin.getTime()) / 60000 
+                    : 0;
 	}
 }

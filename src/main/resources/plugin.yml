@@ -1,5 +1,5 @@
 name: MineStats
-version: 7
+version: 8
 author: Afonso Batista
 main: org.rage.pluginstats.Main
 description: This plugin uploads to a dataBase the Stats of the players in a Minecraft Server.

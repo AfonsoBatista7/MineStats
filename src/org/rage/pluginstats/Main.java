@@ -50,6 +50,7 @@ public class Main extends JavaPlugin {
 
 	private boolean initialized = false;
 	private boolean loadError = false;
+	private boolean hasOptionalWarnings = false;
 	
 	public static JDA jda = null;
 	public static final Set<GatewayIntent> api = Sets.immutableEnumSet(EnumSet.of(
@@ -71,27 +72,32 @@ public class Main extends JavaPlugin {
 	
 	@Override
 	public void onLoad() {
-		
+
 		log = this.getServer().getLogger();
 		try {
 			loadConfig();
-			
+
+			if (!validateConfig()) {
+				loadError = true;
+				return;
+			}
+
 			Logger.getLogger( "org.mongodb.driver" ).setLevel(Level.SEVERE);  //TO NOT HAVE LOGS ON CONSOLE
-			
+
 			currentServer = getServer();
 			serverMan = new ServerManager(new DataBase(getConfig()), log, this);
 			mongoDB = serverMan.getDataBaseManager();
 			linkMan = new LinkManager(mongoDB, serverMan);
 			controller = new ListenersController(mongoDB, serverMan);
-			
+
 			Thread initThread = new Thread(this::init, "[MineStats] - Initialization Discord Bot");
 	        initThread.setUncaughtExceptionHandler((t, e) -> {
 	            getLogger().severe("[MineStats] - failed to load Discord functions properly: " + e.getMessage());
 	        });
 	        initThread.start();
-			
+
 			initialized = true;
-			
+
 		} catch(Exception e) {
 			log.log(Level.INFO, "[MineStats] - Error on enable MongoDB.", e);
 			loadError = true;
@@ -163,6 +169,65 @@ public class Main extends JavaPlugin {
 	public void loadConfig() {
 		getConfig().options().copyDefaults(true);
 		saveConfig();
+	}
+
+	private boolean validateConfig() {
+		// Check required MongoDB settings
+		String mongoURL = getConfig().getString("mongoURL", "");
+		if (mongoURL.isEmpty() || mongoURL.equals("YOUR_MONGODB_URL_HERE")) {
+			log.severe("[MineStats] - MongoDB URL is not configured! Please set 'mongoURL' in config.yml");
+			log.severe("[MineStats] - Plugin will not load until properly configured.");
+			return false;
+		}
+
+		// Check required Discord settings
+		String token = getConfig().getString("token", "");
+		if (token.isEmpty() || token.equals("YOUR_DISCORD_TOKEN_HERE")) {
+			log.severe("[MineStats] - Discord token is not configured! Please set 'token' in config.yml");
+			log.severe("[MineStats] - Plugin will not load until properly configured.");
+			return false;
+		}
+
+		// Check database configuration
+		String dataBaseName = getConfig().getString("dataBaseName", "");
+		if (dataBaseName.isEmpty()) {
+			log.severe("[MineStats] - Database name is not configured! Please set 'dataBaseName' in config.yml");
+			log.severe("[MineStats] - Plugin will not load until properly configured.");
+			return false;
+		}
+
+		String collectionName = getConfig().getString("collectionName", "");
+		if (collectionName.isEmpty()) {
+			log.severe("[MineStats] - Collection name is not configured! Please set 'collectionName' in config.yml");
+			log.severe("[MineStats] - Plugin will not load until properly configured.");
+			return false;
+		}
+
+		// Optional settings - just log info messages
+
+		String discordGuildId = getConfig().getString("discordGuildId", "");
+		if (discordGuildId.isEmpty() || discordGuildId.equals("YOUR_DISCORD_GUILD_ID_HERE")) {
+			log.info("[MineStats] - Discord Guild ID not configured. Some Discord features may not work.");
+			this.hasOptionalWarnings = true;
+		}
+
+		String channelId = getConfig().getString("channelId", "");
+		if (channelId.isEmpty() || channelId.equals("YOUR_DISCORD_CHANNEL_ID_HERE")) {
+			log.info("[MineStats] - Discord Channel ID not configured. Chat integration will not work.");
+			this.hasOptionalWarnings = true;
+		}
+
+		String discordRoleLinkedId = getConfig().getString("discordRoleLinkedId", "");
+		if (discordRoleLinkedId.isEmpty() || discordRoleLinkedId.equals("YOUR_DISCORD_ROLE_ID_HERE")) {
+			log.info("[MineStats] - Discord Role ID not configured. Role assignment will not work.");
+			this.hasOptionalWarnings = true;
+		}
+
+		if (this.hasOptionalWarnings) {
+			log.info("[MineStats] - Plugin loaded with some optional features disabled. Check config.yml for full functionality.");
+		}
+
+		return true;
 	}
 	
 	@Override
