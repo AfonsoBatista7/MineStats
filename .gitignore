@@ -2,3 +2,5 @@ config.yml
 private.asc
 MineStats.jar
 target/
+.DS_Store
+**/.DS_Store
