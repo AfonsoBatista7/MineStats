@@ -95,11 +95,11 @@ Follow these steps to compile and run the MineStats plugin on your own Minecraft
    ```
 2. **Build the plugin**
    - On Windows:
-   Run `FinishBuild.bat` by double-clicking it.
+   Run `build.bat` by double-clicking it.
 
    - On macOS/Linux:
    ```bash
-   mvn clean package
+   ./build.sh
    ```
 3. Find the built .jar file in the target/ folder.
 
