@@ -4,11 +4,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
 import org.bukkit.Bukkit;
-import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.apache.commons.lang3.StringUtils;
 import org.rage.pluginstats.stats.Stats;
 import org.rage.pluginstats.utils.DiscordUtil;
+import org.rage.pluginstats.mongoDB.DataBaseManager;
 
 import com.vdurmont.emoji.EmojiParser;
 
@@ -43,10 +44,12 @@ public class DiscordChatListener extends ListenerAdapter {
 		String message = event.getMessage().getContentRaw();
 		User user = event.getAuthor();
 		Guild guild = event.getGuild();
+
+                int maxDiscordMessage = mongoDB.getConfig().getInt("maxDiscordMessage");
 		
-		if(message.length() > mongoDB.getConfig().getInt("maxDiscordMessage")) {
+		if(message.length() > maxDiscordMessage) {
 	            event.getMessage().addReaction("\uD83D\uDCAC").queue();
-	            message = message.substring(0, mongoDB.getConfig().getInt("maxDiscordMessage"));
+	            message = message.substring(0, maxDiscordMessage);
 	    }
 		
 		List<Member> members = guild.getMembersWithRoles(guild.getRoleById(DiscordUtil.getRoleLinkedId()));
@@ -55,10 +58,16 @@ public class DiscordChatListener extends ListenerAdapter {
 		if(!members.contains(guild.getMemberById(user.getIdLong()))) return;
 		
 		if (StringUtils.isBlank(EmojiParser.removeAllEmojis(message))) return;
+
+                System.out.println(message);
 		
 		message = DiscordUtil.convertMentionsToNames(message);
-		
-		String minecraftMessage = DiscordUtil.buildDiscordToMinecraft(mongoDB.getPlayerByDiscordUser(user.getId()).getString(Stats.NAME.getQuery()), message);
+
+		Document playerDoc = mongoDB.getPlayerByDiscordUser(user.getId());
+                if(playerDoc==null) return;
+
+		String minecraftMessage = DiscordUtil.buildDiscordToMinecraft(
+                                playerDoc.getString(Stats.NAME.getQuery()), message);
 		
 		Bukkit.broadcastMessage(minecraftMessage);
 	}
