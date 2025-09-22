@@ -78,7 +78,8 @@ public class LinkManager {
 			if(rawCode.contains(String.valueOf(code))) {
 				String playerName = serverMan.getPlayerFromHashMap(getPlayer(code)).getName();
 				linkProcess(code, userId);
-				return String.format("You were linked with player %s!", playerName);
+
+				return playerName;
 			}
 		}
 			
