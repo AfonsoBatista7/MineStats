@@ -77,7 +77,7 @@ public class DiscordLinkCommand implements CommandExecutor {
 				
 		pp.setLinkTrys(numberOfTrys+1);
 				
-		sender.sendMessage(Util.chat("&7Send &d&l"+linkMan.generateNewCode(pp.getPlayerID())+" &7to the Link discord Bot"));
+		sender.sendMessage(Util.chat("&b[MineStats]&7 - &7Send &d&l"+linkMan.generateNewCode(pp.getPlayerID())+" &7to the Link discord Bot"));
 		
 		return true;
 	}
