@@ -129,6 +129,7 @@ public class DataBaseManager {
 				sp.setNumberOfVersions(playerDoc.getList(Stats.VERSIONS.getQuery(), String.class).size());
 				sp.setMetersTraveled(playerDoc.getLong(Stats.TRAVELLED.getQuery()));
 				sp.setTimePlayed(playerDoc.getLong(Stats.TIMEPLAYED.getQuery()));
+				sp.setTimeAFK(playerDoc.getLong(Stats.TIMEAFK.getQuery()));
 				sp.setDeaths(playerDoc.getLong(Stats.DEATHS.getQuery()));
 				sp.setTimesLogin(playerDoc.getLong(Stats.TIMESLOGIN.getQuery()));
 				sp.setSessionMarkTime(null);

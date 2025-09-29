@@ -241,7 +241,6 @@ public class Main extends JavaPlugin {
 			
 			saveConfig();
 			serverMan.logOutAllPlayers();
-			serverMan.uploadAll();
 		}
 	}
 	

@@ -118,7 +118,7 @@ public class PlayerProfile {
 		this.timePlayed = timePlayed;
 	}
 
-	public void setTimeAfk(long timeAFK) {
+	public void setTimeAFK(long timeAFK) {
 		this.timeAFK = timeAFK;
 	}
 	
