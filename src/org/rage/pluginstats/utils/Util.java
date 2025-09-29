@@ -83,6 +83,8 @@ public class Util {
 				return pp.getMobStats().getFishCaught();
 			case MINER:
 				return pp.getBlockStats().getMinedBlocks();
+			case IDLER:
+				return pp.getTimeAFK()/60;
 			default:
 		}
 		return 0;
@@ -134,6 +136,8 @@ public class Util {
 				return pp.getBlockStats().getBlockStatsList();
 			case TIMEPLAYED:
 				return pp.getTimePlayed();
+			case TIMEAFK:
+				return pp.getTimeAFK();
 			default:
 			
 		}

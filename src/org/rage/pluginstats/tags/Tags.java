@@ -24,7 +24,8 @@ public enum Tags {
 	NETHERKILLER("netherkiller", "&4"),
 	TIMEWALKER("timewalker"),
 	FISHERMAN("fisherman", "&b"),
-	MINER("miner", "&7");
+	MINER("miner", "&7"),
+	IDLER("idler");
 	
 	private String tag, color;
 	private boolean haveCustomColor;

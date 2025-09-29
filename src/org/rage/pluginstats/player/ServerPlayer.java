@@ -25,12 +25,15 @@ import net.dv8tion.jda.api.entities.Guild;
  */
 public class ServerPlayer extends PlayerProfile {
 
-	private final long TIME_BETWEEN_SAVES, TIME_DISCORD_LINK;
+	private final int AFK_MAX_TIME, TIME_BETWEEN_SAVES, TIME_DISCORD_LINK;
 	
-	private Date sessionMarkTime;
+	private Date sessionMarkTime, afkMarkTime;
 	private DataBaseManager mongoDB;
+
+        private boolean isAFK;
+        private int sessionAfkTime;
 	
-	private Timer timer;
+	private Timer timer, afkTimer;
 	
 	public ServerPlayer(UUID playerID, DataBaseManager mongoDB) {
 		super(playerID);
@@ -39,12 +42,17 @@ public class ServerPlayer extends PlayerProfile {
 		
 		TIME_DISCORD_LINK = mongoDB.getConfig().getInt("timeDiscordLink");
 		TIME_BETWEEN_SAVES = mongoDB.getConfig().getInt("timeBetweenSaves");
+		AFK_MAX_TIME = mongoDB.getConfig().getInt("afkMaxTime");
+
 		timer = new Timer();
+                afkTimer = new Timer();
+                isAFK = false;
+                sessionAfkTime = 0;
 	}
 	
 	public boolean resetLinkTrys() {
 		Date now = new Date();
-		long dif = now.getTime() - lastLogin.getTime() / 1000;
+		long dif = (now.getTime() - lastLogin.getTime()) / 1000;
 		if(dif>TIME_DISCORD_LINK) {
 			setLinkTrys(0);
 			return true;
@@ -57,24 +65,60 @@ public class ServerPlayer extends PlayerProfile {
 	}
 	
 	public void flushSessionPlaytime() {
-		if(sessionMarkTime != null)
-		{
+		if(sessionMarkTime != null) {
 			Date now = new Date();
 			long dif = (now.getTime() - sessionMarkTime.getTime()) / 60000;
-			timePlayed += dif;
+			timePlayed += dif - sessionAfkTime;
+
+                        sessionAfkTime = 0; 
+
 			sessionMarkTime = now;
 		}
 	}
+
+	public void flushAFKTime() {
+		if(afkMarkTime != null) {
+			Date now = new Date();
+			long dif = (now.getTime() - afkMarkTime.getTime()) / 60000;
+
+                        sessionAfkTime += dif;
+			timeAFK += dif;
+
+                        if(isAFK) afkMarkTime = now;
+                        else afkMarkTime = null;
+		}
+	}
+
+        public void resetAFKTimer() {
+            if(afkTimer != null) afkTimer.cancel();
+
+            if(isAFK) {
+                isAFK = false;
+                flushAFKTime();
+
+                Bukkit.broadcastMessage(Util.chat("&b[MineStats]&7 - &a<player>&7 is no longer &6AFK&7!")
+                  .replace("<player>", getName()));
+            }
+
+
+            afkTimer = new Timer();
+            afkTimer.schedule(new AFKTimerTask(), AFK_MAX_TIME); // Single execution after delay
+        }
 	
 	public void quit() {
+                if(isAFK) flushAFKTime();
+                if(afkTimer != null) afkTimer.cancel();
+
 		flushSessionPlaytime();
 		sessionMarkTime = null;
+
 		online = false;
 	}
 	
 	public void join() {
 		sessionMarkTime = new Date();
 		resetLinkTrys();
+                resetAFKTimer();
 		lastLogin = new Date();
 		online = true;
 		timesLogin++;
@@ -143,9 +187,10 @@ public class ServerPlayer extends PlayerProfile {
 			mongoDB.newMedalOnDataBase(newMedal, player);
 			newMedal.newMedalEffect(player);
 			Bukkit.broadcastMessage(
-					Util.chat("&b[MineStats]&7 - &a<player>&7, received the &c<medalName> &6<level>&7 Medal!!! :D.".replace("<player>", getName())
-															   													   .replace("<medalName>", medal.toString())
-															   													   .replace("<level>", medal.getMedalLevel().toString())));
+                            Util.chat("&b[MineStats]&7 - &a<player>&7, received the &c<medalName> &6<level>&7 Medal!!! :D."
+                                .replace("<player>", getName())
+                                .replace("<medalName>", medal.toString())
+                                .replace("<level>", medal.getMedalLevel().toString())));
 		}
 	}
 	
@@ -229,11 +274,28 @@ public class ServerPlayer extends PlayerProfile {
 			
 			if(!isRealyOnline()) quit();
 			else {
+                                flushAFKTime();
+                                medalCheck(Medals.IDLER, getTimeAFK()/60, Main.currentServer.getPlayer(getName()));
 				flushSessionPlaytime();
 				medalCheck(Medals.TIMEWALKER, getTimePlayed()/60, Main.currentServer.getPlayer(getName()));
 				uploadToDataBase();
 			}
 		}
 	}
+
+       private class AFKTimerTask extends TimerTask {
+
+              @Override
+              public void run() {
+                  // Mark AFK time when timer expires
+                  afkMarkTime = new Date();
+                  isAFK = true;
+
+                  Bukkit.broadcastMessage(Util.chat("&b[MineStats]&7 - &a<player>&7 is now &6AFK&7!")
+                          .replace("<player>", getName()));
+
+              }
+      }
+
 	
 }

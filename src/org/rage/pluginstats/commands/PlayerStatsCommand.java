@@ -88,7 +88,10 @@ public class PlayerStatsCommand implements CommandExecutor {
 
                 sender.sendMessage(Util.chat("    &e<stat>&7: &b<variable>")
                         .replace("<stat>", Stats.TIMEPLAYED.getText())
-                        .replace("<variable>", Util.minutesToTimestamp(pp.getTotalPlaytimeMinutes())));
+                        .replace("<variable>", Util.minutesToTimestamp(pp.getTimePlayed())));
+                sender.sendMessage(Util.chat("    &e<stat>&7: &b<variable>")
+                        .replace("<stat>", Stats.TIMEAFK.getText())
+                        .replace("<variable>", Util.minutesToTimestamp(pp.getTimeAFK())));
 						
 		Document discUser = mongoDB.getDiscordUserByPlayer(playerId);
 

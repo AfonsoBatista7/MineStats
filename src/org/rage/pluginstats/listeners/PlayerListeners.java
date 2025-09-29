@@ -10,6 +10,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 /**
  * @author Afonso Batista
@@ -50,6 +53,24 @@ public class PlayerListeners implements Listener {
 		if(!event.isCancelled() && event.getState().equals(State.CAUGHT_FISH))
 			controller.playerFishCaught(event.getPlayer(), event.getCaught());
 	}
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onPlayerChat(AsyncPlayerChatEvent event) {
+                if(!event.isCancelled())
+                        controller.playerChat(event.getPlayer());
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onPlayerInteract(PlayerInteractEvent event) {
+                if(!event.isCancelled())
+                        controller.playerInteract(event.getPlayer());
+        }
+
+        @EventHandler
+        public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+               if(!event.isCancelled())
+                        controller.playerCommand(event.getPlayer()); 
+        }
 	
 	public boolean samePlace(Location l1, Location l2) {
 		return (l1.getBlockX() == l2.getBlockX()) &&
