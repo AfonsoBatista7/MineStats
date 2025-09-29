@@ -50,6 +50,20 @@ public class PlayerListeners implements Listener {
 		if(!event.isCancelled() && event.getState().equals(State.CAUGHT_FISH))
 			controller.playerFishCaught(event.getPlayer(), event.getCaught());
 	}
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onPlayerChat(AsyncPlayerChatEvent event) {
+                if(!event.isCancelled())
+                        controller.playerChat(event.getPlayer());
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onPlayerInteract(PlayerInteractEvent event) {
+                if(!event.isCancelled())
+                        controller.playerInteract(event.getPlayer());
+        }
+
+
 	
 	public boolean samePlace(Location l1, Location l2) {
 		return (l1.getBlockX() == l2.getBlockX()) &&

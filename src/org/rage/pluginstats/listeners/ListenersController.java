@@ -81,6 +81,9 @@ public class ListenersController {
 	public void playerMove(Player player) {
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.move();
+
+                pp.resetAFKTimer();
+
 		if(pp.getKilometer()==1000) {
 			pp.resetKilometer();
 			pp.medalCheck(Medals.WORLDTRAVELLER, pp.getMetersTraveled(), player);
@@ -90,6 +93,14 @@ public class ListenersController {
 	
 	public void playerKick(Player player) {
 		playerQuit(player);
+	}
+
+	public void playerChat(Player player) {
+                mongoDB.getPlayerStats(player).resetAFKTimer();
+	}
+
+	public void playerInteract(Player player) {
+                mongoDB.getPlayerStats(player).resetAFKTimer();
 	}
 	
 	public void placeBlock(Player player, Block block) {

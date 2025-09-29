@@ -39,6 +39,7 @@ public class PlayerProfile {
 	protected long metersTraveled,
                        kilometer,
                        timePlayed,
+                       timeAFK,
                        deaths,
                        timesLogin; 
 	
@@ -115,6 +116,10 @@ public class PlayerProfile {
 	
 	public void setTimePlayed(long timePlayed) {
 		this.timePlayed = timePlayed;
+	}
+
+	public void setTimeAfk(long timeAFK) {
+		this.timeAFK = timeAFK;
 	}
 	
 	public void setDeaths(long numDeaths) {
@@ -193,6 +198,10 @@ public class PlayerProfile {
 	public long getTimePlayed() {
 		return timePlayed;
 	}
+
+	public long getTimeAFK() {
+		return timeAFK;
+	}
 	
 	public long getKilometer() {
 		return kilometer;
@@ -230,6 +239,10 @@ public class PlayerProfile {
 
 	public String getTotalPlaytime() {
 		return Util.minutesToTimestamp(timePlayed);
+	}
+
+	public String getTotalAfkTime() {
+		return Util.minutesToTimestamp(timeAFK);
 	}
 	
 	public long getTotalPlaytimeMinutes() {
