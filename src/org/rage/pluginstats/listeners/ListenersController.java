@@ -102,6 +102,11 @@ public class ListenersController {
 	public void playerInteract(Player player) {
                 mongoDB.getPlayerStats(player).resetAFKTimer();
 	}
+
+	public void playerCommand(Player player) {
+                mongoDB.getPlayerStats(player).resetAFKTimer();
+	}
+
 	
 	public void placeBlock(Player player, Block block) {
 		if(block.getType().isBlock()) {

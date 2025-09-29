@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 /**
  * @author Afonso Batista
@@ -68,7 +69,7 @@ public class PlayerListeners implements Listener {
         @EventHandler
         public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
                if(!event.isCancelled())
-                        controller.resetAFKTimer(event.getPlayer();); 
+                        controller.playerCommand(event.getPlayer()); 
         }
 	
 	public boolean samePlace(Location l1, Location l2) {
