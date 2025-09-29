@@ -49,6 +49,7 @@ public class ServerManager {
 	 */
 	public void uploadAll() {
 		for(ServerPlayer ps : stats.values()) {
+                        ps.flushAFKTime();
 			ps.flushSessionPlaytime();
 			ps.stopPersisting();
 			mongoDB.uploadToDataBase(ps);

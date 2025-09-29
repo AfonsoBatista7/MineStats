@@ -274,9 +274,10 @@ public class ServerPlayer extends PlayerProfile {
 			
 			if(!isRealyOnline()) quit();
 			else {
+                                flushAFKTime();
+                                medalCheck(Medals.IDLER, getTimeAFK()/60, Main.currentServer.getPlayer(getName()));
 				flushSessionPlaytime();
 				medalCheck(Medals.TIMEWALKER, getTimePlayed()/60, Main.currentServer.getPlayer(getName()));
-                                medalCheck(Medals.IDLER, getTimeAFK(), Main.currentServer.getPlayer(getName()));
 				uploadToDataBase();
 			}
 		}

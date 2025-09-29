@@ -10,6 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 /**
  * @author Afonso Batista
@@ -63,7 +65,11 @@ public class PlayerListeners implements Listener {
                         controller.playerInteract(event.getPlayer());
         }
 
-
+        @EventHandler
+        public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+               if(!event.isCancelled())
+                        controller.resetAFKTimer(event.getPlayer();); 
+        }
 	
 	public boolean samePlace(Location l1, Location l2) {
 		return (l1.getBlockX() == l2.getBlockX()) &&

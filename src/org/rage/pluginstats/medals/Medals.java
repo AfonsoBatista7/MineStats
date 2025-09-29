@@ -27,7 +27,7 @@ public enum Medals {
 	TIMEWALKER(100, 2, 16, "Time Played", "Play some time on the server :DDD", Tags.TIMEWALKER, 952897726901813258L),		// #16 Time Played					 
 	FISHERMAN(10, 2, 17, "Fish Caught", "Catch some fish", Tags.FISHERMAN, 824004714479878144L),					// #17 Fish Caught
 	MINER(10000, 3, 18, "Mined Blocks", "Break blocks under the sea level (63)", Tags.MINER),					// #18 Mined Blocks
-	IDLER(30, 2, 19, "Time AFK", "Stay AFK for some time zZzZ...", Tags.IDLER),		                                        // #19 Time AFK
+	IDLER(30, 2, 19, "Time AFK", "Stay AFK for some time zZzZ...", Tags.IDLER);		                                        // #19 Time AFK
 	
 	private int index;
 	private long transition, roleId=0;

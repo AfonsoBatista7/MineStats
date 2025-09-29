@@ -37,7 +37,7 @@ public enum Stats {
 	MOBSKILLED(21, "mobsKilled", "Mobs Killed", false, true, Arrays.asList()),
 	BLOCKS(22, "blocks", "Blocks", false, true, Arrays.asList()),
 	LINK(23, "link", "Link", false, false, ""),
-	TIMEAFK(24, "timeAFKMinutes", "Time AFK", false, true, 0L),
+	TIMEAFK(24, "timeAFKMinutes", "Time AFK", false, true, 0L);
 
 	
 	private int index;

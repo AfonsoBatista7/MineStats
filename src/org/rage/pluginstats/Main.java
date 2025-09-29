@@ -54,13 +54,13 @@ public class Main extends JavaPlugin {
 	
 	public static JDA jda = null;
 	public static final Set<GatewayIntent> api = Sets.immutableEnumSet(EnumSet.of(
-													GatewayIntent.GUILD_MEMBERS,
-													GatewayIntent.GUILD_BANS,
-													GatewayIntent.GUILD_EMOJIS,
-													GatewayIntent.GUILD_VOICE_STATES,
-													GatewayIntent.GUILD_MESSAGES,
-													GatewayIntent.DIRECT_MESSAGES
-												));
+                                                    GatewayIntent.GUILD_MEMBERS,
+                                                    GatewayIntent.GUILD_BANS,
+                                                    GatewayIntent.GUILD_EMOJIS,
+                                                    GatewayIntent.GUILD_VOICE_STATES,
+                                                    GatewayIntent.GUILD_MESSAGES,
+                                                    GatewayIntent.DIRECT_MESSAGES
+                                            ));
 		
 	public static Server currentServer;
 	
