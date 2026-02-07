@@ -135,6 +135,10 @@ public class DataBaseManager {
 				sp.setSessionMarkTime(null);
 				
 				sp.setMedals(loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class)));
+
+				List<String> customTagsList = playerDoc.getList("customTags", String.class);
+				if(customTagsList != null) sp.setCustomTags(customTagsList.toArray(new String[0]));
+				else sp.setCustomTags(new String[0]);
 				
 				sp.setPlayerSince(new SimpleDateFormat("dd/MM/yyyy").parse(playerDoc.getString(Stats.PLAYERSINCE.getQuery())));
 				sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy h:mm a").parse(playerDoc.getString(Stats.LASTLOGIN.getQuery())));
@@ -279,6 +283,14 @@ public class DataBaseManager {
 		return mapBlockStats;
 	}
 	
+	public void addCustomTag(UUID playerId, String tag) {
+		mongoDB.getServerCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), playerId), Updates.addToSet("customTags", tag));
+	}
+
+	public void removeCustomTag(UUID playerId, String tag) {
+		mongoDB.getServerCollection().updateOne(Filters.eq(Stats.PLAYERID.getQuery(), playerId), Updates.pull("customTags", tag));
+	}
+
 	public void updateStat(Bson filter, Bson update) {
 		mongoDB.getServerCollection().updateOne(filter, update);
 	}
