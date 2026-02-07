@@ -134,9 +134,6 @@ public class MergeCommand implements CommandExecutor{
 						.replace("<player1>", playerDoc1.getString(Stats.NAME.getQuery()))
 						.replace("<player2>", playerDoc2.getString(Stats.NAME.getQuery()))));
 		
-		//Player player = Main.currentServer.getPlayer(playerDoc1.getString(Stats.NAME.getQuery()));
-		
-		//serverMan.getPlayerStats(playerId).medalCheck(Medals.NAMEHOLDER, playerDoc1.getList(Stats.NAMES.getQuery(), String.class).size(), player);
 		return true;
 	}
 	
@@ -145,6 +142,8 @@ public class MergeCommand implements CommandExecutor{
 			//Merge all duplicate data, incrising the stats
 			mongoDB.updateMultStats(Filters.eq(Stats.PLAYERID.getQuery(), recentPlayer.get(Stats.PLAYERID.getQuery())),
 					Updates.combine(
+							Updates.set(Stats.CUSTOMTAGS.getQuery(), mergeTagData(recentPlayer.getList(Stats.CUSTOMTAGS.getQuery(), String.class),
+									oldPlayer.getList(Stats.CUSTOMTAGS.getQuery(), String.class))),
 							Updates.set(Stats.BLOCKS.getQuery(), mergeBlockData(recentPlayer.getList(Stats.BLOCKS.getQuery(), Document.class),
 									oldPlayer.getList(Stats.BLOCKS.getQuery(), Document.class))),
 							Updates.set(Stats.MOBSKILLED.getQuery(), mergeMobData(recentPlayer.getList(Stats.MOBSKILLED.getQuery(), Document.class),
@@ -181,6 +180,17 @@ public class MergeCommand implements CommandExecutor{
 			mongoDB.deleteDoc(Filters.eq(Stats.PLAYERID.getQuery(), oldPlayer.get(Stats.PLAYERID.getQuery())));
 	}
 	
+	private List<String> mergeTagData(List<String> rpTags, List<String> opTags) {
+		List<String> merged = new ArrayList<>(rpTags != null ? rpTags : new ArrayList<>());
+
+		if(opTags != null) {
+			for(String tag : opTags) {
+				if(!merged.contains(tag)) merged.add(tag);
+			}
+		}
+
+		return merged;
+	}
 	private List<Document> mergeBlockData(List<Document> rpBlocks, List<Document> opBlocks) {
 		
 		int toRemove = -1;

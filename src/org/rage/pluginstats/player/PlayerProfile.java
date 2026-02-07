@@ -27,6 +27,7 @@ public class PlayerProfile {
 	protected String name;
 	
 	private Medal[] medals;
+	private String[] customTags;
 	private Stat[] stats;
 	
 	protected boolean online;
@@ -57,6 +58,7 @@ public class PlayerProfile {
 		mobStats = new MobStats();
 		
 		medals = new Medal[Medals.values().length];
+		customTags = new String[0];
 		stats = new Stat[Stats.values().length];
 		numberOfLinkTrys = 0;
 		
@@ -148,6 +150,14 @@ public class PlayerProfile {
 	
 	public void setMedals(Medal[] medals) {
 		this.medals = medals;
+	}
+
+	public String[] getCustomTags() {
+		return customTags;
+	}
+
+	public void setCustomTags(String[] customTags) {
+		this.customTags = customTags;
 	}
 	
 	public Stat[] getStatsArray() {
