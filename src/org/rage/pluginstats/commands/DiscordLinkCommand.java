@@ -64,7 +64,7 @@ public class DiscordLinkCommand implements CommandExecutor {
 		Document discUser = mongoDB.getDiscordUserByPlayer(pp.getPlayerID());
 		
 		if(discUser!=null) {
-			sender.sendMessage(Util.chat("&b[MineStats]&7 - You are already linked with Discord user &d&l"+discUser.getString("userName")));
+			sender.sendMessage(Util.chat("&b[MineStats]&7 - You are already linked with Discord user &d&l"+discUser.getString("username")));
 			return false;
 		}
 		

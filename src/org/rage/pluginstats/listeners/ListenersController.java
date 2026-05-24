@@ -10,7 +10,8 @@ import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
-import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.mongoDB.DBFields;
+import org.rage.pluginstats.stats.GamestatField;
 import org.rage.pluginstats.utils.DiscordUtil;
 import org.rage.pluginstats.utils.Util;
 
@@ -49,7 +50,7 @@ public class ListenersController {
 			player.setPlayerListName(Util.chat(names[1]));
 		}
 		
-		mongoDB.updateStat(Filters.eq(Stats.PLAYERID.getQuery(), pp.getPlayerID()), Updates.set(Stats.ONLINE.getQuery(), true));
+		mongoDB.updateStat(Filters.eq(DBFields.IDENTITY_ID, pp.getIdentityId()), Updates.set(GamestatField.STATUS.getQuery(), true));
 		pp.startPersisting();
 		
 		Document doc = mongoDB.getPlayer(player.getUniqueId());

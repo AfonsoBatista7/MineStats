@@ -248,8 +248,8 @@ public class ServerPlayer extends PlayerProfile {
 		Document discUser = mongoDB.getDiscordUserByPlayer(playerId);
 		if(discUser!=null && medal.getRoleId()!=0 && getMedalByMedal(medal).getMedalLevel().equals(MLevel.GOD)) {
 			Guild guild = DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId());
-    	
-    		guild.addRoleToMember(discUser.getString("userId"), guild.getRoleById(medal.getRoleId())).complete();
+
+    		guild.addRoleToMember(discUser.getString("externalId"), guild.getRoleById(medal.getRoleId())).complete();
 		}
 	}
 	
