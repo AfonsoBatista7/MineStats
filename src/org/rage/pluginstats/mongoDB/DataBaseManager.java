@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+
+import com.mongodb.client.MongoCursor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -243,6 +245,32 @@ public class DataBaseManager {
 
     public Document getDiscordUser(String discordUserId) {
         return mongoDB.getIdentityByExternalId(discordUserId, "discord");
+    }
+
+    /** Looks up the MC player linked to a Discord user ID, returns enriched gamestat doc. */
+    public Document getPlayerByDiscordUser(String discordUserId) {
+        Document discordIdentity = mongoDB.getIdentityByExternalId(discordUserId, "discord");
+        if (discordIdentity == null || discordIdentity.get(DBFields.USER_ID) == null) return null;
+        Document mcIdentity = mongoDB.getIdentityByUserId(discordIdentity.getObjectId(DBFields.USER_ID), "minecraft");
+        if (mcIdentity == null) return null;
+        String identityId = mcIdentity.getObjectId("_id").toString();
+        Document gamestatDoc = mongoDB.getGamestatByIdentityId(identityId, mongoDB.getServerId());
+        return enrichGamestatWithIdentity(gamestatDoc, mcIdentity);
+    }
+
+    /** Returns a raw cursor over all gamestats for this server. Use {@link #enrichGamestat} on each doc. */
+    public MongoCursor<Document> getGamestatsIterator() {
+        return mongoDB.getGamestatsCollection()
+            .find(new Document(DBFields.SERVER_ID, mongoDB.getServerId()))
+            .iterator();
+    }
+
+    public Document enrichGamestat(Document gamestatDoc) {
+        if (gamestatDoc == null) return null;
+        String identityId = gamestatDoc.getString(DBFields.IDENTITY_ID);
+        if (identityId == null) return gamestatDoc;
+        Document identityDoc = mongoDB.getIdentityById(identityId);
+        return enrichGamestatWithIdentity(gamestatDoc, identityDoc);
     }
 
     // -------------------------------------------------------------------------

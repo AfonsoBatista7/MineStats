@@ -72,6 +72,10 @@ public class DataBase {
         ).first();
     }
 
+    public Document getIdentityById(String id) {
+        return identitiesCollection.find(new Document("_id", new ObjectId(id))).first();
+    }
+
     public void insertIdentity(Document doc) { identitiesCollection.insertOne(doc); }
 
     public void updateIdentity(Bson filter, Bson update) {

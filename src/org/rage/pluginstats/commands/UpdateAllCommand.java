@@ -42,10 +42,10 @@ public class UpdateAllCommand implements CommandExecutor{
 		}
 		
 		
-		MongoCursor<Document> it = mongoDB.getCollectionIterator();
+		MongoCursor<Document> it = mongoDB.getGamestatsIterator();
 		ServerPlayer sp; Document doc;
 		while(it.hasNext()) {
-			doc = it.next();
+			doc = mongoDB.enrichGamestat(it.next());
 			
 			sp = serverMan.getPlayerFromHashMap((UUID) doc.get(DBFields.PLAYER_ID));
 
