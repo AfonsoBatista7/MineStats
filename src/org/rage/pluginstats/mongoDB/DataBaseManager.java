@@ -78,6 +78,10 @@ public class DataBaseManager {
 
         String identityId = identityDoc.getObjectId("_id").toString();
 
+        Document existing = mongoDB.getGamestatByIdentityId(identityId, serverId);
+        if (existing != null)
+            return enrichGamestatWithIdentity(existing, identityDoc);
+
         Document statsSubDoc = new Document();
         for (Stats stat : Stats.values())
             statsSubDoc.append(stat.getQuery(), stat.getFirstValue());
