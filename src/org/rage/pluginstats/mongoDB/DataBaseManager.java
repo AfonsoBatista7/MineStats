@@ -83,7 +83,8 @@ public class DataBaseManager {
         Document gamestatDoc = new Document(DBFields.IDENTITY_ID, identityId)
             .append(DBFields.SERVER_ID, serverId);
         for (GamestatField field : GamestatField.values())
-            gamestatDoc.append(field.getQuery(), field.getFirstValue());
+            if (field.getFirstValue() != null)
+                gamestatDoc.append(field.getQuery(), field.getFirstValue());
         gamestatDoc.append(DBFields.STATS, statsSubDoc);
 
         mongoDB.insertGamestat(gamestatDoc);
@@ -182,6 +183,9 @@ public class DataBaseManager {
                 );
                 sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy h:mm a").parse(lastLoginStr));
             }
+
+            sp.setDisplayName(playerDoc.getString(GamestatField.DISPLAYNAME.getQuery()));
+            sp.setListName(playerDoc.getString(GamestatField.LISTNAME.getQuery()));
 
             serverManager.newPlayerOnServer(sp);
         }
@@ -321,6 +325,34 @@ public class DataBaseManager {
         mongoDB.updateGamestat(
             Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
             Updates.pull(GamestatField.CUSTOMTAGS.getQuery(), tag)
+        );
+    }
+
+    // -------------------------------------------------------------------------
+    // Display name
+    // -------------------------------------------------------------------------
+
+    public void setDisplayName(UUID playerId, String displayName, String listName) {
+        Document playerDoc = getPlayer(playerId);
+        if (playerDoc == null) return;
+        mongoDB.updateGamestat(
+            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            Updates.combine(
+                Updates.set(GamestatField.DISPLAYNAME.getQuery(), displayName),
+                Updates.set(GamestatField.LISTNAME.getQuery(), listName)
+            )
+        );
+    }
+
+    public void clearDisplayName(UUID playerId) {
+        Document playerDoc = getPlayer(playerId);
+        if (playerDoc == null) return;
+        mongoDB.updateGamestat(
+            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            Updates.combine(
+                Updates.unset(GamestatField.DISPLAYNAME.getQuery()),
+                Updates.unset(GamestatField.LISTNAME.getQuery())
+            )
         );
     }
 

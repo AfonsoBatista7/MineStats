@@ -7,7 +7,7 @@ import java.util.List;
 import org.bson.Document;
 import org.bukkit.Bukkit;
 import org.apache.commons.lang3.StringUtils;
-import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.mongoDB.DBFields;
 import org.rage.pluginstats.utils.DiscordUtil;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 
@@ -67,7 +67,7 @@ public class DiscordChatListener extends ListenerAdapter {
                 if(playerDoc==null) return;
 
 		String minecraftMessage = DiscordUtil.buildDiscordToMinecraft(
-                                playerDoc.getString(Stats.NAME.getQuery()), message);
+                                playerDoc.getString(DBFields.NAME), message);
 		
 		Bukkit.broadcastMessage(minecraftMessage);
 	}

@@ -42,12 +42,9 @@ public class ListenersController {
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.join();
 		
-		if(mongoDB.getConfig().getString("players."+player.getUniqueId())!=null) {
-			
-			String[] names = mongoDB.getConfig().getString("players."+player.getUniqueId()).split(">");
-	
-			player.setDisplayName(Util.chat(names[0]));
-			player.setPlayerListName(Util.chat(names[1]));
+		if (pp.getDisplayName() != null) {
+			player.setDisplayName(Util.chat(pp.getDisplayName()));
+			player.setPlayerListName(Util.chat(pp.getListName()));
 		}
 		
 		mongoDB.updateStat(Filters.eq(DBFields.IDENTITY_ID, pp.getIdentityId()), Updates.set(GamestatField.STATUS.getQuery(), true));
