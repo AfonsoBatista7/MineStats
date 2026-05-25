@@ -9,7 +9,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.mongoDB.DBFields;
 import org.rage.pluginstats.Main;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
@@ -47,19 +47,18 @@ public class UpdateAllCommand implements CommandExecutor{
 		while(it.hasNext()) {
 			doc = it.next();
 			
-			sp = serverMan.getPlayerFromHashMap((UUID) doc.get(Stats.PLAYERID.getQuery())); 
-			
+			sp = serverMan.getPlayerFromHashMap((UUID) doc.get(DBFields.PLAYER_ID));
+
 			if(sp==null) {
 				try {
-					sp = new ServerPlayer((UUID) doc.get(Stats.PLAYERID.getQuery()), mongoDB);
-					mongoDB.downloadFromDataBase(sp, doc);												//IF A PLAYER IS NOT ONLINE AT THE MOMENT
+					sp = new ServerPlayer((UUID) doc.get(DBFields.PLAYER_ID), mongoDB);
+					mongoDB.downloadFromDataBase(sp, doc);
 				} catch (ParseException e) {
 					e.printStackTrace();
 				}
 			}
-		
-			//Check for medals
-			Player player = Main.currentServer.getPlayer(doc.getString(Stats.NAME.getQuery()));
+
+			Player player = Main.currentServer.getPlayer(doc.getString(DBFields.NAME));
 			
 			for(Medals medal: Medals.values()) {
 				long variable = Util.getMedalVariable(sp, medal);

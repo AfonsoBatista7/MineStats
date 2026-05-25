@@ -19,7 +19,8 @@ import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
-import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.mongoDB.DBFields;
+import org.rage.pluginstats.stats.GamestatField;
 import org.rage.pluginstats.tags.Tags;
 import org.rage.pluginstats.utils.Util;
 
@@ -81,15 +82,15 @@ public class TagsCommand implements CommandExecutor {
                     }
 		}
 
-		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));
+		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(DBFields.PLAYER_ID));
 
-		if(pp==null) medals = mongoDB.loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class));
+		if(pp==null) medals = mongoDB.loadMedals(playerDoc.getList(GamestatField.MEDALS.getQuery(), Document.class));
 		else medals = pp.getMedals();
 
 		String[] customTags;
 		if(pp!=null) customTags = pp.getCustomTags();
 		else {
-			List<String> ctList = playerDoc.getList("customTags", String.class);
+			List<String> ctList = playerDoc.getList(GamestatField.CUSTOMTAGS.getQuery(), String.class);
 			customTags = ctList != null ? ctList.toArray(new String[0]) : new String[0];
 		}
 
@@ -118,7 +119,8 @@ public class TagsCommand implements CommandExecutor {
 						newName = String.format("%s%s&r %s", color, tagName, name);
 						listName = medal.getMedalLevel().equals(MLevel.GOD) ? color+"&l"+name : color+name;
 
-						mongoDB.getConfig().set("players."+player.getUniqueId(), newName +">"+ listName);
+						mongoDB.setDisplayName(player.getUniqueId(), newName, listName);
+						if(pp!=null) { pp.setDisplayName(newName); pp.setListName(listName); }
 						player.setDisplayName(Util.chat(newName));
 						player.setPlayerListName(Util.chat(listName));
 
@@ -136,7 +138,8 @@ public class TagsCommand implements CommandExecutor {
 					newName = String.format("%s%s&r %s", color, tagName, name);
 					listName = color+name;
 
-					mongoDB.getConfig().set("players."+player.getUniqueId(), newName +">"+ listName);
+					mongoDB.setDisplayName(player.getUniqueId(), newName, listName);
+					if(pp!=null) { pp.setDisplayName(newName); pp.setListName(listName); }
 					player.setDisplayName(Util.chat(newName));
 					player.setPlayerListName(Util.chat(listName));
 
@@ -149,8 +152,10 @@ public class TagsCommand implements CommandExecutor {
 
 			case "del":
 
-				player.setDisplayName(String.format("%s", name));
-				player.setPlayerListName(String.format("%s", name));
+				mongoDB.clearDisplayName(player.getUniqueId());
+				if(pp!=null) { pp.setDisplayName(null); pp.setListName(null); }
+				player.setDisplayName(name);
+				player.setPlayerListName(name);
 
 				sender.sendMessage(Util.chat("&b[MineStats]&7 - &aSuccess! &7You deleted your tag!"));
 
@@ -219,7 +224,7 @@ public class TagsCommand implements CommandExecutor {
 					return false;
 				}
 
-				UUID givePlayerId = (UUID) givePlayerDoc.get(Stats.PLAYERID.getQuery());
+				UUID givePlayerId = (UUID) givePlayerDoc.get(DBFields.PLAYER_ID);
 
 				// Persist to MongoDB
 				mongoDB.addCustomTag(givePlayerId, args[2]);
@@ -267,14 +272,14 @@ public class TagsCommand implements CommandExecutor {
 					return false;
 				}
 
-				UUID rmPlayerId = (UUID) rmPlayerDoc.get(Stats.PLAYERID.getQuery());
+				UUID rmPlayerId = (UUID) rmPlayerDoc.get(DBFields.PLAYER_ID);
 
 				// Load custom tags for this player
 				String[] rmCustomTags;
 				ServerPlayer rmSp = serverMan.getPlayerFromHashMap(rmPlayerId);
 				if(rmSp!=null) rmCustomTags = rmSp.getCustomTags();
 				else {
-					List<String> rmCtList = rmPlayerDoc.getList("customTags", String.class);
+					List<String> rmCtList = rmPlayerDoc.getList(GamestatField.CUSTOMTAGS.getQuery(), String.class);
 					rmCustomTags = rmCtList != null ? rmCtList.toArray(new String[0]) : new String[0];
 				}
 

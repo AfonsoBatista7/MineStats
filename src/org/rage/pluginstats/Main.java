@@ -196,9 +196,9 @@ public class Main extends JavaPlugin {
 			return false;
 		}
 
-		String collectionName = getConfig().getString("collectionName", "");
-		if (collectionName.isEmpty()) {
-			log.severe("[MineStats] - Collection name is not configured! Please set 'collectionName' in config.yml");
+		String serverId = getConfig().getString("serverId", "");
+		if (serverId.isEmpty() || serverId.equals("YOUR_SERVER_ID_HERE")) {
+			log.severe("[MineStats] - Server ID is not configured! Create a document in the 'servers' collection and set 'serverId' in config.yml");
 			log.severe("[MineStats] - Plugin will not load until properly configured.");
 			return false;
 		}

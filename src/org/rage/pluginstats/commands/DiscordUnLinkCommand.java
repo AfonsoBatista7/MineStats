@@ -11,7 +11,7 @@ import org.rage.pluginstats.discord.LinkManager;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
-import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.mongoDB.DBFields;
 import org.rage.pluginstats.utils.Util;
 
 /**
@@ -48,7 +48,7 @@ public class DiscordUnLinkCommand implements CommandExecutor {
 			return false;
 		}
 		
-		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));
+		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(DBFields.PLAYER_ID));
 				
 		if(mongoDB.getDiscordUserByPlayer(pp.getPlayerID())==null) {
 			sender.sendMessage(Util.chat("&b[MineStats]&7 - &d&l"+name+"&7 is not linked yet. Try /link first."));

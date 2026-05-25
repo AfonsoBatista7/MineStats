@@ -14,6 +14,7 @@ import org.rage.pluginstats.medals.MLevel;
 import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
+import org.rage.pluginstats.mongoDB.DBFields;
 import org.rage.pluginstats.utils.DiscordUtil;
 import org.rage.pluginstats.utils.Util;
 
@@ -248,8 +249,8 @@ public class ServerPlayer extends PlayerProfile {
 		Document discUser = mongoDB.getDiscordUserByPlayer(playerId);
 		if(discUser!=null && medal.getRoleId()!=0 && getMedalByMedal(medal).getMedalLevel().equals(MLevel.GOD)) {
 			Guild guild = DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId());
-    	
-    		guild.addRoleToMember(discUser.getString("userId"), guild.getRoleById(medal.getRoleId())).complete();
+
+    		guild.addRoleToMember(discUser.getString(DBFields.EXTERNAL_ID), guild.getRoleById(medal.getRoleId())).complete();
 		}
 	}
 	

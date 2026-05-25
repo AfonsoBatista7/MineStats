@@ -9,7 +9,7 @@ import org.rage.pluginstats.discord.LinkManager;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
-import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.mongoDB.DBFields;
 import org.rage.pluginstats.utils.Util;
 
 import java.util.UUID;
@@ -59,12 +59,12 @@ public class DiscordLinkCommand implements CommandExecutor {
 			}
 		}
 		
-		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));
+		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(DBFields.PLAYER_ID));
 		
 		Document discUser = mongoDB.getDiscordUserByPlayer(pp.getPlayerID());
 		
 		if(discUser!=null) {
-			sender.sendMessage(Util.chat("&b[MineStats]&7 - You are already linked with Discord user &d&l"+discUser.getString("userName")));
+			sender.sendMessage(Util.chat("&b[MineStats]&7 - You are already linked with Discord user &d&l"+discUser.getString(DBFields.USERNAME)));
 			return false;
 		}
 		

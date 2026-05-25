@@ -9,7 +9,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.mongoDB.DBFields;
+import org.rage.pluginstats.stats.GamestatField;
 import org.rage.pluginstats.medals.Medal;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
@@ -66,11 +67,11 @@ public class PlayerMedalsCommand implements CommandExecutor {
 			}
 		}
 		
-		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(Stats.PLAYERID.getQuery()));       
-		
+		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(DBFields.PLAYER_ID));
+
 		Medal[] medals;
-		
-		if(pp==null) medals = mongoDB.loadMedals(playerDoc.getList(Stats.MEDALS.getQuery(), Document.class));
+
+		if(pp==null) medals = mongoDB.loadMedals(playerDoc.getList(GamestatField.MEDALS.getQuery(), Document.class));
 		else medals = pp.getMedals();
 		
 		sender.sendMessage(Util.chat("&b[MineStats]&7 - &c<player>&7 Medals:").replace("<player>", name));

@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
-import org.rage.pluginstats.stats.Stats;
+import org.rage.pluginstats.mongoDB.DBFields;
 import org.rage.pluginstats.utils.Util;
 
 /**
@@ -51,7 +51,7 @@ public class DownloadCommand implements CommandExecutor {
 					return false;
 				}
 				
-				UUID playerId = (UUID) playerDoc.get(Stats.PLAYERID.getQuery());
+				UUID playerId = (UUID) playerDoc.get(DBFields.PLAYER_ID);
 				
 				sp = serverMan.getPlayerFromHashMap(playerId);
 				

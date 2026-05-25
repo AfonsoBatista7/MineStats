@@ -25,6 +25,8 @@ public class PlayerProfile {
 	
 	protected UUID playerId;
 	protected String name;
+	protected String identityId; // gamestats.identityId — used for all DB updates
+	protected String displayName, listName;
 	
 	private Medal[] medals;
 	private String[] customTags;
@@ -134,6 +136,30 @@ public class PlayerProfile {
 	
 	public void setName(String playerName) {
 		name = playerName;
+	}
+
+	public String getIdentityId() {
+		return identityId;
+	}
+
+	public void setIdentityId(String identityId) {
+		this.identityId = identityId;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getListName() {
+		return listName;
+	}
+
+	public void setListName(String listName) {
+		this.listName = listName;
 	}
 	
 	public int getNumberOfVersions() {
