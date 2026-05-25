@@ -239,7 +239,6 @@ public class Main extends JavaPlugin {
 				 jda.shutdownNow();
 			 }
 			
-			saveConfig();
 			serverMan.logOutAllPlayers();
 		}
 	}
