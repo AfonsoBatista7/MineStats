@@ -21,7 +21,6 @@ import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.utils.Util;
 
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
 /**
@@ -102,7 +101,7 @@ public class MergeCommand implements CommandExecutor {
         String recentId = recentPlayer.getString(DBFields.IDENTITY_ID);
 
         // Merge list fields
-        mongoDB.updateGamestat(Filters.eq(DBFields.IDENTITY_ID, recentId),
+        mongoDB.updateGamestat(mongoDB.gamestatFilter(recentId),
             Updates.combine(
                 Updates.set(GamestatField.CUSTOMTAGS.getQuery(),
                     mergeTagData(
@@ -123,7 +122,7 @@ public class MergeCommand implements CommandExecutor {
             ));
 
         // Merge numeric fields
-        mongoDB.updateGamestat(Filters.eq(DBFields.IDENTITY_ID, recentId),
+        mongoDB.updateGamestat(mongoDB.gamestatFilter(recentId),
             Updates.combine(
                 Updates.set(GamestatField.STATUS.getQuery(),
                     boolOrFalse(recentPlayer, GamestatField.STATUS.getQuery()) ||
@@ -151,7 +150,7 @@ public class MergeCommand implements CommandExecutor {
                         : new ArrayList<String>())
             ));
 
-        mongoDB.deleteGamestat(Filters.eq(DBFields.IDENTITY_ID, oldPlayer.getString(DBFields.IDENTITY_ID)));
+        mongoDB.deleteGamestat(mongoDB.gamestatFilter(oldPlayer.getString(DBFields.IDENTITY_ID)));
     }
 
     // -------------------------------------------------------------------------
