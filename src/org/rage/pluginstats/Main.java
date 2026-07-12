@@ -88,7 +88,7 @@ public class Main extends JavaPlugin {
 			serverMan = new ServerManager(new DataBase(getConfig()), log, this);
 			mongoDB = serverMan.getDataBaseManager();
 			linkMan = new LinkManager(mongoDB, serverMan);
-			controller = new ListenersController(mongoDB, serverMan);
+			controller = new ListenersController(mongoDB, serverMan, linkMan);
 
 			Thread initThread = new Thread(this::init, "[MineStats] - Initialization Discord Bot");
 	        initThread.setUncaughtExceptionHandler((t, e) -> {

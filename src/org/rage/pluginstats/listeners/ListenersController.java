@@ -6,16 +6,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.rage.pluginstats.Main;
+import org.rage.pluginstats.discord.LinkManager;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
-import org.rage.pluginstats.mongoDB.DBFields;
 import org.rage.pluginstats.stats.GamestatField;
 import org.rage.pluginstats.utils.DiscordUtil;
 import org.rage.pluginstats.utils.Util;
 
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
 /**
@@ -23,13 +22,15 @@ import com.mongodb.client.model.Updates;
  * 2021 - 2022
  */
 public class ListenersController {
-	
-	
+
+
 	private DataBaseManager mongoDB;
-	
-	public ListenersController(DataBaseManager mongoDB, ServerManager serverMan) {
-		
+	private LinkManager linkMan;
+
+	public ListenersController(DataBaseManager mongoDB, ServerManager serverMan, LinkManager linkMan) {
+
 		this.mongoDB = mongoDB;
+		this.linkMan = linkMan;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -41,13 +42,15 @@ public class ListenersController {
 		
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.join();
-		
+
+		linkMan.syncLinkedRole(player.getUniqueId());
+
 		if (pp.getDisplayName() != null) {
 			player.setDisplayName(Util.chat(pp.getDisplayName()));
 			player.setPlayerListName(Util.chat(pp.getListName()));
 		}
 		
-		mongoDB.updateStat(Filters.eq(DBFields.IDENTITY_ID, pp.getIdentityId()), Updates.set(GamestatField.STATUS.getQuery(), true));
+		mongoDB.updateStat(mongoDB.gamestatFilter(pp.getIdentityId()), Updates.set(GamestatField.STATUS.getQuery(), true));
 		pp.startPersisting();
 		
 		Document doc = mongoDB.getPlayer(player.getUniqueId());

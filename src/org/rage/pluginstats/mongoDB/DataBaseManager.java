@@ -184,7 +184,7 @@ public class DataBaseManager {
             } catch (ParseException e) {
                 lastLoginStr = lastLoginStr + " 12:00 AM";
                 mongoDB.updateGamestat(
-                    Filters.eq(DBFields.IDENTITY_ID, sp.getIdentityId()),
+                    gamestatFilter(sp.getIdentityId()),
                     Updates.set(GamestatField.LASTLOGIN.getQuery(), lastLoginStr)
                 );
                 sp.setLastLogin(new SimpleDateFormat("dd/MM/yyyy h:mm a").parse(lastLoginStr));
@@ -212,7 +212,7 @@ public class DataBaseManager {
         }
 
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, sp.getIdentityId()),
+            gamestatFilter(sp.getIdentityId()),
             Updates.combine(updates)
         );
     }
@@ -285,7 +285,7 @@ public class DataBaseManager {
         List<String> versions = playerDoc.getList(GamestatField.VERSIONS.getQuery(), String.class);
         if (versions != null && versions.contains(version)) return true;
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            gamestatFilter(playerDoc.getString(DBFields.IDENTITY_ID)),
             Updates.addToSet(GamestatField.VERSIONS.getQuery(), version)
         );
         return false;
@@ -309,7 +309,7 @@ public class DataBaseManager {
             }
         }
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            gamestatFilter(playerDoc.getString(DBFields.IDENTITY_ID)),
             Updates.set(GamestatField.MEDALS.getQuery(), finalList)
         );
     }
@@ -326,14 +326,14 @@ public class DataBaseManager {
         Document playerDoc = getPlayer(player.getUniqueId());
         if (playerDoc == null) return;
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            gamestatFilter(playerDoc.getString(DBFields.IDENTITY_ID)),
             Updates.addToSet(GamestatField.MEDALS.getQuery(), newMedal.createMedalDoc())
         );
     }
 
     public void newMedalOnDataBase(Document medalDoc, ServerPlayer sp) {
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, sp.getIdentityId()),
+            gamestatFilter(sp.getIdentityId()),
             Updates.addToSet(GamestatField.MEDALS.getQuery(), medalDoc)
         );
     }
@@ -346,7 +346,7 @@ public class DataBaseManager {
         Document playerDoc = getPlayer(playerId);
         if (playerDoc == null) return;
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            gamestatFilter(playerDoc.getString(DBFields.IDENTITY_ID)),
             Updates.addToSet(GamestatField.CUSTOMTAGS.getQuery(), tag)
         );
     }
@@ -355,7 +355,7 @@ public class DataBaseManager {
         Document playerDoc = getPlayer(playerId);
         if (playerDoc == null) return;
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            gamestatFilter(playerDoc.getString(DBFields.IDENTITY_ID)),
             Updates.pull(GamestatField.CUSTOMTAGS.getQuery(), tag)
         );
     }
@@ -368,7 +368,7 @@ public class DataBaseManager {
         Document playerDoc = getPlayer(playerId);
         if (playerDoc == null) return;
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            gamestatFilter(playerDoc.getString(DBFields.IDENTITY_ID)),
             Updates.combine(
                 Updates.set(GamestatField.DISPLAYNAME.getQuery(), displayName),
                 Updates.set(GamestatField.LISTNAME.getQuery(), listName)
@@ -380,7 +380,7 @@ public class DataBaseManager {
         Document playerDoc = getPlayer(playerId);
         if (playerDoc == null) return;
         mongoDB.updateGamestat(
-            Filters.eq(DBFields.IDENTITY_ID, playerDoc.getString(DBFields.IDENTITY_ID)),
+            gamestatFilter(playerDoc.getString(DBFields.IDENTITY_ID)),
             Updates.combine(
                 Updates.unset(GamestatField.DISPLAYNAME.getQuery()),
                 Updates.unset(GamestatField.LISTNAME.getQuery())
@@ -397,6 +397,17 @@ public class DataBaseManager {
     public void updateGamestat(Bson filter, Bson update)  { mongoDB.updateGamestat(filter, update); }
     public void deleteGamestat(Bson filter)               { mongoDB.deleteGamestat(filter); }
     public void updateIdentity(Bson filter, Bson update)  { mongoDB.updateIdentity(filter, update); }
+
+    /**
+     * A given identityId can have one gamestat document per server, so any
+     * update/delete targeting "the" gamestat must also be scoped to this server.
+     */
+    public Bson gamestatFilter(String identityId) {
+        return Filters.and(
+            Filters.eq(DBFields.IDENTITY_ID, identityId),
+            Filters.eq(DBFields.SERVER_ID, mongoDB.getServerId())
+        );
+    }
 
     public DataBase getMongoDB()           { return mongoDB; }
     public FileConfiguration getConfig()   { return DataBase.getConfig(); }
