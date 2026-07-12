@@ -9,7 +9,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.rage.pluginstats.discord.LinkManager;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
-import org.rage.pluginstats.player.ServerPlayer;
 import org.rage.pluginstats.server.ServerManager;
 import org.rage.pluginstats.mongoDB.DBFields;
 import org.rage.pluginstats.utils.Util;
@@ -48,14 +47,14 @@ public class DiscordUnLinkCommand implements CommandExecutor {
 			return false;
 		}
 		
-		ServerPlayer pp = serverMan.getPlayerFromHashMap((UUID) playerDoc.get(DBFields.PLAYER_ID));
-				
-		if(mongoDB.getDiscordUserByPlayer(pp.getPlayerID())==null) {
+		UUID playerId = (UUID) playerDoc.get(DBFields.PLAYER_ID);
+
+		if(mongoDB.getDiscordUserByPlayer(playerId)==null) {
 			sender.sendMessage(Util.chat("&b[MineStats]&7 - &d&l"+name+"&7 is not linked yet. Try /link first."));
 			return false;
 		}
-		
-		linkMan.unlink(pp.getPlayerID());
+
+		linkMan.unlink(playerId);
 		sender.sendMessage(Util.chat("&b[MineStats]&7 - &d&l"+name+"&7 is now unlinked!"));
 		
 		return true;

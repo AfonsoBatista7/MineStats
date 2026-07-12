@@ -18,6 +18,7 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Role;
 
 /**
  * @author Afonso Batista
@@ -75,22 +76,53 @@ public class LinkManager {
         Document mcIdentity = mongoDB.getMongoDB().getIdentityByExternalId(mcPlayerId.toString(), "minecraft");
         if (mcIdentity == null || mcIdentity.get(DBFields.USER_ID) == null) return;
 
-        ObjectId userId = mcIdentity.getObjectId(DBFields.USER_ID);
-        Document discordIdentity = mongoDB.getMongoDB().getIdentityByUserId(userId, "discord");
+        ObjectId oldUserId = mcIdentity.getObjectId(DBFields.USER_ID);
+        Document discordIdentity = mongoDB.getMongoDB().getIdentityByUserId(oldUserId, "discord");
+
+        // A user can group several identities (e.g. other linked MC alts), so unlinking
+        // must only detach this one MC identity, not wipe out the shared user. Every
+        // identity is expected to belong to a user, so give this one a fresh, separate one.
+        Document newUserDoc = new Document();
+        mongoDB.getMongoDB().insertUser(newUserDoc);
 
         mongoDB.updateIdentity(
             Filters.eq("_id", mcIdentity.getObjectId("_id")),
-            Updates.unset(DBFields.USER_ID)
+            Updates.set(DBFields.USER_ID, newUserDoc.getObjectId("_id"))
         );
 
-        if (discordIdentity != null) {
-            Guild guild = DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId());
-            if (guild != null)
-                guild.removeRoleFromMember(
-                    discordIdentity.getString(DBFields.EXTERNAL_ID),
-                    guild.getRoleById(DiscordUtil.getRoleLinkedId())
-                ).complete();
-        }
+        if (discordIdentity == null) return;
+
+        // Only strip the linked role if no other Minecraft identity is still tied to
+        // that Discord user's old user document — otherwise they're still linked.
+        if (mongoDB.getMongoDB().hasIdentityByUserId(oldUserId, "minecraft")) return;
+
+        Guild guild = DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId());
+        if (guild != null)
+            guild.removeRoleFromMember(
+                discordIdentity.getString(DBFields.EXTERNAL_ID),
+                guild.getRoleById(DiscordUtil.getRoleLinkedId())
+            ).complete();
+    }
+
+    /**
+     * Ensures a player's linked Discord user has the configured linked-role on this
+     * server's guild. Called on join so players linked via another server also get
+     * the role reapplied here.
+     */
+    public void syncLinkedRole(UUID mcPlayerId) {
+        Document mcIdentity = mongoDB.getMongoDB().getIdentityByExternalId(mcPlayerId.toString(), "minecraft");
+        if (mcIdentity == null || mcIdentity.get(DBFields.USER_ID) == null) return;
+
+        Document discordIdentity = mongoDB.getMongoDB().getIdentityByUserId(mcIdentity.getObjectId(DBFields.USER_ID), "discord");
+        if (discordIdentity == null) return;
+
+        Guild guild = DiscordUtil.getJda().getGuildById(DiscordUtil.getGuildId());
+        if (guild == null) return;
+
+        Role role = guild.getRoleById(DiscordUtil.getRoleLinkedId());
+        if (role == null) return;
+
+        guild.addRoleToMember(discordIdentity.getString(DBFields.EXTERNAL_ID), role).queue();
     }
 
     private void linkProcess(int code, String discordUserId) {

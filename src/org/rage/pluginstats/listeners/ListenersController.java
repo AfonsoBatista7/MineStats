@@ -6,6 +6,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.rage.pluginstats.Main;
+import org.rage.pluginstats.discord.LinkManager;
 import org.rage.pluginstats.medals.Medals;
 import org.rage.pluginstats.mongoDB.DataBaseManager;
 import org.rage.pluginstats.player.ServerPlayer;
@@ -21,13 +22,15 @@ import com.mongodb.client.model.Updates;
  * 2021 - 2022
  */
 public class ListenersController {
-	
-	
+
+
 	private DataBaseManager mongoDB;
-	
-	public ListenersController(DataBaseManager mongoDB, ServerManager serverMan) {
-		
+	private LinkManager linkMan;
+
+	public ListenersController(DataBaseManager mongoDB, ServerManager serverMan, LinkManager linkMan) {
+
 		this.mongoDB = mongoDB;
+		this.linkMan = linkMan;
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -39,7 +42,9 @@ public class ListenersController {
 		
 		ServerPlayer pp = mongoDB.getPlayerStats(player);
 		pp.join();
-		
+
+		linkMan.syncLinkedRole(player.getUniqueId());
+
 		if (pp.getDisplayName() != null) {
 			player.setDisplayName(Util.chat(pp.getDisplayName()));
 			player.setPlayerListName(Util.chat(pp.getListName()));

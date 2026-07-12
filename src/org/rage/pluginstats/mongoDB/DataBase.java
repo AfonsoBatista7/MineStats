@@ -72,6 +72,13 @@ public class DataBase {
         ).first();
     }
 
+    public boolean hasIdentityByUserId(ObjectId userId, String provider) {
+        return identitiesCollection.countDocuments(
+            new Document(DBFields.USER_ID, userId)
+                .append(DBFields.PROVIDER, provider)
+        ) > 0;
+    }
+
     public Document getIdentityById(String id) {
         return identitiesCollection.find(new Document("_id", new ObjectId(id))).first();
     }
